@@ -44,7 +44,7 @@ var config = {
       gravity: {
         y: 300 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: {
@@ -104,19 +104,20 @@ function preload() {
    this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
-    spacing: 48,
-    frameWidth: 80,
-    frameHeight: 73
+    spacing: 46,
+    frameWidth: 82,
+    frameHeight: 73,
+    
   }); 
   this.load.spritesheet("gauche", "src/assets/Run2.png", {
-    spacing: 48,
     frameWidth: 80,
-    frameHeight: 70
+    frameHeight: 70,
+    spacing: 48
   }); 
   this.load.spritesheet("droite", "src/assets/Run.png", {
-    spacing: 48,
     frameWidth: 80,
-    frameHeight: 70
+    frameHeight: 70,
+    spacing: 48
   }); 
 }
 
