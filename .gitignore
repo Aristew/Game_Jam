@@ -26,3 +26,13 @@ phaser_environnement_vide/src/assets/platform.png
 phaser_environnement_vide/src/assets/sky.png
 phaser_environnement_vide/src/assets/star.png
 phaser_base_3_niveaux/src/assets/Charge_1G.png
+phaser_base_3_niveaux/src/assets/Hurt.png
+phaser_base_3_niveaux/src/index.js
+phaser_base_3_niveaux/src/assets/Idle.png
+testY
+index.js
+.gitignore
+phaser_base_3_niveaux/README.md
+phaser_base_3_niveaux/src/index.js
+phaser_base_3_niveaux/src/assets/Hurt.png
+phaser_base_3_niveaux/src/assets/Idle.png
