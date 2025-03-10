@@ -161,7 +161,7 @@ groupe_mineraux = this.physics.add.group();
   this.physics.add.collider(groupe_mineraux, groupe_plateformes); 
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
   
-  texteCompteur = this.add.text(500, 20, "Oxygène: 0  Fer: 0  Hydrogène: 0\nSodium: 0  Chlore: 0  Silicium: 0", { fontSize: '16px', fill: '#FFF' });
+  texteCompteur = this.add.text(450, 20, "Oxygène: 0  Fer: 0  Hydrogène: 0\nSodium: 0  Chlore: 0  Silicium: 0", { fontSize: '16px', fill: '#FFF' });
 }
 
 
