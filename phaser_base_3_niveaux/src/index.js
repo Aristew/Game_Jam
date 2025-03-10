@@ -48,7 +48,7 @@ var config = {
     arcade: {
       // parametres du mode arcade
       gravity: {
-        y: 300 // gravité verticale : acceleration ddes corps en pixels par seconde
+        y: 230 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
       debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
@@ -199,7 +199,7 @@ function create() {
 
   player.setCollideWorldBounds(true); 
   this.physics.add.collider(player, groupe_plateformes); 
-  player.setBounce(0.2); 
+  player.setBounce(0); 
   clavier = this.input.keyboard.createCursorKeys(); 
 
   this.anims.create({
