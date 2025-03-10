@@ -30,7 +30,11 @@ export default class selection extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 48
     });
-    this.load.spritesheet("courir", "src/assets/Run.png", {
+    this.load.spritesheet("courir(d)", "src/assets/Run.png", {
+      frameWidth: 32,
+      frameHeight: 48
+    });
+    this.load.spritesheet("courir(g)", "src/assets/Run2.png", {
       frameWidth: 32,
       frameHeight: 48
     });
@@ -106,9 +110,9 @@ export default class selection extends Phaser.Scene {
     // creation de l'animation "anim_tourne_gauche" qui sera jouée sur le player lorsque ce dernier tourne à gauche
     this.anims.create({
       key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
-      frames: this.anims.generateFrameNumbers("img_perso", {
+      frames: this.anims.generateFrameNumbers("courir(g)", {
         start: 0,
-        end: 3
+        end: 8
       }), // on prend toutes les frames de img perso numerotées de 0 à 3
       frameRate: 10, // vitesse de défilement des frames
       repeat: -1 // nombre de répétitions de l'animation. -1 = infini
@@ -125,7 +129,7 @@ export default class selection extends Phaser.Scene {
     this.anims.create({
       key: "anim_tourne_droite",
       frames: this.anims.generateFrameNumbers("courir", {
-        start: 5,
+        start: 0,
         end: 8
       }),
       frameRate: 10,
