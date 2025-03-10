@@ -30,9 +30,9 @@ function tirerProjectile(type, player) {
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
-  bullet.body.allowGravity = false;
-  bullet.setVelocity(1000 * coefDir, 0);
-} 
+  bullet.body.allowGravity = true;  // Activation de la gravité
+  bullet.setVelocity(300 * coefDir, -150); // Moins de vitesse horizontale, tir plus haut
+}
 
 var config = {
   type: Phaser.AUTO,
@@ -50,7 +50,7 @@ var config = {
       gravity: {
         y: 300 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: {
