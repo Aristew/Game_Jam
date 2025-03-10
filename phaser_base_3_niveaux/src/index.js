@@ -182,6 +182,26 @@ groupe_mineraux = this.physics.add.group();
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
   
   texteCompteur = this.add.text(450, 20, "Oxygène: 0  Fer: 0  Hydrogène: 0\nSodium: 0  Chlore: 0  Silicium: 0", { fontSize: '16px', fill: '#FFF' });
+  clavier = this.input.keyboard.createCursorKeys();
+  boutonFeu = this.input.keyboard.addKey('A');
+  groupeBullets = this.physics.add.group(); 
+  
+   
+   
+
+  
+  this.physics.add.collider(groupe_plateformes);  
+  this.physics.add.overlap(groupeBullets, null,this);
+  this.physics.world.on("worldbounds", function(body) {
+    // on récupère l'objet surveillé
+    var objet = body.gameObject;
+    // s'il s'agit d'une balle
+    if (groupeBullets.contains(objet)) {
+        // on le détruit
+        objet.destroy();
+    }
+
+  })
 }
 
 
@@ -207,6 +227,9 @@ function update() {
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
   } 
+  if ( Phaser.Input.Keyboard.JustDown(boutonFeu)) {
+    tirer(player);
+ }  
  if (gameOver) {
   return;
 } 
