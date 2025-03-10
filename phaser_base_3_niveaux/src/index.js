@@ -9,6 +9,7 @@ var groupe_plateformes;
 var player; // désigne le sprite du joueur 
 var clavier; 
 var gameOver = false;
+var groupe_mineraux;
 
 var config = {
   type: Phaser.AUTO,
@@ -39,6 +40,21 @@ var config = {
 
 // création et lancement du jeu
 var game = new Phaser.Game(config);
+
+function ramasserMineraux(un_player, un_minerau) {
+  // on désactive le "corps physique" de l'étoile mais aussi sa texture
+  // l'étoile existe alors sans exister : elle est invisible et ne peut plus intéragir
+  un_minerau.disableBody(true, true);
+    // on regarde le nombre d'étoiles qui sont encore actives (non ramassées)
+    if (groupe_mineraux.countActive(true) === 0) {
+      // si ce nombre est égal à 0 : on va réactiver toutes les étoiles désactivées
+      // pour chaque étoile etoile_i du groupe, on réacttive etoile_i avec la méthode enableBody
+      // ceci s'ecrit bizarrement : avec un itérateur sur les enfants (children) du groupe (equivalent du for)
+      groupe_mineraux.children.iterate(function iterateur(minerau_i) {
+        minerau_i.enableBody(true, minerau_i.x, 0, true, true);
+      });
+}
+} 
 
 /***********************************************************************/
 /** FONCTION PRELOAD 
