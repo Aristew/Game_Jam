@@ -118,14 +118,6 @@ function preload() {
     frameWidth: 80,
     frameHeight: 70
   }); 
-  this.load.spritesheet("sphereG", "src/assets/Magic_sphereG.png", {
-    frameWidth: 128,
-    frameHeight: 73
-  }); 
-  this.load.spritesheet("sphereD", "src/assets/Magic_sphere.png", {
-    frameWidth: 128,
-    frameHeight: 73
-  }); 
 }
 
 /***********************************************************************/
@@ -162,13 +154,13 @@ function create() {
 
   this.anims.create({
     key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("gauche", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
+    frames: this.anims.generateFrameNumbers("gauche", { start: 7, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
   this.anims.create({
     key: "anim_tourne_droite", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("droite", { start: 7, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
+    frames: this.anims.generateFrameNumbers("droite", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
