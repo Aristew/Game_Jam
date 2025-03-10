@@ -97,6 +97,14 @@ function preload() {
     frameWidth: 128,
     frameHeight: 70
   }); 
+  this.load.spritesheet("sphereG", "src/assets/Magic_sphereG.png", {
+    frameWidth: 128,
+    frameHeight: 73
+  }); 
+  this.load.spritesheet("sphereD", "src/assets/Magic_sphere.png", {
+    frameWidth: 128,
+    frameHeight: 73
+  }); 
 }
 
 /***********************************************************************/
@@ -149,6 +157,18 @@ function create() {
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
+  this.anims.create({
+    key: "anim_sphereG", // key est le nom de l'animation : doit etre unique poru la scene.
+    frames: this.anims.generateFrameNumbers("sphereG", { start: 15, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
+    frameRate: 10, // vitesse de défilement des frames
+    repeat: -1 // nombre de répétitions de l'animation. -1 = infini
+  });
+  this.anims.create({
+    key: "anim_sphereD", // key est le nom de l'animation : doit etre unique poru la scene.
+    frames: this.anims.generateFrameNumbers("sphereD", { start: 0, end: 15 }), // on prend toutes les frames de img perso numerotées de 0 à 3
+    frameRate: 10, // vitesse de défilement des frames
+    repeat: -1 // nombre de répétitions de l'animation. -1 = infini
+  });
 
 groupe_mineraux = this.physics.add.group();
   for (let couleur of couleurs) {
