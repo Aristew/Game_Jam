@@ -12,8 +12,8 @@ var boutonFeu;
 var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
-var couleurs = ["rouge", "vert", "rose", "violet", "blanc", "jaune"];
-var compteurMineraux = { "rouge": 0, "vert": 0, "rose": 0, "violet": 0, "blanc": 0, "jaune": 0 };
+var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
+var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
 var texteCompteur;
 
 function tirer(player) {
@@ -61,7 +61,7 @@ var game = new Phaser.Game(config);
 function ramasserMineraux(un_player, un_minerau) {
   compteurMineraux[un_minerau.texture.key]++;
   un_minerau.disableBody(true, true);
-  texteCompteur.setText(`Rouge: ${compteurMineraux["rouge"]}  Vert: ${compteurMineraux["vert"]}  Rose: ${compteurMineraux["rose"]}\nViolet: ${compteurMineraux["violet"]}  Blanc: ${compteurMineraux["blanc"]}  Jaune: ${compteurMineraux["jaune"]}`);
+  texteCompteur.setText(`Oxygène: ${compteurMineraux["rouge"]}  Fer: ${compteurMineraux["jaune_clair"]}  Hydrogène: ${compteurMineraux["rose"]}\nSodium: ${compteurMineraux["violet"]}  Chlore: ${compteurMineraux["blanc"]}  Silicium: ${compteurMineraux["orange"]}`);
 }
 
 
@@ -79,11 +79,11 @@ function preload() {
    this.load.image("img_plateforme", "src/assets/platform.png");  
 
    this.load.image("rouge", "src/assets/Red_crystal3.png"); 
-   this.load.image("vert", "src/assets/green_crystal3.png"); 
+   this.load.image("jaune_clair", "src/assets/Yellow-green_crystal3.png"); 
    this.load.image("rose", "src/assets/Pink_crystal3.png"); 
    this.load.image("violet", "src/assets/Violet_crystal3.png"); 
    this.load.image("blanc", "src/assets/White_crystal3.png"); 
-   this.load.image("jaune", "src/assets/Yellow_crystal3.png"); 
+   this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
     frameWidth: 128,
@@ -161,7 +161,7 @@ groupe_mineraux = this.physics.add.group();
   this.physics.add.collider(groupe_mineraux, groupe_plateformes); 
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
   
-  texteCompteur = this.add.text(500, 20, "Rouge: 0  Vert: 0  Rose: 0\nViolet: 0  Blanc: 0  Jaune: 0", { fontSize: '16px', fill: '#FFF' });
+  texteCompteur = this.add.text(500, 20, "Oxygène: 0  Fer: 0  Hydrogène: 0\nSodium: 0  Chlore: 0  Silicium: 0", { fontSize: '16px', fill: '#FFF' });
 }
 
 
