@@ -68,17 +68,25 @@ function preload() {
    // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
    this.load.image("img_ciel", "src/assets/sky.png"); 
    this.load.image("img_plateforme", "src/assets/platform.png");  
+
+   this.load.image("rouge", "src/assets/Red_crystal3.png"); 
+   this.load.image("vert", "src/assets/green_crystal3.png"); 
+   this.load.image("rose", "src/assets/Pink_crystal3.png"); 
+   this.load.image("violet", "src/assets/Violet_crystal3.png"); 
+   this.load.image("blanc", "src/assets/White_crystal3.png"); 
+   this.load.image("jaune", "src/assets/Yellow_crystal3.png"); 
+
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
-    frameWidth: 32,
-    frameHeight: 48
+    frameWidth: 128,
+    frameHeight: 128
   }); 
   this.load.spritesheet("gauche", "src/assets/Run2.png", {
-    frameWidth: 32,
-    frameHeight: 48
+    frameWidth: 128,
+    frameHeight: 128
   }); 
   this.load.spritesheet("droite", "src/assets/Run.png", {
-    frameWidth: 32,
-    frameHeight: 48
+    frameWidth: 128,
+    frameHeight: 128
   }); 
 }
 
@@ -129,13 +137,13 @@ function create() {
   }); 
   this.anims.create({
     key: "anim_tourne_droite", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("droite", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
+    frames: this.anims.generateFrameNumbers("droite", { start: 7, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
   this.anims.create({
     key: "anim_face", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("img_perso", { start: 4, end: 4 }), // on prend toutes les frames de img perso numerotées de 0 à 3
+    frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
