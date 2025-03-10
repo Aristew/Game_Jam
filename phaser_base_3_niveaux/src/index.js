@@ -15,18 +15,24 @@ var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
 var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
 var texteCompteur;
+var scene;
 
-function tirer(player) {
-  var coefDir;
-if (player.direction == 'left') { coefDir = -1; } else { coefDir = 1 }
-  // on crée la balle a coté du joueur
-  var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'bullet');
-  // parametres physiques de la balle.
-  bullet.setCollideWorldBounds(true);
+function tirerProjectile(type, player) {
+  var coefDir = (player.direction == 'left') ? -1 : 1;
+  var projectiles = {
+    "explosion": 'bullet_explosion',
+    "congelation": 'bullet_congelation',
+    "tempete": 'bullet_tempete',
+    "foudre": 'bullet_foudre',
+    "chaleur": 'bullet_chaleur'
+  };
+  
+  var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
+  bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
-  bullet.body.allowGravity =false;
-  bullet.setVelocity(1000 * coefDir, 0); // vitesse en x et en y
-}   
+  bullet.body.allowGravity = false;
+  bullet.setVelocity(1000 * coefDir, 0);
+} 
 
 var config = {
   type: Phaser.AUTO,
@@ -61,7 +67,13 @@ var game = new Phaser.Game(config);
 function ramasserMineraux(un_player, un_minerau) {
   compteurMineraux[un_minerau.texture.key]++;
   un_minerau.disableBody(true, true);
+
+  // Mise à jour de l'affichage des minéraux collectés
   texteCompteur.setText(`Oxygène: ${compteurMineraux["rouge"]}  Fer: ${compteurMineraux["jaune_clair"]}  Hydrogène: ${compteurMineraux["rose"]}\nSodium: ${compteurMineraux["violet"]}  Chlore: ${compteurMineraux["blanc"]}  Silicium: ${compteurMineraux["orange"]}`);
+  
+  // Vérifier que le texte a bien été mis à jour
+  console.log(`Minéral collecté: ${un_minerau.texture.key}`);
+  console.log(`Minéraux: Oxygène: ${compteurMineraux["rouge"]}, Fer: ${compteurMineraux["jaune_clair"]}, Hydrogène: ${compteurMineraux["rose"]}`);
 }
 
 function lancerAttaque(type) {
@@ -74,13 +86,44 @@ function lancerAttaque(type) {
   };
 
   let attaque = attaques[type];
+
+  // Vérifie si le joueur a suffisamment de minéraux pour lancer l'attaque
   if (attaque.elements.every(e => compteurMineraux[e] > 0)) {
     attaque.elements.forEach(e => compteurMineraux[e]--);
+
+    // Mise à jour de l'affichage des minéraux
     texteCompteur.setText(`Oxygène: ${compteurMineraux["rouge"]}  Fer: ${compteurMineraux["jaune_clair"]}  Hydrogène: ${compteurMineraux["rose"]}\nSodium: ${compteurMineraux["violet"]}  Chlore: ${compteurMineraux["blanc"]}  Silicium: ${compteurMineraux["orange"]}`);
-    console.log(attaque.effet);
+
+    // Affiche un message avec la composition du sort, son effet et la touche associée
+    console.log(`Sort lancé: ${attaque.effet}`);
+    console.log(`Minéraux nécessaires : ${attaque.elements.join(', ')}`);
+    console.log(`Touche pour lancer: ${type.toUpperCase()}`);
+
+    // Lancement du projectile correspondant
+    tirerProjectile(type, player);
+
+    // Affiche un message sur l'écran indiquant que le sort a été lancé avec succès
+    afficherMessage(`Sort lancé: ${attaque.effet}`);
   } else {
     console.log("Pas assez de minéraux !");
+    
+    // Affiche un message à l'écran si le joueur n'a pas assez de minéraux
+    afficherMessage("Pas assez de minéraux pour lancer ce sort !");
   }
+}
+
+function afficherMessage(message) {
+  if (!scene.texteMessage) {
+    scene.texteMessage = scene.add.text(400, 300, "", { fontSize: '18px', fill: '#FF0000' });
+    scene.texteMessage.setOrigin(0.5, 0.5);
+  }
+
+  scene.texteMessage.setText(message);
+
+  // Effacer le message après 2 secondes
+  scene.time.delayedCall(2000, () => {
+    scene.texteMessage.setText('');
+  });
 }
 
 /***********************************************************************/
@@ -102,6 +145,12 @@ function preload() {
    this.load.image("violet", "src/assets/Violet_crystal3.png"); 
    this.load.image("blanc", "src/assets/White_crystal3.png"); 
    this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
+
+   this.load.image("bullet_explosion", "src/assets/bullet_explosion.png");
+   this.load.image("bullet_congelation", "src/assets/bullet_congelation.png");
+   this.load.image("bullet_tempete", "src/assets/bullet_tempete.png");
+   this.load.image("bullet_foudre", "src/assets/bullet_foudre.png");
+   this.load.image("bullet_chaleur", "src/assets/bullet_chaleur.png");
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
     spacing: 48,
@@ -136,7 +185,7 @@ function create() {
 //this.physics.world.setBounds(0, 0, 3200, 640);
 //  ajout du champs de la caméra de taille identique à celle du monde
 //this.cameras.main.setBounds(0, 0, 3200, 640);
-
+  scene = this;
   this.add.image(400, 300, "img_ciel"); 
   groupe_plateformes = this.physics.add.staticGroup();
   groupe_plateformes.create(200, 584, "img_plateforme");
@@ -171,6 +220,8 @@ function create() {
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
 
+groupeBullets = this.physics.add.group();
+
 groupe_mineraux = this.physics.add.group();
   for (let couleur of couleurs) {
     for (let i = 0; i < 3; i++) {
@@ -182,11 +233,11 @@ groupe_mineraux = this.physics.add.group();
   this.physics.add.collider(groupe_mineraux, groupe_plateformes); 
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
     
-  this.input.keyboard.on("keydown-ONE", () => lancerAttaque("explosion"));
-  this.input.keyboard.on("keydown-TWO", () => lancerAttaque("congelation"));
-  this.input.keyboard.on("keydown-THREE", () => lancerAttaque("tempete"));
-  this.input.keyboard.on("keydown-FOUR", () => lancerAttaque("foudre"));
-  this.input.keyboard.on("keydown-FIVE", () => lancerAttaque("chaleur"));
+  this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
+  this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
+  this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
+  this.input.keyboard.on("keydown-R", () => lancerAttaque("foudre"));
+  this.input.keyboard.on("keydown-T", () => lancerAttaque("chaleur"));
 
   texteCompteur = this.add.text(450, 20, "Oxygène: 0  Fer: 0  Hydrogène: 0\nSodium: 0  Chlore: 0  Silicium: 0", { fontSize: '16px', fill: '#FFF' });
 }
@@ -203,10 +254,12 @@ function update() {
   if (clavier.right.isDown) {
     player.setVelocityX(220);
     player.anims.play('anim_tourne_droite', true); 
+    player.direction = 'right';  // Mise à jour de la direction
   } 
-  else if ( clavier.left.isDown) {
+  else if (clavier.left.isDown) {
     player.setVelocityX(-220);
     player.anims.play('anim_tourne_gauche', true);    
+    player.direction = 'left';  // Mise à jour de la direction
   } else {
     player.setVelocityX(0); 
     player.anims.play('anim_face', true); 
@@ -214,8 +267,8 @@ function update() {
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
   } 
- if (gameOver) {
-  return;
-} 
+  if (gameOver) {
+    return;
+  }
 }
 
