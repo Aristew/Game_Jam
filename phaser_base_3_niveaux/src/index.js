@@ -10,6 +10,9 @@ var player; // désigne le sprite du joueur
 var clavier; 
 var gameOver = false;
 var groupe_mineraux;
+var couleurs = ["rouge", "vert", "rose", "violet", "blanc", "jaune"];
+var compteurMineraux = { "rouge": 0, "vert": 0, "rose": 0, "violet": 0, "blanc": 0, "jaune": 0 };
+var texteCompteur;
 
 var config = {
   type: Phaser.AUTO,
@@ -42,19 +45,11 @@ var config = {
 var game = new Phaser.Game(config);
 
 function ramasserMineraux(un_player, un_minerau) {
-  // on désactive le "corps physique" de l'étoile mais aussi sa texture
-  // l'étoile existe alors sans exister : elle est invisible et ne peut plus intéragir
+  compteurMineraux[un_minerau.texture.key]++;
   un_minerau.disableBody(true, true);
-    // on regarde le nombre d'étoiles qui sont encore actives (non ramassées)
-    if (groupe_mineraux.countActive(true) === 0) {
-      // si ce nombre est égal à 0 : on va réactiver toutes les étoiles désactivées
-      // pour chaque étoile etoile_i du groupe, on réacttive etoile_i avec la méthode enableBody
-      // ceci s'ecrit bizarrement : avec un itérateur sur les enfants (children) du groupe (equivalent du for)
-      groupe_mineraux.children.iterate(function iterateur(minerau_i) {
-        minerau_i.enableBody(true, minerau_i.x, 0, true, true);
-      });
+  texteCompteur.setText(`Rouge: ${compteurMineraux["rouge"]}  Vert: ${compteurMineraux["vert"]}  Rose: ${compteurMineraux["rose"]}\nViolet: ${compteurMineraux["violet"]}  Blanc: ${compteurMineraux["blanc"]}  Jaune: ${compteurMineraux["jaune"]}`);
 }
-} 
+
 
 /***********************************************************************/
 /** FONCTION PRELOAD 
@@ -116,19 +111,12 @@ function create() {
   groupe_plateformes.create(750, 270, "img_plateforme"); 
   player = this.physics.add.sprite(100, 250, 'img_perso'); 
   player.index=100;
-  // ancrage de la caméra sur le joueur
-//this.cameras.main.startFollow(player);
-  // ajout d'une collision entre le joueur et le calque plateformes
-//this.physics.add.collider(player, calque_plateformes); 
 
   player.setCollideWorldBounds(true); 
   this.physics.add.collider(player, groupe_plateformes); 
   player.setBounce(0.2); 
   clavier = this.input.keyboard.createCursorKeys(); 
-   // dans cette partie, on crée les animations, à partir des spritesheet
-  // chaque animation est une succession de frame à vitesse de défilement défini
-  // une animation doit avoir un nom. Quand on voudra la jouer sur un sprite, on utilisera la méthode play()
-  // creation de l'animation "anim_tourne_gauche" qui sera jouée sur le player lorsque ce dernier tourne à gauche
+
   this.anims.create({
     key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("gauche", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
@@ -147,7 +135,23 @@ function create() {
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
+
+groupe_mineraux = this.physics.add.group();
+  for (let couleur of couleurs) {
+    for (let i = 0; i < 3; i++) {
+      let x = Phaser.Math.Between(50, 750);
+      let y = Phaser.Math.Between(50, 400);
+      groupe_mineraux.create(x, y, couleur);
+    }
+  }
+  this.physics.add.collider(groupe_mineraux, groupe_plateformes); 
+  this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
+  
+  texteCompteur = this.add.text(500, 20, "Rouge: 0  Vert: 0  Rose: 0\nViolet: 0  Blanc: 0  Jaune: 0", { fontSize: '16px', fill: '#FFF' });
 }
+
+
+
 
 
 /***********************************************************************/
