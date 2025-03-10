@@ -104,15 +104,18 @@ function preload() {
    this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
-    frameWidth: 128,
+    spacing: 48,
+    frameWidth: 80,
     frameHeight: 73
   }); 
   this.load.spritesheet("gauche", "src/assets/Run2.png", {
-    frameWidth: 128,
+    spacing: 48,
+    frameWidth: 80,
     frameHeight: 70
   }); 
   this.load.spritesheet("droite", "src/assets/Run.png", {
-    frameWidth: 128,
+    spacing: 48,
+    frameWidth: 80,
     frameHeight: 70
   }); 
   this.load.spritesheet("sphereG", "src/assets/Magic_sphereG.png", {
