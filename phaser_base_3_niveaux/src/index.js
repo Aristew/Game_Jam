@@ -64,6 +64,24 @@ function ramasserMineraux(un_player, un_minerau) {
   texteCompteur.setText(`Oxygène: ${compteurMineraux["rouge"]}  Fer: ${compteurMineraux["jaune_clair"]}  Hydrogène: ${compteurMineraux["rose"]}\nSodium: ${compteurMineraux["violet"]}  Chlore: ${compteurMineraux["blanc"]}  Silicium: ${compteurMineraux["orange"]}`);
 }
 
+function lancerAttaque(type) {
+  let attaques = {
+    "explosion": { elements: ["jaune_clair", "rouge"], effet: "Explosion Chimique !" },
+    "congelation": { elements: ["rose", "rouge"], effet: "Congélation Instantanée !" },
+    "tempete": { elements: ["orange", "rouge"], effet: "Tempête de Sable !" },
+    "foudre": { elements: ["jaune_clair", "violet"], effet: "Foudre Électrostatique !" },
+    "chaleur": { elements: ["violet", "blanc"], effet: "Chaleur Intense !" }
+  };
+
+  let attaque = attaques[type];
+  if (attaque.elements.every(e => compteurMineraux[e] > 0)) {
+    attaque.elements.forEach(e => compteurMineraux[e]--);
+    texteCompteur.setText(`Oxygène: ${compteurMineraux["rouge"]}  Fer: ${compteurMineraux["jaune_clair"]}  Hydrogène: ${compteurMineraux["rose"]}\nSodium: ${compteurMineraux["violet"]}  Chlore: ${compteurMineraux["blanc"]}  Silicium: ${compteurMineraux["orange"]}`);
+    console.log(attaque.effet);
+  } else {
+    console.log("Pas assez de minéraux !");
+  }
+}
 
 /***********************************************************************/
 /** FONCTION PRELOAD 
@@ -157,18 +175,6 @@ function create() {
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
-  this.anims.create({
-    key: "anim_sphereG", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("sphereG", { start: 15, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-    frameRate: 10, // vitesse de défilement des frames
-    repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  });
-  this.anims.create({
-    key: "anim_sphereD", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("sphereD", { start: 0, end: 15 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-    frameRate: 10, // vitesse de défilement des frames
-    repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  });
 
 groupe_mineraux = this.physics.add.group();
   for (let couleur of couleurs) {
@@ -180,28 +186,14 @@ groupe_mineraux = this.physics.add.group();
   }
   this.physics.add.collider(groupe_mineraux, groupe_plateformes); 
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
-  
+    
+  this.input.keyboard.on("keydown-ONE", () => lancerAttaque("explosion"));
+  this.input.keyboard.on("keydown-TWO", () => lancerAttaque("congelation"));
+  this.input.keyboard.on("keydown-THREE", () => lancerAttaque("tempete"));
+  this.input.keyboard.on("keydown-FOUR", () => lancerAttaque("foudre"));
+  this.input.keyboard.on("keydown-FIVE", () => lancerAttaque("chaleur"));
+
   texteCompteur = this.add.text(450, 20, "Oxygène: 0  Fer: 0  Hydrogène: 0\nSodium: 0  Chlore: 0  Silicium: 0", { fontSize: '16px', fill: '#FFF' });
-  clavier = this.input.keyboard.createCursorKeys();
-  boutonFeu = this.input.keyboard.addKey('A');
-  groupeBullets = this.physics.add.group(); 
-  
-   
-   
-
-  
-  this.physics.add.collider(groupe_plateformes);  
-  this.physics.add.overlap(groupeBullets, null,this);
-  this.physics.world.on("worldbounds", function(body) {
-    // on récupère l'objet surveillé
-    var objet = body.gameObject;
-    // s'il s'agit d'une balle
-    if (groupeBullets.contains(objet)) {
-        // on le détruit
-        objet.destroy();
-    }
-
-  })
 }
 
 
@@ -227,9 +219,6 @@ function update() {
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
   } 
-  if ( Phaser.Input.Keyboard.JustDown(boutonFeu)) {
-    tirer(player);
- }  
  if (gameOver) {
   return;
 } 
