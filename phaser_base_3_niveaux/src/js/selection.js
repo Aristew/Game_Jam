@@ -30,6 +30,10 @@ export default class selection extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 48
     });
+    this.load.spritesheet("courir", "src/assets/Run.png", {
+      frameWidth: 32,
+      frameHeight: 48
+    });
     this.load.image("img_porte1", "src/assets/door1.png");
     this.load.image("img_porte2", "src/assets/door2.png");
     this.load.image("img_porte3", "src/assets/door3.png");
@@ -120,7 +124,7 @@ export default class selection extends Phaser.Scene {
     // creation de l'animation "anim_tourne_droite" qui sera jouée sur le player lorsque ce dernier tourne à droite
     this.anims.create({
       key: "anim_tourne_droite",
-      frames: this.anims.generateFrameNumbers("img_perso", {
+      frames: this.anims.generateFrameNumbers("courir", {
         start: 5,
         end: 8
       }),
