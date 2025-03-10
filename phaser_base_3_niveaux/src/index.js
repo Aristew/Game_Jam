@@ -92,15 +92,15 @@ function preload() {
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
     frameWidth: 128,
-    frameHeight: 128
+    frameHeight: 73
   }); 
   this.load.spritesheet("gauche", "src/assets/Run2.png", {
     frameWidth: 128,
-    frameHeight: 128
+    frameHeight: 70
   }); 
   this.load.spritesheet("droite", "src/assets/Run.png", {
     frameWidth: 128,
-    frameHeight: 128
+    frameHeight: 70
   }); 
 }
 
