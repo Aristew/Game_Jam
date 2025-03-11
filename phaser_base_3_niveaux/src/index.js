@@ -17,6 +17,7 @@ var texteCompteur;
 var scene;
 var musique_de_fond;
 var Squelette_1;
+var Squelettes = []; // Tableau pour stocker les squelettes
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -513,6 +514,54 @@ for (let pos of positionsMineraux) {
     padding: { x: 10, y: 5 }
   }).setOrigin(0.5).setVisible(false);
   
+  // Positions prédéfinies pour les squelettes
+  let positionsSquelettes = [
+    { x: 900, y: 300 },
+    { x: 1500, y: 300 },
+    { x: 2100, y: 300 }
+  ];
+
+  // Créer les squelettes
+  for (let pos of positionsSquelettes) {
+    let squelette = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
+    squelette.setCollideWorldBounds(true);
+    squelette.setBounce(0);
+    squelette.body.setSize(80, 50);
+    squelette.body.setOffset(30, 80);
+    Squelettes.push(squelette);
+
+    // Initialiser l'animation et la direction
+    squelette.anims.play('anim_Sq_1D', true);
+
+    // Boucle simple pour alterner le déplacement
+    let movingRight = true;
+    setInterval(() => {
+      if (movingRight) {
+        squelette.setVelocityX(50); // Déplace à droite
+        squelette.anims.play('anim_Sq_1D', true);
+      } else {
+        squelette.setVelocityX(-50); // Déplace à gauche
+        squelette.anims.play('anim_Sq_1G', true);
+      }
+      movingRight = !movingRight;
+    }, 3000); // Change de direction toutes les 3 secondes
+  }
+
+  // Ajouter les collisions entre les squelettes et les plateformes
+  Squelettes.forEach(squelette => {
+    this.physics.add.collider(squelette, plateforme);
+    this.physics.add.overlap(player, squelette, finDuJeu);
+  });
+
+  // Ajouter les collisions entre les projectiles et les squelettes
+  groupeBullets.children.iterate(bullet => {
+    Squelettes.forEach(squelette => {
+      this.physics.add.overlap(bullet, squelette, () => {
+        squelette.disableBody(true, true); // Désactiver le squelette
+        bullet.destroy(); // Détruire le projectile
+      });
+    });
+  });
 }
 
 
