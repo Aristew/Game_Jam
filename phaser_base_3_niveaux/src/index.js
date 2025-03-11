@@ -17,7 +17,8 @@ var texteCompteur;
 var scene;
 var musique_de_fond;
 var box;
-var Squelettes = []; // Tableau pour stocker les squelettes
+var Squelettes1 = []; // Tableau pour stocker les squelettes a lance
+var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -36,14 +37,23 @@ function tirerProjectile(type, player) {
   bullet.body.allowGravity = true;  // Activation de la gravité
   bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
 
-  // Ajouter la collision entre le projectile et les squelettes
-  Squelettes.forEach(squelette => {
-    scene.physics.add.overlap(bullet, squelette, () => {
-      squelette.disableBody(true, true); // Désactiver le squelette
+  // Ajouter la collision entre le projectile et les squelettes1
+  Squelettes1.forEach(squelette1 => {
+    scene.physics.add.overlap(bullet, squelette1, () => {
+      squelette1.disableBody(true, true); // Désactiver le squelette
       bullet.destroy(); // Détruire le projectile
     });
   });
 
+  // Ajouter la collision entre le projectile et les squelettes
+  Squelettes2.forEach(squelette2 => {
+    scene.physics.add.overlap(bullet, squelette2, () => {
+      squelette2.disableBody(true, true); // Désactiver le squelette
+      bullet.destroy(); // Détruire le projectile
+      });
+    });
+    
+  
   // Collision avec une box
   scene.physics.add.overlap(bullet, box, () => {
     box.disableBody(true, true);
@@ -322,8 +332,16 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
   this.load.spritesheet("Sq_1_Mort", "src/assets/Dead_Squelette_1D.png", {  
     frameWidth: 128,
     frameHeight: 128,
-  });}
-
+  });
+  this.load.spritesheet("Sq_2_D", "src/assets/Squelette_2D.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet("Sq_2_G", "src/assets/Squelette_2G.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+}
 
 /***********************************************************************/
 /** FONCTION CREATE 
@@ -386,6 +404,21 @@ this.anims.create({
 this.anims.create({
   key: 'anim_Sq_1G', 
   frames: this.anims.generateFrameNumbers('Sq_1_G', { start: 0, end: 4 }),
+  frameRate: 10,
+  repeat: -1
+});
+
+// Créer les animations
+this.anims.create({
+  key: 'anim_Sq_2D', 
+  frames: this.anims.generateFrameNumbers('Sq_2_D', { start: 0, end: 4 }),
+  frameRate: 10,
+  repeat: -1
+});
+
+this.anims.create({
+  key: 'anim_Sq_2G', 
+  frames: this.anims.generateFrameNumbers('Sq_2_G', { start: 0, end: 4 }),
   frameRate: 10,
   repeat: -1
 });
@@ -518,49 +551,94 @@ for (let pos of positionsMineraux) {
   }).setOrigin(0.5).setVisible(false);
   
   // Positions prédéfinies pour les squelettes
-  let positionsSquelettes = [
+  let positionsSquelettes1 = [
     { x: 1000, y: 300 },
     { x: 1400, y: 300 },
     { x: 3000, y: 300 }
   ];
 
-  // Créer les squelettes
-  for (let pos of positionsSquelettes) {
-    let squelette = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
-    squelette.setCollideWorldBounds(true);
-    squelette.setBounce(0);
-    squelette.body.setSize(80, 50);
-    squelette.body.setOffset(30, 80);
-    Squelettes.push(squelette);
+  let positionsSquelettes2 = [
+    { x: 2000, y: 300 },
+  ];
+
+  // Créer les squelettes1
+  for (let pos of positionsSquelettes1) {
+    let squelette1 = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
+    squelette1.setCollideWorldBounds(true);
+    squelette1.setBounce(0);
+    squelette1.body.setSize(80, 50);
+    squelette1.body.setOffset(30, 80);
+    Squelettes1.push(squelette1);
 
     // Initialiser l'animation et la direction
-    squelette.anims.play('anim_Sq_1D', true);
+    squelette1.anims.play('anim_Sq_1D', true);
 
     // Boucle simple pour alterner le déplacement
     let movingRight = true;
     setInterval(() => {
       if (movingRight) {
-        squelette.setVelocityX(50); // Déplace à droite
-        squelette.anims.play('anim_Sq_1D', true);
+        squelette1.setVelocityX(50); // Déplace à droite
+        squelette1.anims.play('anim_Sq_1D', true);
       } else {
-        squelette.setVelocityX(-50); // Déplace à gauche
-        squelette.anims.play('anim_Sq_1G', true);
+        squelette1.setVelocityX(-50); // Déplace à gauche
+        squelette1.anims.play('anim_Sq_1G', true);
       }
       movingRight = !movingRight;
     }, 3000); // Change de direction toutes les 3 secondes
   }
 
+// Créer les squelettes2
+for (let pos of positionsSquelettes2) {
+      let squelette2 = this.physics.add.sprite(pos.x, pos.y, 'Sq_2_G');
+      squelette2.setCollideWorldBounds(true);
+      squelette2.setBounce(0);
+      squelette2.body.setSize(80, 50);
+      squelette2.body.setOffset(30, 80);
+      Squelettes2.push(squelette2);
+  
+      // Initialiser l'animation et la direction
+      squelette2.anims.play('anim_Sq_2D', true);
+  
+      // Boucle simple pour alterner le déplacement
+      let movingRight = true;
+      setInterval(() => {
+        if (movingRight) {
+          squelette2.setVelocityX(50); // Déplace à droite
+          squelette2.anims.play('anim_Sq_2D', true);
+        } else {
+          squelette2.setVelocityX(-50); // Déplace à gauche
+          squelette2.anims.play('anim_Sq_2G', true);
+        }
+        movingRight = !movingRight;
+      }, 3000); // Change de direction toutes les 3 secondes
+    }
+
   // Ajouter les collisions entre les squelettes et les plateformes
-  Squelettes.forEach(squelette => {
-    this.physics.add.collider(squelette, plateforme);
-    this.physics.add.overlap(player, squelette, finDuJeu);
+  Squelettes1.forEach(squelette1 => {
+    this.physics.add.collider(squelette1, plateforme);
+    this.physics.add.overlap(player, squelette1, finDuJeu);
   });
+  Squelettes2.forEach(squelette2 => {
+    this.physics.add.collider(squelette2, plateforme);
+    this.physics.add.overlap(player, squelette2, finDuJeu);
+  });
+
+  
 
   // Ajouter les collisions entre les projectiles et les squelettes
   groupeBullets.children.iterate(bullet => {
-    Squelettes.forEach(squelette => {
-      this.physics.add.overlap(bullet, squelette, () => {
-        squelette.disableBody(true, true); // Désactiver le squelette
+    Squelettes1.forEach(squelette1 => {
+      this.physics.add.overlap(bullet, squelette1, () => {
+        squelette1.disableBody(true, true); // Désactiver le squelette
+        bullet.destroy(); // Détruire le projectile
+      });
+    });
+  });
+   // Ajouter les collisions entre les projectiles et les squelettes
+   groupeBullets.children.iterate(bullet => {
+    Squelettes2.forEach(squelette2 => {
+      this.physics.add.overlap(bullet, squelette2, () => {
+        squelette2.disableBody(true, true); // Désactiver le squelette
         bullet.destroy(); // Détruire le projectile
       });
     });
