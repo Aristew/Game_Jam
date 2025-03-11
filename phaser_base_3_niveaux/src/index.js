@@ -16,7 +16,6 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
-var Boss_1;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -255,7 +254,11 @@ function preload() {
    // chargement tuiles de jeu
    this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
    this.load.image("fond", "src/assets/fond.png");
-   this.load.spritesheet("esprit", "src/assets/spirit.png", { frameWidth: 128, frameHeight: 128 });
+
+   this.load.spritesheet("esprit", "src/assets/spirit.png", { 
+    frameWidth: 128, 
+    frameHeight: 128 });
+
    this.load.image('bulle', 'src/assets/bulle.png'); // Optionnel, pour une bulle stylisée
 // chargement de la carte
 this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
@@ -274,11 +277,6 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
    this.load.image("bullet_tempete", "src/assets/sable.jpg");
    this.load.image("bullet_foudre", "src/assets/foudre.png");
    this.load.image("bullet_chaleur", "src/assets/boules_de_feu.png");
-   this.load.spritesheet("Boss_1", "src/assets/Bringer-of-Death.png", {
-    frameWidth: 140,
-    frameHeight: 93,
-   });
-
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
 
     frameWidth: 128,
@@ -347,8 +345,6 @@ clavier = this.input.keyboard.createCursorKeys();
 // Créer l’esprit
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 
-// Créer le boss 1
-this.Boss_1 = this.add.sprite(700, 475, 'Boss_1'); // Position fixe
 
 // Créer les animations
 this.anims.create({
@@ -358,6 +354,9 @@ this.anims.create({
     repeat: -1
   });
   this.esprit.play('phase1');
+
+  
+
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
 //  ajout du champs de la caméra de taille identique à celle du monde
@@ -409,7 +408,6 @@ this.physics.add.collider(player, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
   
   this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
-  
   this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
   this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
   this.input.keyboard.on("keydown-R", () => lancerAttaque("foudre"));
