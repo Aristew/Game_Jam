@@ -34,6 +34,12 @@ function tirerProjectile(type, player) {
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
   bullet.setVelocity(300 * coefDir, -150); // Moins de vitesse horizontale, tir plus haut
+
+  // Ajouter la collision entre le projectile et le squelette
+  scene.physics.add.overlap(bullet, Squelette_1, () => {
+    Squelette_1.disableBody(true, true); // Désactiver le squelette
+    bullet.destroy(); // Détruire le projectile
+  });
 }
 
 var config = {
@@ -360,7 +366,7 @@ clavier = this.input.keyboard.createCursorKeys();
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 
 // Créer le squelette
-Squelette_1 = this.physics.add.sprite(500, 100, 'Sq_1_G'); // Position fixe
+Squelette_1 = this.physics.add.sprite(900, 300, 'Sq_1_G'); // Position fixe
 Squelette_1.setCollideWorldBounds(true);
 Squelette_1.setBounce(0);
 Squelette_1.body.setSize(80, 50);
@@ -391,14 +397,14 @@ Squelette_1.anims.play('anim_Sq_1D', true);
 let movingRight = true;
 setInterval(() => {
   if (movingRight) {
-      Squelette_1.setVelocityX(100); // Déplace à droite
+      Squelette_1.setVelocityX(50); // Déplace à droite
       Squelette_1.anims.play('anim_Sq_1D', true);} 
   else {
-    Squelette_1.setVelocityX(-100); // Déplace à gauche
+    Squelette_1.setVelocityX(-50); // Déplace à gauche
     Squelette_1.anims.play('anim_Sq_1G', true);
     }
     movingRight = !movingRight;
-  }, 2000); // Change de direction toutes les 2 secondes
+  }, 3000); // Change de direction toutes les 2 secondes
 
 // Créer les animations 
 this.anims.create({
@@ -484,6 +490,7 @@ for (let pos of positionsMineraux) {
   // Empêcher les minéraux de flotter en les faisant tomber sur le sol
   this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
+  this.physics.add.overlap(player, Squelette_1, finDuJeu);
   
   this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
   this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
