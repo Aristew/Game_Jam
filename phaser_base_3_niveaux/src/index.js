@@ -34,7 +34,7 @@ function tirerProjectile(type, player) {
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
-  bullet.setVelocity(300 * coefDir, -150); // Moins de vitesse horizontale, tir plus haut
+  bullet.setVelocity(300 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
 
   // Ajouter la collision entre le projectile et le squelette
   scene.physics.add.overlap(bullet, Squelette_1, () => {
@@ -57,9 +57,9 @@ var config = {
     arcade: {
       // parametres du mode arcade
       gravity: {
-        y: 330 // gravité verticale : acceleration ddes corps en pixels par seconde
+        y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: {
@@ -262,6 +262,7 @@ function preload() {
    // chargement tuiles de jeu
    this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
    this.load.image("fond", "src/assets/fond.png");
+   this.load.image("box", "src/assets/box.png");
 
    this.load.spritesheet("esprit", "src/assets/spirit.png", { 
     frameWidth: 128, 
@@ -449,15 +450,28 @@ this.physics.add.collider(Squelette_1, plateforme);
   }); 
   groupeBullets = scene.physics.add.group();
   groupe_mineraux = this.physics.add.group(); 
-  
+
+  let box = this.physics.add.sprite(2450, 100, "box"); // Création du sprite
+  box.setCollideWorldBounds(true); // Empêche la box de sortir du monde
+  box.setImmovable(true); // La box ne bougera pas si elle est touchée
+  this.physics.add.collider(player, box); // Permet au joueur de rentrer en collision avec la box
+  this.physics.add.collider(plateforme, box); // Permet au joueur de rentrer en collision avec la box
+
+
   // Liste des positions prédéfinies pour les minéraux
 let positionsMineraux = [
   { x: 500, y: 300, type: "rouge" },
   { x: 650, y: 250, type: "blanc" },
-  { x: 1000, y: 275, type: "rose" },
-  { x: 1500, y: 320, type: "violet" },
-  { x: 2000, y: 280, type: "orange" },
-  { x: 2500, y: 310, type: "jaune_clair" },
+  { x: 900, y: 275, type: "rose" },
+  { x: 1300, y: 320, type: "violet" },
+  { x: 1800, y: 280, type: "orange" },
+  { x: 1850, y: 310, type: "jaune_clair" },
+  { x: 2350, y: 300, type: "rouge" },
+  { x: 2400, y: 250, type: "blanc" },
+  { x: 1550, y: 275, type: "rose" },
+  { x: 1050, y: 320, type: "violet" },
+  { x: 700, y: 280, type: "orange" },
+  { x: 550, y: 310, type: "jaune_clair" },
   { x: 2700, y: 350, type: "rouge" },
   { x: 3200, y: 400, type: "jaune_clair" },
   { x: 3500, y: 420, type: "rose" },
