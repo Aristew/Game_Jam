@@ -16,6 +16,7 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
+var Squelette_1;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -212,6 +213,7 @@ function finDuJeu() {
   )
   .setInteractive()
   .on('pointerdown', () => { 
+    compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
     scene.scene.restart();  // Recharge la scène
     gameOver = false;
   });
@@ -293,6 +295,35 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
     frameHeight: 70,
   }); 
 
+  this.load.spritesheet("Squelette1_Immobile_Gauche", "src/assets/Idle_Squelette_1G.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet("Squelette1_Immobile_Droite", "src/assets/Idle_Squelette_1D.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet("Squelette1_Marche_Droite", "src/assets/Walk_Squelette_1G.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet("Squelette1_Marche_Gauche", "src/assets/Walk_Squelette_1G.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet("Squelette1_Attaque_Droite", "src/assets/Attaque_Squelette_1G.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet("Squelette1_Attaque_Gauche", "src/assets/Attaque_Squelette_1G.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet("Squelette1_Mort", "src/assets/Dead_Squelette_1D.png", {  
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+
 }
 
 /***********************************************************************/
@@ -337,14 +368,23 @@ const plateforme = carteDuNiveau.createLayer(
 plateforme.setCollisionByProperty({ estSolide: true }); 
 
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
-player.index=100;
 player.setCollideWorldBounds(true); 
 player.setBounce(0); 
 clavier = this.input.keyboard.createCursorKeys(); 
 
 // Créer l’esprit
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
-
+Squelette_1 = this.physics.add.sprite(500, 100, 'Squelette1_Immobile_Gauche'); // Position fixe
+Squelette_1.setCollideWorldBounds(true);
+Squelette_1.setBounce(0);
+Squelette_1.body.setSize(50, 67);
+Squelette_1.body.setOffset(40, 60);
+this.anims.create({
+  key: 'Squelette1_Immobile_Gauche', 
+  frames: this.anims.generateFrameNumbers('Squelette1_Immobile_Gauche', { start: 0, end: 7 }),
+  frameRate: 10,
+  repeat: -1
+});
 
 // Créer les animations
 this.anims.create({
@@ -364,6 +404,7 @@ this.cameras.main.setBounds(0, 0, 4768, 640);
 // ancrage de la caméra sur le joueur
 this.cameras.main.startFollow(player);  
 this.physics.add.collider(player, plateforme); 
+this.physics.add.collider(Squelette_1, plateforme);
 // Création de la bulle de texte (initialement cachée)
 
 
