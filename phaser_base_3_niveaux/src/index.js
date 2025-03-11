@@ -185,11 +185,11 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
    this.load.image("blanc", "src/assets/White_crystal3.png"); 
    this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
 
-   //this.load.image("bullet_explosion", "src/assets/bullet_explosion.png");
-   //this.load.image("bullet_congelation", "src/assets/bullet_congelation.png");
-   //this.load.image("bullet_tempete", "src/assets/bullet_tempete.png");
-   //this.load.image("bullet_foudre", "src/assets/bullet_foudre.png");
-   //this.load.image("bullet_chaleur", "src/assets/bullet_chaleur.png");
+   this.load.image("bullet_explosion", "src/assets/boule_chimique.png");
+   this.load.image("bullet_congelation", "src/assets/boules_de_neige.png");
+   this.load.image("bullet_tempete", "src/assets/sable.png");
+   this.load.image("bullet_foudre", "src/assets/foudre.jpg");
+   this.load.image("bullet_chaleur", "src/assets/boules_de_feu.png");
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
 
