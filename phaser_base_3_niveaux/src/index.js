@@ -190,9 +190,9 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
 
    this.load.image("bullet_explosion", "src/assets/boule_chimique.png");
 
-   this.load.image("bullet_congelation", "src/assets/boules_de_neige.png");
-   this.load.image("bullet_tempete", "src/assets/sable.png");
-   this.load.image("bullet_foudre", "src/assets/foudre.jpg");
+   this.load.image("bullet_congelation", "src/assets/boule_de_neige.png");
+   this.load.image("bullet_tempete", "src/assets/sable.jpg");
+   this.load.image("bullet_foudre", "src/assets/foudre.png");
    this.load.image("bullet_chaleur", "src/assets/boules_de_feu.png");
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
