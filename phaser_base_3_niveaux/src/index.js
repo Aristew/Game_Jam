@@ -295,31 +295,16 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
     frameHeight: 70,
   }); 
 
-  this.load.spritesheet("Squelette1_Immobile_Gauche", "src/assets/Idle_Squelette_1G.png", {  
+  
+  this.load.spritesheet("Sq_1_D", "src/assets/Squelette_1D.png", {  
     frameWidth: 128,
     frameHeight: 128,
   });
-  this.load.spritesheet("Squelette1_Immobile_Droite", "src/assets/Idle_Squelette_1D.png", {  
+  this.load.spritesheet("Sq_1_G", "src/assets/Squelette_1G.png", {  
     frameWidth: 128,
     frameHeight: 128,
   });
-  this.load.spritesheet("Squelette1_Marche_Droite", "src/assets/Walk_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Marche_Gauche", "src/assets/Walk_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Attaque_Droite", "src/assets/Attaque_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Attaque_Gauche", "src/assets/Attaque_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Mort", "src/assets/Dead_Squelette_1D.png", {  
+  this.load.spritesheet("Sq_1_Mort", "src/assets/Dead_Squelette_1D.png", {  
     frameWidth: 128,
     frameHeight: 128,
   });
@@ -374,19 +359,49 @@ clavier = this.input.keyboard.createCursorKeys();
 
 // Créer l’esprit
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
-Squelette_1 = this.physics.add.sprite(500, 100, 'Squelette1_Immobile_Gauche'); // Position fixe
+
+// Créer le squelette
+Squelette_1 = this.physics.add.sprite(500, 100, 'Sq_1_G'); // Position fixe
 Squelette_1.setCollideWorldBounds(true);
 Squelette_1.setBounce(0);
-Squelette_1.body.setSize(50, 67);
-Squelette_1.body.setOffset(40, 60);
+Squelette_1.body.setSize(80, 50);
+Squelette_1.body.setOffset(30, 80);
+
+// Créer les animations
 this.anims.create({
-  key: 'Squelette1_Immobile_Gauche', 
-  frames: this.anims.generateFrameNumbers('Squelette1_Immobile_Gauche', { start: 0, end: 7 }),
+  key: 'anim_Sq_1D', 
+  frames: this.anims.generateFrameNumbers('Sq_1_D', { start: 0, end: 4 }),
   frameRate: 10,
   repeat: -1
 });
 
-// Créer les animations
+this.anims.create({
+  key: 'anim_Sq_1G', 
+  frames: this.anims.generateFrameNumbers('Sq_1_G', { start: 0, end: 4 }),
+  frameRate: 10,
+  repeat: -1
+});
+
+// Initialiser l'animation et la direction
+Squelette_1.anims.play('anim_Sq_1D', true);
+
+// Initialiser l'animation et la direction
+Squelette_1.anims.play('anim_Sq_1D', true);
+
+// Boucle simple pour alterner le déplacement
+let movingRight = true;
+setInterval(() => {
+  if (movingRight) {
+      Squelette_1.setVelocityX(100); // Déplace à droite
+      Squelette_1.anims.play('anim_Sq_1D', true);} 
+  else {
+    Squelette_1.setVelocityX(-100); // Déplace à gauche
+    Squelette_1.anims.play('anim_Sq_1G', true);
+    }
+    movingRight = !movingRight;
+  }, 2000); // Change de direction toutes les 2 secondes
+
+// Créer les animations 
 this.anims.create({
     key: 'phase1',
     frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 4 }),
