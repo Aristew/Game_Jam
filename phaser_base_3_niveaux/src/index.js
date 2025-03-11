@@ -667,13 +667,15 @@ for (let pos of positionsSquelettes2) {
       });
     });
   });
-  
+
+  if (!this.anims.exists('eau_anim')) {
   this.anims.create({
     key: 'eau_anim',
     frames: this.anims.generateFrameNumbers('eau', { start: 0, end: 3 }),
     frameRate: 1,
     repeat: -1
   });
+}
 
   //eau = this.physics.add.staticSprite(400, 400, 'eau');
   eaux = this.physics.add.group({
