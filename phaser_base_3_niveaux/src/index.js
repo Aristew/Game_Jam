@@ -571,7 +571,7 @@ for (let pos of positionsMineraux) {
   ];
 
   let positionsSquelettes2 = [
-    { x: 2000, y: 300 },
+    { x:2000, y: 300 },
   ];
 
   // Créer les squelettes1
@@ -605,8 +605,8 @@ for (let pos of positionsSquelettes2) {
       let squelette2 = this.physics.add.sprite(pos.x, pos.y, 'Sq_2_G');
       squelette2.setCollideWorldBounds(true);
       squelette2.setBounce(0);
-      squelette2.body.setSize(80, 50);
-      squelette2.body.setOffset(30, 80);
+      squelette2.body.setSize(60, 70);
+      squelette2.body.setOffset(50, 60);
       Squelettes2.push(squelette2);
   
       // Initialiser l'animation et la direction
