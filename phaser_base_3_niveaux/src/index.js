@@ -212,6 +212,7 @@ function finDuJeu() {
   )
   .setInteractive()
   .on('pointerdown', () => { 
+    compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
     scene.scene.restart();  // Recharge la scène
     gameOver = false;
   });
