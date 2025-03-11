@@ -29,12 +29,32 @@ function tirerProjectile(type, player) {
   
   groupeBullets = scene.physics.add.group();
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
-  bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
   bullet.setVelocity(300 * coefDir, -150); // Moins de vitesse horizontale, tir plus haut
+  switch (type) {
+    case "explosion":
+      bullet.setDisplaySize(30, 30);  // Exemple : taille de la boule d'explosion
+      break;
+    case "congelation":
+      bullet.setDisplaySize(25, 25);  // Exemple : taille de la boule de neige
+      break;
+    case "tempete":
+      bullet.setDisplaySize(20, 20);  // Exemple : taille de la boule de sable
+      break;
+    case "foudre":
+      bullet.setDisplaySize(15, 40);  // Exemple : taille de la foudre
+      break;
+    case "chaleur":
+      bullet.setDisplaySize(35, 35);  // Exemple : taille de la boule de feu
+      break;
+    default:
+      bullet.setDisplaySize(20, 20);  // Taille par défaut
+      break;
+  }
 }
+
 
 var config = {
   type: Phaser.AUTO,
