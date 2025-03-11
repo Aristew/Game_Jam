@@ -33,7 +33,7 @@ function tirerProjectile(type, player) {
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
-  bullet.setVelocity(300 * coefDir, -150); // Moins de vitesse horizontale, tir plus haut
+  bullet.setVelocity(300 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
 
   // Ajouter la collision entre le projectile et le squelette
   scene.physics.add.overlap(bullet, Squelette_1, () => {
@@ -58,7 +58,7 @@ var config = {
       gravity: {
         y: 330 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: {
