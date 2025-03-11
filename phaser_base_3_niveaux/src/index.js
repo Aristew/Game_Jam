@@ -6,8 +6,8 @@
 
 // configuration générale du jeu
 var player; // désigne le sprite du joueur 
-var clavier; 
-var boutonFeu;  
+var clavier;
+var boutonFeu;
 var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
@@ -17,6 +17,8 @@ var texteCompteur;
 var scene;
 var musique_de_fond;
 var Squelette_1;
+var eaux;
+var collision;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -27,7 +29,7 @@ function tirerProjectile(type, player) {
     "foudre": 'bullet_foudre',
     "chaleur": 'bullet_chaleur'
   };
-  
+
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
   bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
@@ -38,7 +40,7 @@ function tirerProjectile(type, player) {
 
 var config = {
   type: Phaser.AUTO,
-  scale : {
+  scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
@@ -83,25 +85,25 @@ function mettreAJourCompteur() {
 
 function lancerAttaque(type) {
   let attaques = {
-    "explosion": { 
-      elements: ["jaune_clair", "rouge"], 
-      effet: "Déflagration Alchimique !" 
+    "explosion": {
+      elements: ["jaune_clair", "rouge"],
+      effet: "Déflagration Alchimique !"
     },
-    "congelation": { 
-      elements: ["rose", "rouge"], 
-      effet: "Malédiction de Givre !" 
+    "congelation": {
+      elements: ["rose", "rouge"],
+      effet: "Malédiction de Givre !"
     },
-    "tempete": { 
-      elements: ["orange", "rouge"], 
-      effet: "Invocation de la Tempête !" 
+    "tempete": {
+      elements: ["orange", "rouge"],
+      effet: "Invocation de la Tempête !"
     },
-    "foudre": { 
-      elements: ["jaune_clair", "violet"], 
-      effet: "Éclair du Chaos !" 
+    "foudre": {
+      elements: ["jaune_clair", "violet"],
+      effet: "Éclair du Chaos !"
     },
-    "chaleur": { 
-      elements: ["violet", "blanc"], 
-      effet: "Brasier Astral !" 
+    "chaleur": {
+      elements: ["violet", "blanc"],
+      effet: "Brasier Astral !"
     }
   };
 
@@ -126,12 +128,12 @@ function lancerAttaque(type) {
 
 function afficherMessage(message) {
   if (!scene.texteMessage) {
-    scene.texteMessage = scene.add.text(0, 0, "", { 
-      fontSize: '20px', 
-      fill: '#FFD700', 
-      fontStyle: 'bold', 
-      stroke: '#8B0000', 
-      strokeThickness: 3 
+    scene.texteMessage = scene.add.text(0, 0, "", {
+      fontSize: '20px',
+      fill: '#FFD700',
+      fontStyle: 'bold',
+      stroke: '#8B0000',
+      strokeThickness: 3
     });
     scene.texteMessage.setOrigin(0.5, 0.5);
   }
@@ -140,15 +142,15 @@ function afficherMessage(message) {
   scene.tweens.killTweensOf(scene.texteMessage);
 
   // Positionner le message au centre de l'écran en fonction de la caméra
-  scene.texteMessage.setPosition(scene.cameras.main.scrollX + scene.cameras.main.width / 2, 
-                                 scene.cameras.main.scrollY + scene.cameras.main.height / 2);
-  
+  scene.texteMessage.setPosition(scene.cameras.main.scrollX + scene.cameras.main.width / 2,
+    scene.cameras.main.scrollY + scene.cameras.main.height / 2);
+
   // Réinitialiser l'alpha (rendre visible immédiatement)
   scene.texteMessage.setAlpha(1);
-  
+
   // Mettre à jour le texte
   scene.texteMessage.setText(message);
-  
+
   // Lancer une nouvelle animation pour le faire disparaître
   scene.tweens.add({
     targets: scene.texteMessage,
@@ -167,24 +169,24 @@ function finDuJeu() {
 
   // Fond noir semi-transparent
   let overlay = scene.add.rectangle(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 300, 
-    800, 600, 
+    scene.cameras.main.scrollX + 400,
+    scene.cameras.main.scrollY + 300,
+    800, 600,
     0x000000, 0.7
   );
   overlay.setDepth(20);
 
   // Texte "Game Over" avec effet de fondu
   let texteGameOver = scene.add.text(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 200, 
-    "GAME OVER", 
-    { 
-      fontSize: '64px', 
-      fill: '#ff0000', 
-      fontStyle: 'bold', 
-      stroke: '#000', 
-      strokeThickness: 6 
+    scene.cameras.main.scrollX + 400,
+    scene.cameras.main.scrollY + 200,
+    "GAME OVER",
+    {
+      fontSize: '64px',
+      fill: '#ff0000',
+      fontStyle: 'bold',
+      stroke: '#000',
+      strokeThickness: 6
     }
   );
   texteGameOver.setOrigin(0.5);
@@ -200,41 +202,41 @@ function finDuJeu() {
 
   // Bouton "Rejouer"
   let boutonRejouer = scene.add.text(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 320, 
-    "🔄 Rejouer", 
-    { 
-      fontSize: '30px', 
-      fill: '#ffffff', 
-      backgroundColor: '#008000', 
+    scene.cameras.main.scrollX + 400,
+    scene.cameras.main.scrollY + 320,
+    "🔄 Rejouer",
+    {
+      fontSize: '30px',
+      fill: '#ffffff',
+      backgroundColor: '#008000',
       padding: { x: 10, y: 5 }
     }
   )
-  .setInteractive()
-  .on('pointerdown', () => { 
-    compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
-    scene.scene.restart();  // Recharge la scène
-    gameOver = false;
-  });
+    .setInteractive()
+    .on('pointerdown', () => {
+      compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
+      scene.scene.restart();  // Recharge la scène
+      gameOver = false;
+    });
   boutonRejouer.setOrigin(0.5);
   boutonRejouer.setDepth(21);
 
   // Bouton "Quitter"
   let boutonQuitter = scene.add.text(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 390, 
-    "🚪 Quitter", 
-    { 
-      fontSize: '30px', 
-      fill: '#ffffff', 
-      backgroundColor: '#800000', 
+    scene.cameras.main.scrollX + 400,
+    scene.cameras.main.scrollY + 390,
+    "🚪 Quitter",
+    {
+      fontSize: '30px',
+      fill: '#ffffff',
+      backgroundColor: '#800000',
       padding: { x: 10, y: 5 }
     }
   )
-  .setInteractive()
-  .on('pointerdown', () => { 
-    game.destroy(true);  // Ferme le jeu
-  });
+    .setInteractive()
+    .on('pointerdown', () => {
+      game.destroy(true);  // Ferme le jeu
+    });
   boutonQuitter.setOrigin(0.5);
   boutonQuitter.setDepth(21);
 }
@@ -247,65 +249,71 @@ function finDuJeu() {
  * On y trouve surtout le chargement des assets (images, son ..)
  */
 function preload() {
-   // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
-   this.load.audio('background', 'src/assets/dd-fantasy-music-and-ambience.mp3'); 
+  // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
+  this.load.audio('background', 'src/assets/dd-fantasy-music-and-ambience.mp3');
 
-   this.load.image("img_ciel", "src/assets/sky.png"); 
-   this.load.image("img_plateforme", "src/assets/platform.png");  
-   // chargement tuiles de jeu
-   this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
-   this.load.image("fond", "src/assets/fond.png");
+  this.load.image("img_ciel", "src/assets/sky.png");
+  this.load.image("img_plateforme", "src/assets/platform.png");
+  // chargement tuiles de jeu
+  this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
+  this.load.image("fond", "src/assets/fond.png");
 
-   this.load.spritesheet("esprit", "src/assets/spirit.png", { 
-    frameWidth: 128, 
-    frameHeight: 128 });
+  this.load.spritesheet("esprit", "src/assets/spirit.png", {
+    frameWidth: 128,
+    frameHeight: 128
+  });
+  this.load.spritesheet('eau', 'src/assets/eau.png', {
+    frameWidth: 320, // Largeur d'un frame
+    frameHeight: 50 // Hauteur d'un frame
+  });
 
-// chargement de la carte
-this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
+  // chargement de la carte
+  this.load.tilemapTiledJSON("carte", "src/assets/map.json");
 
 
-   this.load.image("rouge", "src/assets/Red_crystal3.png"); 
-   this.load.image("jaune_clair", "src/assets/Yellow-green_crystal3.png"); 
-   this.load.image("rose", "src/assets/Pink_crystal3.png"); 
-   this.load.image("violet", "src/assets/Violet_crystal3.png"); 
-   this.load.image("blanc", "src/assets/White_crystal3.png"); 
-   this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
+  this.load.image("rouge", "src/assets/Red_crystal3.png");
+  this.load.image("jaune_clair", "src/assets/Yellow-green_crystal3.png");
+  this.load.image("rose", "src/assets/Pink_crystal3.png");
+  this.load.image("violet", "src/assets/Violet_crystal3.png");
+  this.load.image("blanc", "src/assets/White_crystal3.png");
+  this.load.image("orange", "src/assets/Yellow_crystal3.png");
 
-   this.load.image("bullet_explosion", "src/assets/boule_chimique.png");
+  this.load.image("bullet_explosion", "src/assets/boule_chimique.png");
 
-   this.load.image("bullet_congelation", "src/assets/boule_de_neige.png");
-   this.load.image("bullet_tempete", "src/assets/sable.png");
-   this.load.image("bullet_foudre", "src/assets/foudre.png");
-   this.load.image("bullet_chaleur", "src/assets/boules_de_feu.png");
-   this.load.spritesheet("img_perso", "src/assets/Idle.png", {
+  this.load.image("bullet_congelation", "src/assets/boule_de_neige.png");
+  this.load.image("bullet_tempete", "src/assets/sable.png");
+  this.load.image("bullet_foudre", "src/assets/foudre.png");
+  this.load.image("bullet_chaleur", "src/assets/boules_de_feu.png");
+  this.load.spritesheet("img_perso", "src/assets/Idle.png", {
 
     frameWidth: 128,
     frameHeight: 73,
-    
-  }); 
+
+  });
   this.load.spritesheet("gauche", "src/assets/RunG.png", {
     frameWidth: 128,
     frameHeight: 70,
-    
-  }); 
+
+  });
   this.load.spritesheet("droite", "src/assets/Run.png", {
     frameWidth: 128,
     frameHeight: 70,
-  }); 
+  });
 
-  
-  this.load.spritesheet("Sq_1_D", "src/assets/Squelette_1D.png", {  
+
+  this.load.spritesheet("Sq_1_D", "src/assets/Squelette_1D.png", {
     frameWidth: 128,
     frameHeight: 128,
   });
-  this.load.spritesheet("Sq_1_G", "src/assets/Squelette_1G.png", {  
+  this.load.spritesheet("Sq_1_G", "src/assets/Squelette_1G.png", {
     frameWidth: 128,
     frameHeight: 128,
   });
-  this.load.spritesheet("Sq_1_Mort", "src/assets/Dead_Squelette_1D.png", {  
+  this.load.spritesheet("Sq_1_Mort", "src/assets/Dead_Squelette_1D.png", {
     frameWidth: 128,
     frameHeight: 128,
-  });}
+  });
+}
 
 
 /***********************************************************************/
@@ -319,88 +327,115 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
  * ainsi que toutes les instructions permettant de planifier des evenements
  */
 function create() {
-// lancement du son background
-musique_de_fond = this.sound.add('background');
-musique_de_fond.play();
-// redimentionnement du monde avec les dimensions calculées via tiled
-//this.physics.world.setBounds(0, 0, 3200, 640);
-//  ajout du champs de la caméra de taille identique à celle du monde
-//this.cameras.main.setBounds(0, 0, 3200, 640);
+  // lancement du son background
+  musique_de_fond = this.sound.add('background');
+  musique_de_fond.play();
+  // redimentionnement du monde avec les dimensions calculées via tiled
+  //this.physics.world.setBounds(0, 0, 3200, 640);
+  //  ajout du champs de la caméra de taille identique à celle du monde
+  //this.cameras.main.setBounds(0, 0, 3200, 640);
+
+
   scene = this;
-  this.add.image(2384, 320, "fond"); 
+  this.add.image(2384, 320, "fond");
   const carteDuNiveau = this.add.tilemap("carte");
 
   // chargement du jeu de tuiles
   const tileset = carteDuNiveau.addTilesetImage(
-            "Tileset",
-            "Phaser_tuilesdejeu"
-          );  
+    "Tileset",
+    "Phaser_tuilesdejeu"
+  );
 
-          // chargement du calque calque_background
-          // chargement du calque calque_background_2
-const fond = carteDuNiveau.createLayer(
-  "fond",
-  tileset
-);
-const plateforme = carteDuNiveau.createLayer(
-  "plateforme",
-  tileset
-);
+  // chargement du calque calque_background
+  // chargement du calque calque_background_2
+  const fond = carteDuNiveau.createLayer(
+    "fond",
+    tileset
+  );
+  const plateforme = carteDuNiveau.createLayer(
+    "plateforme",
+    tileset
+  );
+  this.anims.create({
+    key: 'eau_anim',
+    frames: this.anims.generateFrameNumbers('eau', { start: 0, end: 3 }),
+    frameRate: 1,
+    repeat: -1
+  });
 
-plateforme.setCollisionByProperty({ estSolide: true }); 
+  //eau = this.physics.add.staticSprite(400, 400, 'eau');
+  eaux = this.physics.add.group({
+    key: 'eau',
+    repeat: 1,
+    setXY: { x: 2016, y: 352}
+});  
 
-player = this.physics.add.sprite(100,475 , 'img_perso'); 
-player.index=100;
-player.setCollideWorldBounds(true); 
-player.setBounce(0); 
-clavier = this.input.keyboard.createCursorKeys(); 
+  eaux.children.iterate(function iterateur(eau) {eau.anims.play('eau_anim');});
 
-// Créer l’esprit
-this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
+  // Gérer les collisions
 
-// Créer le squelette
-Squelette_1 = this.physics.add.sprite(500, 100, 'Sq_1_G'); // Position fixe
-Squelette_1.setCollideWorldBounds(true);
-Squelette_1.setBounce(0);
-Squelette_1.body.setSize(80, 50);
-Squelette_1.body.setOffset(30, 80);
+  //this.physics.add.overlap(player, eaux, collisEau, null, this);
+  this.physics.add.collider(plateforme, eaux);
+ 
 
-// Créer les animations
-this.anims.create({
-  key: 'anim_Sq_1D', 
-  frames: this.anims.generateFrameNumbers('Sq_1_D', { start: 0, end: 4 }),
-  frameRate: 10,
-  repeat: -1
-});
 
-this.anims.create({
-  key: 'anim_Sq_1G', 
-  frames: this.anims.generateFrameNumbers('Sq_1_G', { start: 0, end: 4 }),
-  frameRate: 10,
-  repeat: -1
-});
 
-// Initialiser l'animation et la direction
-Squelette_1.anims.play('anim_Sq_1D', true);
+  plateforme.setCollisionByProperty({ estSolide: true });
 
-// Initialiser l'animation et la direction
-Squelette_1.anims.play('anim_Sq_1D', true);
+  player = this.physics.add.sprite(100, 475, 'img_perso');
+  player.index = 100;
+  player.setCollideWorldBounds(true);
+  player.setBounce(0);
+  clavier = this.input.keyboard.createCursorKeys();
+  this.physics.add.collider(player, eaux, null, collisEau, this);
 
-// Boucle simple pour alterner le déplacement
-let movingRight = true;
-setInterval(() => {
-  if (movingRight) {
+  // Créer l’esprit
+  this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
+  collision = this.physics.add.collider(player, eaux);
+  // Créer le squelette
+  Squelette_1 = this.physics.add.sprite(500, 100, 'Sq_1_G'); // Position fixe
+  Squelette_1.setCollideWorldBounds(true);
+  Squelette_1.setBounce(0);
+  Squelette_1.body.setSize(80, 50);
+  Squelette_1.body.setOffset(30, 80);
+
+  // Créer les animations
+  this.anims.create({
+    key: 'anim_Sq_1D',
+    frames: this.anims.generateFrameNumbers('Sq_1_D', { start: 0, end: 4 }),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'anim_Sq_1G',
+    frames: this.anims.generateFrameNumbers('Sq_1_G', { start: 0, end: 4 }),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  // Initialiser l'animation et la direction
+  Squelette_1.anims.play('anim_Sq_1D', true);
+
+  // Initialiser l'animation et la direction
+  Squelette_1.anims.play('anim_Sq_1D', true);
+
+  // Boucle simple pour alterner le déplacement
+  let movingRight = true;
+  setInterval(() => {
+    if (movingRight) {
       Squelette_1.setVelocityX(100); // Déplace à droite
-      Squelette_1.anims.play('anim_Sq_1D', true);} 
-  else {
-    Squelette_1.setVelocityX(-100); // Déplace à gauche
-    Squelette_1.anims.play('anim_Sq_1G', true);
+      Squelette_1.anims.play('anim_Sq_1D', true);
+    }
+    else {
+      Squelette_1.setVelocityX(-100); // Déplace à gauche
+      Squelette_1.anims.play('anim_Sq_1G', true);
     }
     movingRight = !movingRight;
   }, 2000); // Change de direction toutes les 2 secondes
 
-// Créer les animations 
-this.anims.create({
+  // Créer les animations 
+  this.anims.create({
     key: 'phase1',
     frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
     frameRate: 5,
@@ -408,17 +443,17 @@ this.anims.create({
   });
   this.esprit.play('phase1');
 
-  
+
 
   // redimentionnement du monde avec les dimensions calculées via tiled
-this.physics.world.setBounds(0, 0, 4768, 640);
-//  ajout du champs de la caméra de taille identique à celle du monde
-this.cameras.main.setBounds(0, 0, 4768, 640);
-// ancrage de la caméra sur le joueur
-this.cameras.main.startFollow(player);  
-this.physics.add.collider(player, plateforme); 
-this.physics.add.collider(Squelette_1, plateforme);
-// Création de la bulle de texte (initialement cachée)
+  this.physics.world.setBounds(0, 0, 4768, 640);
+  //  ajout du champs de la caméra de taille identique à celle du monde
+  this.cameras.main.setBounds(0, 0, 4768, 640);
+  // ancrage de la caméra sur le joueur
+  this.cameras.main.startFollow(player);
+  this.physics.add.collider(player, plateforme);
+  this.physics.add.collider(Squelette_1, plateforme);
+  // Création de la bulle de texte (initialement cachée)
 
 
 
@@ -427,56 +462,56 @@ this.physics.add.collider(Squelette_1, plateforme);
     frames: this.anims.generateFrameNumbers("gauche", { start: 7, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  }); 
+  });
   this.anims.create({
     key: "anim_tourne_droite", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("droite", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  }); 
+  });
   this.anims.create({
     key: "anim_face", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  }); 
+  });
   groupeBullets = scene.physics.add.group();
-  groupe_mineraux = this.physics.add.group(); 
-  
-  // Liste des positions prédéfinies pour les minéraux
-let positionsMineraux = [
-  { x: 500, y: 300, type: "rouge" },
-  { x: 650, y: 250, type: "blanc" },
-  { x: 1000, y: 275, type: "rose" },
-  { x: 1500, y: 320, type: "violet" },
-  { x: 2000, y: 280, type: "orange" },
-  { x: 2500, y: 310, type: "jaune_clair" },
-  { x: 2700, y: 350, type: "rouge" },
-  { x: 3200, y: 400, type: "jaune_clair" },
-  { x: 3500, y: 420, type: "rose" },
-  { x: 4100, y: 100, type: "violet" },
-  { x: 4300, y: 480, type: "blanc" },
-  { x: 4600, y: 500, type: "orange" },
-  { x: 5000, y: 350, type: "rouge" },
-  { x: 5400, y: 400, type: "jaune_clair" },
-  { x: 5800, y: 100, type: "rose" },
-  { x: 6400, y: 100, type: "violet" },
-  { x: 6400, y: 100, type: "blanc" },
-  { x: 6400, y: 100, type: "orange" }
-];
+  groupe_mineraux = this.physics.add.group();
 
-// Générer les minéraux à des positions fixes
-groupe_mineraux = this.physics.add.group();
-for (let pos of positionsMineraux) {
-  let minerau = groupe_mineraux.create(pos.x, pos.y, pos.type);
-  minerau.setBounce(0.2);  
-  minerau.setCollideWorldBounds(true);
-}
-  
+  // Liste des positions prédéfinies pour les minéraux
+  let positionsMineraux = [
+    { x: 500, y: 300, type: "rouge" },
+    { x: 650, y: 250, type: "blanc" },
+    { x: 1000, y: 275, type: "rose" },
+    { x: 1500, y: 320, type: "violet" },
+    { x: 2000, y: 280, type: "orange" },
+    { x: 2500, y: 310, type: "jaune_clair" },
+    { x: 2700, y: 350, type: "rouge" },
+    { x: 3200, y: 400, type: "jaune_clair" },
+    { x: 3500, y: 420, type: "rose" },
+    { x: 4100, y: 100, type: "violet" },
+    { x: 4300, y: 480, type: "blanc" },
+    { x: 4600, y: 500, type: "orange" },
+    { x: 5000, y: 350, type: "rouge" },
+    { x: 5400, y: 400, type: "jaune_clair" },
+    { x: 5800, y: 100, type: "rose" },
+    { x: 6400, y: 100, type: "violet" },
+    { x: 6400, y: 100, type: "blanc" },
+    { x: 6400, y: 100, type: "orange" }
+  ];
+
+  // Générer les minéraux à des positions fixes
+  groupe_mineraux = this.physics.add.group();
+  for (let pos of positionsMineraux) {
+    let minerau = groupe_mineraux.create(pos.x, pos.y, pos.type);
+    minerau.setBounce(0.2);
+    minerau.setCollideWorldBounds(true);
+  }
+
   // Empêcher les minéraux de flotter en les faisant tomber sur le sol
   this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
-  
+
   this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
   this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
   this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
@@ -505,7 +540,7 @@ for (let pos of positionsMineraux) {
     backgroundColor: '#000',
     padding: { x: 10, y: 5 }
   }).setOrigin(0.5).setVisible(false);
-  
+
 }
 
 
@@ -516,50 +551,67 @@ for (let pos of positionsMineraux) {
 /***********************************************************************/
 
 function update() {
+  if (eaux.getChildren()[0].anims.currentFrame.index == 3){
+    collision.active = true;
+  } else {
+    collision.active = false;
+  }
+   // this.physics.add.collider(plateforme, eaux);
+
   texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
 
   if (clavier.right.isDown) {
     player.setVelocityX(220);
-    player.anims.play('anim_tourne_droite', true); 
+    player.anims.play('anim_tourne_droite', true);
     player.body.setSize(50, 67);
     player.body.setOffset(32, 5);
     player.direction = 'right';  // Mise à jour de la direction
-  } 
+  }
   else if (clavier.left.isDown) {
     player.setVelocityX(-220);
-    player.anims.play('anim_tourne_gauche', true); 
+    player.anims.play('anim_tourne_gauche', true);
     player.body.setSize(50, 67);
-    player.body.setOffset(45, 5);   
+    player.body.setOffset(45, 5);
     player.direction = 'left';  // Mise à jour de la direction
   } else {
-    player.setVelocityX(0); 
-    player.anims.play('anim_face', true); 
+    player.setVelocityX(0);
+    player.anims.play('anim_face', true);
     player.body.setSize(50, 67);
     player.body.setOffset(35, 5);
-  } 
+  }
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
-  } 
+  }
   if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
     finDuJeu();
   }
 
   const distance = Phaser.Math.Distance.Between(
-        player.x, player.y,
-        this.esprit.x, this.esprit.y
-    );
+    player.x, player.y,
+    this.esprit.x, this.esprit.y
+  );
 
-    if (distance < 100) {
-        this.bulleTexte.setVisible(true);
-        this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
-    } else {
-        this.bulleTexte.setVisible(false);
-    }
+  if (distance < 100) {
+    this.bulleTexte.setVisible(true);
+    this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+  } else {
+    this.bulleTexte.setVisible(false);
+  }
+
 
   if (gameOver) {
     // arret du son background
-    musique_de_fond.stop(); 
+    musique_de_fond.stop();
     return;
   }
+}
+
+function collisEau(player, eau) {
+
+  if (eau.anims.currentFrame.index == 4) { // Par exemple, frame 2
+    console.log("Collision avec l'eau !");
+    return true;
+  }
+  return false;
 }
 
