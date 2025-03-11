@@ -215,7 +215,6 @@ function finDuJeu() {
   texteGameOver.setOrigin(0.5);
   texteGameOver.setDepth(21);
 
-  // Effet de fondu sur le texte Game Over
   scene.tweens.add({
     targets: texteGameOver,
     alpha: { from: 0, to: 1 },
@@ -237,9 +236,10 @@ function finDuJeu() {
   )
   .setInteractive()
   .on('pointerdown', () => { 
+    // Réinitialisation complète des variables du jeu
     compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
-    scene.scene.restart();  // Recharge la scène
     gameOver = false;
+    scene.scene.restart();
   });
   boutonRejouer.setOrigin(0.5);
   boutonRejouer.setDepth(21);
@@ -258,11 +258,12 @@ function finDuJeu() {
   )
   .setInteractive()
   .on('pointerdown', () => { 
-    game.destroy(true);  // Ferme le jeu
+    game.destroy(true); // Ferme complètement le jeu
   });
   boutonQuitter.setOrigin(0.5);
   boutonQuitter.setDepth(21);
 }
+
 /***********************************************************************/
 /** FONCTION PRELOAD 
 /***********************************************************************/
@@ -393,13 +394,14 @@ clavier = this.input.keyboard.createCursorKeys();
 // Créer l’esprit
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 
-// Créer les animations
-this.anims.create({
-  key: 'anim_Sq_1D', 
-  frames: this.anims.generateFrameNumbers('Sq_1_D', { start: 0, end: 4 }),
-  frameRate: 10,
-  repeat: -1
-});
+if (!this.anims.exists('anim_Sq_1D')) {
+  this.anims.create({
+    key: 'anim_Sq_1D', 
+    frames: this.anims.generateFrameNumbers('Sq_1_D', { start: 0, end: 4 }),
+    frameRate: 10,
+    repeat: -1
+  });
+}
 
 this.anims.create({
   key: 'anim_Sq_1G', 
@@ -423,14 +425,16 @@ this.anims.create({
   repeat: -1
 });
 
-// Créer les animations 
-this.anims.create({
+if (!this.anims.exists('phase1')) {
+  this.anims.create({
     key: 'phase1',
     frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
     frameRate: 5,
     repeat: -1
   });
-  this.esprit.play('phase1');
+}
+
+this.esprit.play('phase1');
 
   
 
@@ -445,24 +449,33 @@ this.physics.add.collider(player, plateforme);
 
 
 
+if (!this.anims.exists('anim_tourne_gauche')) {
   this.anims.create({
-    key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("gauche", { start: 7, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-    frameRate: 10, // vitesse de défilement des frames
-    repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  }); 
+    key: 'anim_tourne_gauche', 
+    frames: this.anims.generateFrameNumbers('gauche', { start: 7, end: 0 }),
+    frameRate: 10,
+    repeat: -1
+  });
+}
+
+if (!this.anims.exists('anim_tourne_droite')) {
   this.anims.create({
-    key: "anim_tourne_droite", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("droite", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-    frameRate: 10, // vitesse de défilement des frames
-    repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  }); 
+    key: 'anim_tourne_droite', 
+    frames: this.anims.generateFrameNumbers('droite', { start: 0, end: 7 }),
+    frameRate: 10,
+    repeat: -1
+  });
+}
+
+if (!this.anims.exists('anim_face')) {
   this.anims.create({
-    key: "anim_face", // key est le nom de l'animation : doit etre unique poru la scene.
-    frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-    frameRate: 10, // vitesse de défilement des frames
-    repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  }); 
+    key: 'anim_face', 
+    frames: this.anims.generateFrameNumbers('img_perso', { start: 0, end: 7 }),
+    frameRate: 10,
+    repeat: -1
+  });
+}
+
   groupeBullets = scene.physics.add.group();
   groupe_mineraux = this.physics.add.group(); 
 
@@ -475,9 +488,9 @@ this.physics.add.collider(player, plateforme);
 
   // Liste des positions prédéfinies pour les minéraux
 let positionsMineraux = [
-  { x: 500, y: 300, type: "rouge" },
-  { x: 575, y: 310, type: "violet" },
-  { x: 555, y: 300, type: "blanc" },
+  { x: 450, y: 300, type: "rouge" },
+  { x: 550, y: 310, type: "violet" },
+  { x: 485, y: 300, type: "blanc" },
   { x: 650, y: 250, type: "blanc" },
   { x: 900, y: 275, type: "rose" },
   { x: 2400, y: 250, type: "blanc" },
@@ -494,7 +507,7 @@ let positionsMineraux = [
   { x: 1550, y: 275, type: "rose" },
   { x: 1050, y: 320, type: "violet" },
   { x: 700, y: 280, type: "orange" },
-  { x: 550, y: 310, type: "jaune_clair" },
+  { x: 515, y: 310, type: "jaune_clair" },
   { x: 2700, y: 350, type: "rouge" },
   { x: 3200, y: 400, type: "jaune_clair" },
   { x: 3500, y: 420, type: "rose" },
