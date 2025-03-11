@@ -27,6 +27,7 @@ function tirerProjectile(type, player) {
     "chaleur": 'bullet_chaleur'
   };
   
+  groupeBullets = scene.physics.add.group();
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
