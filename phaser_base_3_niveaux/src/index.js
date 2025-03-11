@@ -16,7 +16,7 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
-var ennemis;
+var Squelette_1;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -305,10 +305,8 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
   this.load.spritesheet("Sq_1_Mort", "src/assets/Dead_Squelette_1D.png", {  
     frameWidth: 128,
     frameHeight: 128,
-  });
-  }); 
+  });}
 
-}
 
 /***********************************************************************/
 /** FONCTION CREATE 
@@ -419,6 +417,7 @@ this.cameras.main.setBounds(0, 0, 4768, 640);
 // ancrage de la caméra sur le joueur
 this.cameras.main.startFollow(player);  
 this.physics.add.collider(player, plateforme); 
+this.physics.add.collider(Squelette_1, plateforme);
 // Création de la bulle de texte (initialement cachée)
 
 
