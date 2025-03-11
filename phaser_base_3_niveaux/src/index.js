@@ -160,20 +160,19 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
    this.load.image("bullet_chaleur", "src/assets/bullet_chaleur.png");
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
-    spacing: 46,
-    frameWidth: 82,
+
+    frameWidth: 128,
     frameHeight: 73,
     
   }); 
-  this.load.spritesheet("gauche", "src/assets/Run2.png", {
-    frameWidth: 80,
+  this.load.spritesheet("gauche", "src/assets/RunG.png", {
+    frameWidth: 128,
     frameHeight: 70,
-    spacing: 48
+    
   }); 
   this.load.spritesheet("droite", "src/assets/Run.png", {
-    frameWidth: 80,
+    frameWidth: 128,
     frameHeight: 70,
-    spacing: 48
   }); 
 }
 
@@ -288,21 +287,21 @@ function update() {
   if (clavier.right.isDown) {
     player.setVelocityX(220);
     player.anims.play('anim_tourne_droite', true); 
-    player.body.setSize(50, 70);
-    player.body.setOffset(35, 0);
+    player.body.setSize(50, 67);
+    player.body.setOffset(32, 5);
     player.direction = 'right';  // Mise à jour de la direction
   } 
   else if (clavier.left.isDown) {
     player.setVelocityX(-220);
     player.anims.play('anim_tourne_gauche', true); 
-    player.body.setSize(50, 70);
-    player.body.setOffset(0, 0);   
+    player.body.setSize(50, 67);
+    player.body.setOffset(45, 5);   
     player.direction = 'left';  // Mise à jour de la direction
   } else {
     player.setVelocityX(0); 
     player.anims.play('anim_face', true); 
-    player.body.setSize(50, 70);
-    player.body.setOffset(35, 0);
+    player.body.setSize(50, 67);
+    player.body.setOffset(35, 5);
   } 
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
