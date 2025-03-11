@@ -16,7 +16,7 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
-var Squelette_1;
+var ennemis;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -28,7 +28,6 @@ function tirerProjectile(type, player) {
     "chaleur": 'bullet_chaleur'
   };
   
-  groupeBullets = scene.physics.add.group();
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
   bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
@@ -261,7 +260,6 @@ function preload() {
     frameWidth: 128, 
     frameHeight: 128 });
 
-   this.load.image('bulle', 'src/assets/bulle.png'); // Optionnel, pour une bulle stylisée
 // chargement de la carte
 this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
 
@@ -308,6 +306,7 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
     frameWidth: 128,
     frameHeight: 128,
   });
+  }); 
 
 }
 
@@ -353,6 +352,7 @@ const plateforme = carteDuNiveau.createLayer(
 plateforme.setCollisionByProperty({ estSolide: true }); 
 
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
+player.index=100;
 player.setCollideWorldBounds(true); 
 player.setBounce(0); 
 clavier = this.input.keyboard.createCursorKeys(); 
@@ -404,7 +404,7 @@ setInterval(() => {
 // Créer les animations 
 this.anims.create({
     key: 'phase1',
-    frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 4 }),
+    frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
     frameRate: 5,
     repeat: -1
   });
@@ -419,7 +419,6 @@ this.cameras.main.setBounds(0, 0, 4768, 640);
 // ancrage de la caméra sur le joueur
 this.cameras.main.startFollow(player);  
 this.physics.add.collider(player, plateforme); 
-this.physics.add.collider(Squelette_1, plateforme);
 // Création de la bulle de texte (initialement cachée)
 
 
@@ -442,7 +441,7 @@ this.physics.add.collider(Squelette_1, plateforme);
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
-
+  groupeBullets = scene.physics.add.group();
   groupe_mineraux = this.physics.add.group(); 
   
   // Liste des positions prédéfinies pour les minéraux
