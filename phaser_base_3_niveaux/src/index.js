@@ -255,6 +255,7 @@ function preload() {
    // chargement tuiles de jeu
    this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
    this.load.image("fond", "src/assets/fond.png");
+   this.load.image("box", "src/assets/box.png");
 
    this.load.spritesheet("esprit", "src/assets/spirit.png", { 
     frameWidth: 128, 
@@ -442,7 +443,14 @@ this.physics.add.collider(Squelette_1, plateforme);
   }); 
   groupeBullets = scene.physics.add.group();
   groupe_mineraux = this.physics.add.group(); 
-  
+
+  let box = this.physics.add.sprite(2450, 100, "box"); // Création du sprite
+  box.setCollideWorldBounds(true); // Empêche la box de sortir du monde
+  box.setImmovable(true); // La box ne bougera pas si elle est touchée
+  this.physics.add.collider(player, box); // Permet au joueur de rentrer en collision avec la box
+  this.physics.add.collider(plateforme, box); // Permet au joueur de rentrer en collision avec la box
+
+
   // Liste des positions prédéfinies pour les minéraux
 let positionsMineraux = [
   { x: 500, y: 300, type: "rouge" },
