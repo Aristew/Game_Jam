@@ -29,6 +29,7 @@ function tirerProjectile(type, player) {
   
   groupeBullets = scene.physics.add.group();
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
+  bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
