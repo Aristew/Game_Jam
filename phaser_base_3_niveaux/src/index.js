@@ -504,7 +504,7 @@ for (let pos of positionsMineraux) {
   // Positions prédéfinies pour les squelettes
   let positionsSquelettes = [
     { x: 1000, y: 300 },
-    { x: 1300, y: 300 },
+    { x: 1400, y: 300 },
     { x: 3000, y: 300 }
   ];
 
