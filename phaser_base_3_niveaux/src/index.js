@@ -187,6 +187,7 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
    this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
 
    this.load.image("bullet_explosion", "src/assets/boule_chimique.png");
+
    this.load.image("bullet_congelation", "src/assets/boules_de_neige.png");
    this.load.image("bullet_tempete", "src/assets/sable.png");
    this.load.image("bullet_foudre", "src/assets/foudre.jpg");
@@ -306,8 +307,9 @@ this.physics.add.collider(player, plateforme);
   // Empêcher les minéraux de flotter en les faisant tomber sur le sol
   this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
-    
+  
   this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
+  
   this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
   this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
   this.input.keyboard.on("keydown-R", () => lancerAttaque("foudre"));
