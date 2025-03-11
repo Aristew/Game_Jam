@@ -17,8 +17,6 @@ var texteCompteur;
 var scene;
 var musique_de_fond;
 var Squelette_1;
-var eaux;
-var collision;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -35,7 +33,30 @@ function tirerProjectile(type, player) {
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
-  bullet.setVelocity(300 * coefDir, -150); // Moins de vitesse horizontale, tir plus haut
+  bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+
+  // Ajouter la collision entre le projectile et les squelettes1
+  Squelettes1.forEach(squelette1 => {
+    scene.physics.add.overlap(bullet, squelette1, () => {
+      squelette1.disableBody(true, true); // Désactiver le squelette
+      bullet.destroy(); // Détruire le projectile
+    });
+  });
+
+  // Ajouter la collision entre le projectile et les squelettes
+  Squelettes2.forEach(squelette2 => {
+    scene.physics.add.overlap(bullet, squelette2, () => {
+      squelette2.disableBody(true, true); // Désactiver le squelette
+      bullet.destroy(); // Détruire le projectile
+      });
+    });
+    
+  
+  // Collision avec une box
+  scene.physics.add.overlap(bullet, box, () => {
+    box.disableBody(true, true);
+    bullet.destroy();
+  });
 }
 
 var config = {
@@ -52,7 +73,7 @@ var config = {
     arcade: {
       // parametres du mode arcade
       gravity: {
-        y: 330 // gravité verticale : acceleration ddes corps en pixels par seconde
+        y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
       debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
@@ -192,7 +213,6 @@ function finDuJeu() {
   texteGameOver.setOrigin(0.5);
   texteGameOver.setDepth(21);
 
-  // Effet de fondu sur le texte Game Over
   scene.tweens.add({
     targets: texteGameOver,
     alpha: { from: 0, to: 1 },
@@ -212,12 +232,12 @@ function finDuJeu() {
       padding: { x: 10, y: 5 }
     }
   )
-    .setInteractive()
-    .on('pointerdown', () => {
-      compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
-      scene.scene.restart();  // Recharge la scène
-      gameOver = false;
-    });
+  .setInteractive()
+  .on('pointerdown', () => { 
+    compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
+    scene.scene.restart();  // Recharge la scène
+    gameOver = false;
+  });
   boutonRejouer.setOrigin(0.5);
   boutonRejouer.setDepth(21);
 
@@ -233,13 +253,14 @@ function finDuJeu() {
       padding: { x: 10, y: 5 }
     }
   )
-    .setInteractive()
-    .on('pointerdown', () => {
-      game.destroy(true);  // Ferme le jeu
-    });
+  .setInteractive()
+  .on('pointerdown', () => { 
+    game.destroy(true);  // Ferme le jeu
+  });
   boutonQuitter.setOrigin(0.5);
   boutonQuitter.setDepth(21);
 }
+
 /***********************************************************************/
 /** FONCTION PRELOAD 
 /***********************************************************************/
@@ -252,11 +273,11 @@ function preload() {
   // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
   this.load.audio('background', 'src/assets/dd-fantasy-music-and-ambience.mp3');
 
-  this.load.image("img_ciel", "src/assets/sky.png");
-  this.load.image("img_plateforme", "src/assets/platform.png");
-  // chargement tuiles de jeu
-  this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
-  this.load.image("fond", "src/assets/fond.png");
+   this.load.image("img_ciel", "src/assets/sky.png"); 
+   this.load.image("img_plateforme", "src/assets/platform.png");  
+   // chargement tuiles de jeu
+   this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
+   this.load.image("fond", "src/assets/fond.png");
 
   this.load.spritesheet("esprit", "src/assets/spirit.png", {
     frameWidth: 128,
@@ -312,8 +333,7 @@ function preload() {
   this.load.spritesheet("Sq_1_Mort", "src/assets/Dead_Squelette_1D.png", {
     frameWidth: 128,
     frameHeight: 128,
-  });
-}
+  });}
 
 
 /***********************************************************************/
@@ -389,23 +409,23 @@ function create() {
   clavier = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(player, eaux, null, collisEau, this);
 
-  // Créer l’esprit
-  this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
-  collision = this.physics.add.collider(player, eaux);
-  // Créer le squelette
-  Squelette_1 = this.physics.add.sprite(500, 100, 'Sq_1_G'); // Position fixe
-  Squelette_1.setCollideWorldBounds(true);
-  Squelette_1.setBounce(0);
-  Squelette_1.body.setSize(80, 50);
-  Squelette_1.body.setOffset(30, 80);
+// Créer l’esprit
+this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 
-  // Créer les animations
-  this.anims.create({
-    key: 'anim_Sq_1D',
-    frames: this.anims.generateFrameNumbers('Sq_1_D', { start: 0, end: 4 }),
-    frameRate: 10,
-    repeat: -1
-  });
+// Créer le squelette
+Squelette_1 = this.physics.add.sprite(500, 100, 'Sq_1_G'); // Position fixe
+Squelette_1.setCollideWorldBounds(true);
+Squelette_1.setBounce(0);
+Squelette_1.body.setSize(80, 50);
+Squelette_1.body.setOffset(30, 80);
+
+// Créer les animations
+this.anims.create({
+  key: 'anim_Sq_1D', 
+  frames: this.anims.generateFrameNumbers('Sq_1_D', { start: 0, end: 4 }),
+  frameRate: 10,
+  repeat: -1
+});
 
   this.anims.create({
     key: 'anim_Sq_1G',
@@ -414,91 +434,93 @@ function create() {
     repeat: -1
   });
 
-  // Initialiser l'animation et la direction
-  Squelette_1.anims.play('anim_Sq_1D', true);
+// Initialiser l'animation et la direction
+Squelette_1.anims.play('anim_Sq_1D', true);
 
-  // Initialiser l'animation et la direction
-  Squelette_1.anims.play('anim_Sq_1D', true);
+// Initialiser l'animation et la direction
+Squelette_1.anims.play('anim_Sq_1D', true);
 
-  // Boucle simple pour alterner le déplacement
-  let movingRight = true;
-  setInterval(() => {
-    if (movingRight) {
+// Boucle simple pour alterner le déplacement
+let movingRight = true;
+setInterval(() => {
+  if (movingRight) {
       Squelette_1.setVelocityX(100); // Déplace à droite
-      Squelette_1.anims.play('anim_Sq_1D', true);
-    }
-    else {
-      Squelette_1.setVelocityX(-100); // Déplace à gauche
-      Squelette_1.anims.play('anim_Sq_1G', true);
+      Squelette_1.anims.play('anim_Sq_1D', true);} 
+  else {
+    Squelette_1.setVelocityX(-100); // Déplace à gauche
+    Squelette_1.anims.play('anim_Sq_1G', true);
     }
     movingRight = !movingRight;
   }, 2000); // Change de direction toutes les 2 secondes
 
-  // Créer les animations 
-  this.anims.create({
+// Créer les animations 
+this.anims.create({
     key: 'phase1',
     frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
     frameRate: 5,
     repeat: -1
   });
-  this.esprit.play('phase1');
+}
+
+this.esprit.play('phase1');
 
 
 
   // redimentionnement du monde avec les dimensions calculées via tiled
-  this.physics.world.setBounds(0, 0, 4768, 640);
-  //  ajout du champs de la caméra de taille identique à celle du monde
-  this.cameras.main.setBounds(0, 0, 4768, 640);
-  // ancrage de la caméra sur le joueur
-  this.cameras.main.startFollow(player);
-  this.physics.add.collider(player, plateforme);
-  this.physics.add.collider(Squelette_1, plateforme);
-  // Création de la bulle de texte (initialement cachée)
+this.physics.world.setBounds(0, 0, 4768, 640);
+//  ajout du champs de la caméra de taille identique à celle du monde
+this.cameras.main.setBounds(0, 0, 4768, 640);
+// ancrage de la caméra sur le joueur
+this.cameras.main.startFollow(player);  
+this.physics.add.collider(player, plateforme); 
+this.physics.add.collider(Squelette_1, plateforme);
+// Création de la bulle de texte (initialement cachée)
 
 
 
+if (!this.anims.exists('anim_tourne_gauche')) {
   this.anims.create({
     key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("gauche", { start: 7, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  });
+  }); 
   this.anims.create({
     key: "anim_tourne_droite", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("droite", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  });
+  }); 
   this.anims.create({
     key: "anim_face", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 7 }), // on prend toutes les frames de img perso numerotées de 0 à 3
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-  });
+  }); 
   groupeBullets = scene.physics.add.group();
-  groupe_mineraux = this.physics.add.group();
-
+  groupe_mineraux = this.physics.add.group(); 
+  
   // Liste des positions prédéfinies pour les minéraux
-  let positionsMineraux = [
-    { x: 500, y: 300, type: "rouge" },
-    { x: 650, y: 250, type: "blanc" },
-    { x: 1000, y: 275, type: "rose" },
-    { x: 1500, y: 320, type: "violet" },
-    { x: 2000, y: 280, type: "orange" },
-    { x: 2500, y: 310, type: "jaune_clair" },
-    { x: 2700, y: 350, type: "rouge" },
-    { x: 3200, y: 400, type: "jaune_clair" },
-    { x: 3500, y: 420, type: "rose" },
-    { x: 4100, y: 100, type: "violet" },
-    { x: 4300, y: 480, type: "blanc" },
-    { x: 4600, y: 500, type: "orange" },
-    { x: 5000, y: 350, type: "rouge" },
-    { x: 5400, y: 400, type: "jaune_clair" },
-    { x: 5800, y: 100, type: "rose" },
-    { x: 6400, y: 100, type: "violet" },
-    { x: 6400, y: 100, type: "blanc" },
-    { x: 6400, y: 100, type: "orange" }
-  ];
+let positionsMineraux = [
+  { x: 500, y: 300, type: "rouge" },
+  { x: 650, y: 250, type: "blanc" },
+  { x: 1000, y: 275, type: "rose" },
+  { x: 1500, y: 320, type: "violet" },
+  { x: 2000, y: 280, type: "orange" },
+  { x: 2500, y: 310, type: "jaune_clair" },
+  { x: 2700, y: 350, type: "rouge" },
+  { x: 3200, y: 400, type: "jaune_clair" },
+  { x: 3500, y: 420, type: "rose" },
+  { x: 4100, y: 100, type: "violet" },
+  { x: 4300, y: 480, type: "blanc" },
+  { x: 4600, y: 500, type: "orange" },
+  { x: 5000, y: 350, type: "rouge" },
+  { x: 5400, y: 400, type: "jaune_clair" },
+  { x: 5800, y: 100, type: "rose" },
+  { x: 6400, y: 100, type: "violet" },
+  { x: 6400, y: 100, type: "blanc" },
+  { x: 6400, y: 100, type: "orange" }
+];
 
   // Générer les minéraux à des positions fixes
   groupe_mineraux = this.physics.add.group();
@@ -540,7 +562,7 @@ function create() {
     backgroundColor: '#000',
     padding: { x: 10, y: 5 }
   }).setOrigin(0.5).setVisible(false);
-
+  
 }
 
 
