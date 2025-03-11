@@ -306,7 +306,8 @@ this.physics.add.collider(player, plateforme);
   // Empêcher les minéraux de flotter en les faisant tomber sur le sol
   this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
-    
+  
+
   this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
   this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
   this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
@@ -332,15 +333,26 @@ this.physics.add.collider(player, plateforme);
 }
 
 
-
-
-
 /***********************************************************************/
 /** FONCTION UPDATE 
 /***********************************************************************/
 
 function update() {
   texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
+
+  groupe_mineraux.children.iterate(function (minerau) {
+    if (minerau.y > 600) {  // Si le minéral tombe trop bas
+        let newX, newY;
+
+        do {
+            newX = Phaser.Math.Between(50, 6400); // Nouvelle position aléatoire en largeur
+            newY = Phaser.Math.Between(50, 200);  // Nouvelle position en hauteur
+        } while (newY > 600);  // Assure que le minéral ne spawn pas en dessous de la limite
+
+        minerau.setPosition(newX, newY);
+        minerau.setVelocity(0, 0);  // On réinitialise sa vitesse
+    }
+});
 
   if (clavier.right.isDown) {
     player.setVelocityX(220);
