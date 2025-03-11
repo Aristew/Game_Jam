@@ -403,13 +403,16 @@ if (!this.anims.exists('anim_Sq_1D')) {
   });
 }
 
+if (!this.anims.exists('anim_Sq_1G')) {
 this.anims.create({
   key: 'anim_Sq_1G', 
   frames: this.anims.generateFrameNumbers('Sq_1_G', { start: 0, end: 4 }),
   frameRate: 10,
   repeat: -1
 });
+}
 
+if (!this.anims.exists('anim_Sq_2D')) {
 // Créer les animations
 this.anims.create({
   key: 'anim_Sq_2D', 
@@ -417,7 +420,9 @@ this.anims.create({
   frameRate: 10,
   repeat: -1
 });
+}
 
+if (!this.anims.exists('anim_Sq_2G')) {
 this.anims.create({
   key: 'anim_Sq_2G', 
   frames: this.anims.generateFrameNumbers('Sq_2_G', { start: 0, end: 4 }),
