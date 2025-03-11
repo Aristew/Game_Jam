@@ -19,6 +19,8 @@ var musique_de_fond;
 var box;
 var Squelettes1 = []; // Tableau pour stocker les squelettes a lance
 var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
+var eaux;
+var collision;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -300,7 +302,11 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
    this.load.image("orange", "src/assets/Yellow_crystal3.png"); 
 
    this.load.image("bullet_explosion", "src/assets/boule_chimique.png");
-
+   this.load.spritesheet("eau", "src/assets/eau.png", {
+    frameWidth: 320,
+    frameHeight: 50,
+    
+  });
    this.load.image("bullet_congelation", "src/assets/boule_de_neige.png");
    this.load.image("bullet_tempete", "src/assets/sable.png");
    this.load.image("bullet_foudre", "src/assets/foudre.png");
@@ -661,6 +667,30 @@ for (let pos of positionsSquelettes2) {
       });
     });
   });
+  
+  this.anims.create({
+    key: 'eau_anim',
+    frames: this.anims.generateFrameNumbers('eau', { start: 0, end: 3 }),
+    frameRate: 1,
+    repeat: -1
+  });
+
+  //eau = this.physics.add.staticSprite(400, 400, 'eau');
+  eaux = this.physics.add.group({
+    key: 'eau',
+    repeat: 1,
+    setXY: { x: 2016, y: 352}
+});  
+
+this.physics.add.collider(player, eaux, null, collisEau, this);
+ collision = this.physics.add.collider(player, eaux);
+  eaux.children.iterate(function iterateur(eau) {eau.anims.play('eau_anim');});
+
+  // Gérer les collisions
+
+  //this.physics.add.overlap(player, eaux, collisEau, null, this);
+  this.physics.add.collider(plateforme, eaux);
+
 }
 
 
@@ -710,6 +740,12 @@ function update() {
     } else {
         this.bulleTexte.setVisible(false);
     }
+    if (eaux.getChildren()[0].anims.currentFrame.index == 3){
+      collision.active = true;
+    } else {
+      collision.active = false;
+    }
+  
 
   if (gameOver) {
     // arret du son background
@@ -718,3 +754,11 @@ function update() {
   }
 }
 
+function collisEau(player, eau) {
+
+  if (eau.anims.currentFrame.index == 4) { // Par exemple, frame 2
+    console.log("Collision avec l'eau !");
+    return true;
+  }
+  return false;
+}
