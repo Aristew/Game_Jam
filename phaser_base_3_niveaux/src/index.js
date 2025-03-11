@@ -258,7 +258,7 @@ plateforme.setCollisionByProperty({ estSolide: true });
   player.index=100;
 
   player.setCollideWorldBounds(true); 
-  this.physics.add.collider(player, groupe_plateformes); 
+ 
   player.setBounce(0); 
   clavier = this.input.keyboard.createCursorKeys(); 
 
