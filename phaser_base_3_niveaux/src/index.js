@@ -16,6 +16,7 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
+var Boss_1;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -273,6 +274,10 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
    this.load.image("bullet_tempete", "src/assets/sable.jpg");
    this.load.image("bullet_foudre", "src/assets/foudre.png");
    this.load.image("bullet_chaleur", "src/assets/boules_de_feu.png");
+   this.load.spritesheet("Boss_1", "src/assets/Bringer-of-Death.png", {
+    frameWidth: 140,
+    frameHeight: 93,
+   });
 
    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
 
@@ -289,6 +294,7 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
     frameWidth: 128,
     frameHeight: 70,
   }); 
+
 }
 
 /***********************************************************************/
@@ -332,19 +338,17 @@ const plateforme = carteDuNiveau.createLayer(
 
 plateforme.setCollisionByProperty({ estSolide: true }); 
 
+player = this.physics.add.sprite(100,475 , 'img_perso'); 
+player.index=100;
+player.setCollideWorldBounds(true); 
+player.setBounce(0); 
+clavier = this.input.keyboard.createCursorKeys(); 
 
+// Créer l’esprit
+this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 
-
-  player = this.physics.add.sprite(100,475 , 'img_perso'); 
-  player.index=100;
-
-  player.setCollideWorldBounds(true); 
- 
-  player.setBounce(0); 
-  clavier = this.input.keyboard.createCursorKeys(); 
-
-  // Créer l’esprit
-  this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
+// Créer le boss 1
+this.Boss_1 = this.add.sprite(700, 475, 'Boss_1'); // Position fixe
 
 // Créer les animations
 this.anims.create({
