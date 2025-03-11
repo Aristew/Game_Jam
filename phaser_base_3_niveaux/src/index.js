@@ -371,6 +371,13 @@ musique_de_fond.play();
   scene = this;
   this.add.image(2384, 320, "fond"); 
   const carteDuNiveau = this.add.tilemap("carte");
+  scene.texteMessage = scene.add.text(0, 0, "", { 
+    fontSize: '20px', 
+    fill: '#FFD700', 
+    fontStyle: 'bold', 
+    stroke: '#8B0000', 
+    strokeThickness: 3 
+  }).setOrigin(0.5, 0.5);
 
   // chargement du jeu de tuiles
   const tileset = carteDuNiveau.addTilesetImage(
