@@ -56,7 +56,7 @@ var config = {
     arcade: {
       // parametres du mode arcade
       gravity: {
-        y: 330 // gravité verticale : acceleration ddes corps en pixels par seconde
+        y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
       debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
@@ -461,10 +461,16 @@ this.physics.add.collider(Squelette_1, plateforme);
 let positionsMineraux = [
   { x: 500, y: 300, type: "rouge" },
   { x: 650, y: 250, type: "blanc" },
-  { x: 1000, y: 275, type: "rose" },
-  { x: 1500, y: 320, type: "violet" },
-  { x: 2000, y: 280, type: "orange" },
-  { x: 2500, y: 310, type: "jaune_clair" },
+  { x: 900, y: 275, type: "rose" },
+  { x: 1300, y: 320, type: "violet" },
+  { x: 1800, y: 280, type: "orange" },
+  { x: 1850, y: 310, type: "jaune_clair" },
+  { x: 2350, y: 300, type: "rouge" },
+  { x: 2400, y: 250, type: "blanc" },
+  { x: 1550, y: 275, type: "rose" },
+  { x: 1050, y: 320, type: "violet" },
+  { x: 700, y: 280, type: "orange" },
+  { x: 550, y: 310, type: "jaune_clair" },
   { x: 2700, y: 350, type: "rouge" },
   { x: 3200, y: 400, type: "jaune_clair" },
   { x: 3500, y: 420, type: "rose" },
