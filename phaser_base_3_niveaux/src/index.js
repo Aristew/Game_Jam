@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
+var compteurMineraux = { "rouge": 100, "jaune_clair": 100, "rose": 100, "violet": 100, "blanc": 100, "orange": 100 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -63,6 +63,13 @@ function tirerProjectile(type, player) {
     }
     bullet.destroy();
   });
+  scene.physics.add.overlap(bullet, eaux, () => {
+    if (type === "congelation") {  // Vérifie si le projectile est de type "chaleur"
+      eau.anims.play('eau_glace'); // Désactive la box
+    }
+    bullet.destroy();
+  });
+
 }
 
 var config = {
@@ -350,6 +357,11 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
     frameWidth: 128,
     frameHeight: 128,
   });
+  this.anims.create({
+    key: "eau_glace",
+    frames: [{ key: "eau", frame: 4 }],
+    frameRate: 20
+  }); 
 }
 
 /***********************************************************************/
