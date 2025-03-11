@@ -29,6 +29,7 @@ function tirerProjectile(type, player) {
   
   groupeBullets = scene.physics.add.group();
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
+  bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
@@ -259,7 +260,7 @@ plateforme.setCollisionByProperty({ estSolide: true });
   player.index=100;
 
   player.setCollideWorldBounds(true); 
-  this.physics.add.collider(player, groupe_plateformes); 
+ 
   player.setBounce(0); 
   clavier = this.input.keyboard.createCursorKeys(); 
 
