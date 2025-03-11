@@ -286,16 +286,24 @@ this.physics.add.collider(player, plateforme);
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
 
-groupeBullets = this.physics.add.group();
+  groupe_mineraux = this.physics.add.group();
 
-groupe_mineraux = this.physics.add.group();
+  // Nombre de minéraux à générer pour chaque couleur
+  let nombreMinerauxParCouleur = 3;  
+  
   for (let couleur of couleurs) {
-    for (let i = 0; i < 3; i++) {
-      let x = Phaser.Math.Between(50, 750);
-      let y = Phaser.Math.Between(50, 400);
-      groupe_mineraux.create(x, y, couleur);
+    for (let i = 0; i < nombreMinerauxParCouleur; i++) {
+      let x = Phaser.Math.Between(50, 6400);  // Toute la largeur de la carte
+      let y = Phaser.Math.Between(0, 10);   // Hauteur contrôlée pour éviter le hors écran
+  
+      let minerau = groupe_mineraux.create(x, y, couleur);
+      minerau.setBounce(0.2);  // Petit rebond pour un effet réaliste
+      minerau.setCollideWorldBounds(true); 
     }
   }
+  
+  // Empêcher les minéraux de flotter en les faisant tomber sur le sol
+  this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
     
   this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
