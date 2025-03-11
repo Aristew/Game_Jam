@@ -174,7 +174,8 @@ function preload() {
    // chargement tuiles de jeu
    this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
    this.load.image("fond", "src/assets/fond.png");
-
+   this.load.spritesheet("esprit", "src/assets/spirit.png", { frameWidth: 128, frameHeight: 128 });
+   this.load.image('bulle', 'src/assets/bulle.png'); // Optionnel, pour une bulle stylisée
 // chargement de la carte
 this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
 
@@ -258,9 +259,21 @@ plateforme.setCollisionByProperty({ estSolide: true });
   player.index=100;
 
   player.setCollideWorldBounds(true); 
+  this.physics.add.collider(player, groupe_plateformes); 
   player.setBounce(0); 
   clavier = this.input.keyboard.createCursorKeys(); 
 
+  // Créer l’esprit
+  this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
+
+// Créer les animations
+this.anims.create({
+    key: 'phase1',
+    frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 4 }),
+    frameRate: 5,
+    repeat: -1
+  });
+  this.esprit.play('phase1');
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
 //  ajout du champs de la caméra de taille identique à celle du monde
@@ -268,6 +281,9 @@ this.cameras.main.setBounds(0, 0, 4768, 640);
 // ancrage de la caméra sur le joueur
 this.cameras.main.startFollow(player);  
 this.physics.add.collider(player, plateforme); 
+// Création de la bulle de texte (initialement cachée)
+
+
 
   this.anims.create({
     key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
@@ -331,8 +347,14 @@ this.physics.add.collider(player, plateforme);
 
   texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
   mettreAJourCompteur();
+  this.bulleTexte = this.add.text(400, 250, 'Je suis un esprit...', {
+    fontSize: '16px',
+    fill: '#fff',
+    backgroundColor: '#000',
+    padding: { x: 10, y: 5 }
+  }).setOrigin(0.5).setVisible(false);
+  
 }
-
 
 
 
@@ -366,6 +388,18 @@ function update() {
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
   } 
+  const distance = Phaser.Math.Distance.Between(
+        player.x, player.y,
+        this.esprit.x, this.esprit.y
+    );
+
+    if (distance < 100) {
+        this.bulleTexte.setVisible(true);
+        this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+    } else {
+        this.bulleTexte.setVisible(false);
+    }
+
   if (gameOver) {
     // arret du son background
     musique_de_fond.stop(); 
