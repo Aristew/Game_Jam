@@ -50,7 +50,7 @@ var config = {
       gravity: {
         y: 230 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: {
@@ -337,15 +337,21 @@ function update() {
   if (clavier.right.isDown) {
     player.setVelocityX(220);
     player.anims.play('anim_tourne_droite', true); 
+    player.body.setSize(50, 70);
+    player.body.setOffset(35, 0);
     player.direction = 'right';  // Mise à jour de la direction
   } 
   else if (clavier.left.isDown) {
     player.setVelocityX(-220);
-    player.anims.play('anim_tourne_gauche', true);    
+    player.anims.play('anim_tourne_gauche', true); 
+    player.body.setSize(50, 70);
+    player.body.setOffset(0, 0);   
     player.direction = 'left';  // Mise à jour de la direction
   } else {
     player.setVelocityX(0); 
     player.anims.play('anim_face', true); 
+    player.body.setSize(50, 70);
+    player.body.setOffset(35, 0);
   } 
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
