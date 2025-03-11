@@ -16,7 +16,7 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
-var Squelette_1;
+var ennemis;
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -28,7 +28,6 @@ function tirerProjectile(type, player) {
     "chaleur": 'bullet_chaleur'
   };
   
-  groupeBullets = scene.physics.add.group();
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
   bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
@@ -261,7 +260,6 @@ function preload() {
     frameWidth: 128, 
     frameHeight: 128 });
 
-   this.load.image('bulle', 'src/assets/bulle.png'); // Optionnel, pour une bulle stylisée
 // chargement de la carte
 this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
 
@@ -294,35 +292,6 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
     frameWidth: 128,
     frameHeight: 70,
   }); 
-
-  this.load.spritesheet("Squelette1_Immobile_Gauche", "src/assets/Idle_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Immobile_Droite", "src/assets/Idle_Squelette_1D.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Marche_Droite", "src/assets/Walk_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Marche_Gauche", "src/assets/Walk_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Attaque_Droite", "src/assets/Attaque_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Attaque_Gauche", "src/assets/Attaque_Squelette_1G.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
-  this.load.spritesheet("Squelette1_Mort", "src/assets/Dead_Squelette_1D.png", {  
-    frameWidth: 128,
-    frameHeight: 128,
-  });
 
 }
 
@@ -368,28 +337,19 @@ const plateforme = carteDuNiveau.createLayer(
 plateforme.setCollisionByProperty({ estSolide: true }); 
 
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
+player.index=100;
 player.setCollideWorldBounds(true); 
 player.setBounce(0); 
 clavier = this.input.keyboard.createCursorKeys(); 
 
 // Créer l’esprit
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
-Squelette_1 = this.physics.add.sprite(500, 100, 'Squelette1_Immobile_Gauche'); // Position fixe
-Squelette_1.setCollideWorldBounds(true);
-Squelette_1.setBounce(0);
-Squelette_1.body.setSize(50, 67);
-Squelette_1.body.setOffset(40, 60);
-this.anims.create({
-  key: 'Squelette1_Immobile_Gauche', 
-  frames: this.anims.generateFrameNumbers('Squelette1_Immobile_Gauche', { start: 0, end: 7 }),
-  frameRate: 10,
-  repeat: -1
-});
+
 
 // Créer les animations
 this.anims.create({
     key: 'phase1',
-    frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 4 }),
+    frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
     frameRate: 5,
     repeat: -1
   });
@@ -404,7 +364,6 @@ this.cameras.main.setBounds(0, 0, 4768, 640);
 // ancrage de la caméra sur le joueur
 this.cameras.main.startFollow(player);  
 this.physics.add.collider(player, plateforme); 
-this.physics.add.collider(Squelette_1, plateforme);
 // Création de la bulle de texte (initialement cachée)
 
 
@@ -427,7 +386,7 @@ this.physics.add.collider(Squelette_1, plateforme);
     frameRate: 10, // vitesse de défilement des frames
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
-
+  groupeBullets = scene.physics.add.group();
   groupe_mineraux = this.physics.add.group(); 
   
   // Liste des positions prédéfinies pour les minéraux
@@ -486,23 +445,12 @@ for (let pos of positionsMineraux) {
 
   texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
   mettreAJourCompteur();
-
-  this.bulleTexte = this.add.text(400, 250, '', {
+  this.bulleTexte = this.add.text(400, 250, 'Je suis un esprit...', {
     fontSize: '16px',
     fill: '#fff',
     backgroundColor: '#000',
     padding: { x: 10, y: 5 }
-}).setOrigin(0.5).setVisible(false);
-this.indexDialogue = 0; 
-this.derniereParole = 0; // Temps du dernier message
-this.dialogues = [
-    "Je suis un esprit",
-    "je suis ici pour te guider",
-    "il existe pleins de types sorts ",
-    "tu peux les créer en combinant des éléments",
-    "Ces elements apparaitront à travers ton aventure",
-    "bonne chance"
-];
+  }).setOrigin(0.5).setVisible(false);
   
 }
 
@@ -513,7 +461,7 @@ this.dialogues = [
 /** FONCTION UPDATE 
 /***********************************************************************/
 
-function update(time) {
+function update() {
   texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
 
   if (clavier.right.isDown) {
@@ -538,36 +486,21 @@ function update(time) {
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
   } 
-  
+  if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
+    finDuJeu();
+  }
+
   const distance = Phaser.Math.Distance.Between(
-    player.x, player.y,
-    this.esprit.x, this.esprit.y
-);
+        player.x, player.y,
+        this.esprit.x, this.esprit.y
+    );
 
-if (distance < 100) {
-    if (!this.joueurDansZone) {  
-        this.joueurDansZone = true;
-        this.indexDialogue = 0;  // Recommence toujours du début à l’entrée
-    }
-
-    if (time > this.derniereParole + 2300 && this.indexDialogue < this.dialogues.length) { 
-        this.derniereParole = time;
-
-        // On met la bulle invisible pour éviter d'afficher "" ou "..."
+    if (distance < 100) {
+        this.bulleTexte.setVisible(true);
+        this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+    } else {
         this.bulleTexte.setVisible(false);
-
-        this.time.delayedCall(0, () => {
-            this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
-            this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
-            this.bulleTexte.setVisible(true); // Affiche la bulle seulement avec du texte
-            this.indexDialogue++;
-        });
     }
-} else {
-    this.joueurDansZone = false;
-    this.bulleTexte.setVisible(false);
-}
-
 
   if (gameOver) {
     // arret du son background
