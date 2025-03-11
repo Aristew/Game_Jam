@@ -158,6 +158,85 @@ function afficherMessage(message) {
   });
 }
 
+function finDuJeu() {
+  gameOver = true;
+  player.setVelocity(0, 0); // Arrête le joueur
+  player.anims.stop(); // Stop l'animation du joueur
+  player.body.moves = false; // Empêche tout mouvement
+  musique_de_fond.stop(); // Stop la musique
+
+  // Fond noir semi-transparent
+  let overlay = scene.add.rectangle(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 300, 
+    800, 600, 
+    0x000000, 0.7
+  );
+  overlay.setDepth(20);
+
+  // Texte "Game Over" avec effet de fondu
+  let texteGameOver = scene.add.text(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 200, 
+    "GAME OVER", 
+    { 
+      fontSize: '64px', 
+      fill: '#ff0000', 
+      fontStyle: 'bold', 
+      stroke: '#000', 
+      strokeThickness: 6 
+    }
+  );
+  texteGameOver.setOrigin(0.5);
+  texteGameOver.setDepth(21);
+
+  // Effet de fondu sur le texte Game Over
+  scene.tweens.add({
+    targets: texteGameOver,
+    alpha: { from: 0, to: 1 },
+    duration: 1000,
+    ease: 'Power2'
+  });
+
+  // Bouton "Rejouer"
+  let boutonRejouer = scene.add.text(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 320, 
+    "🔄 Rejouer", 
+    { 
+      fontSize: '30px', 
+      fill: '#ffffff', 
+      backgroundColor: '#008000', 
+      padding: { x: 10, y: 5 }
+    }
+  )
+  .setInteractive()
+  .on('pointerdown', () => { 
+    scene.scene.restart();  // Recharge la scène
+    gameOver = false;
+  });
+  boutonRejouer.setOrigin(0.5);
+  boutonRejouer.setDepth(21);
+
+  // Bouton "Quitter"
+  let boutonQuitter = scene.add.text(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 390, 
+    "🚪 Quitter", 
+    { 
+      fontSize: '30px', 
+      fill: '#ffffff', 
+      backgroundColor: '#800000', 
+      padding: { x: 10, y: 5 }
+    }
+  )
+  .setInteractive()
+  .on('pointerdown', () => { 
+    game.destroy(true);  // Ferme le jeu
+  });
+  boutonQuitter.setOrigin(0.5);
+  boutonQuitter.setDepth(21);
+}
 /***********************************************************************/
 /** FONCTION PRELOAD 
 /***********************************************************************/
@@ -389,6 +468,10 @@ function update() {
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
   } 
+  if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
+    finDuJeu();
+  }
+
   const distance = Phaser.Math.Distance.Between(
         player.x, player.y,
         this.esprit.x, this.esprit.y
