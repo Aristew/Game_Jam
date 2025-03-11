@@ -388,21 +388,37 @@ this.physics.add.collider(player, plateforme);
     repeat: -1 // nombre de répétitions de l'animation. -1 = infini
   }); 
 
-  groupe_mineraux = this.physics.add.group();
+  groupe_mineraux = this.physics.add.group(); 
+  
+  // Liste des positions prédéfinies pour les minéraux
+let positionsMineraux = [
+  { x: 500, y: 300, type: "rouge" },
+  { x: 650, y: 250, type: "blanc" },
+  { x: 1000, y: 275, type: "rose" },
+  { x: 1500, y: 320, type: "violet" },
+  { x: 2000, y: 280, type: "orange" },
+  { x: 2500, y: 310, type: "jaune_clair" },
+  { x: 2700, y: 350, type: "rouge" },
+  { x: 3200, y: 400, type: "jaune_clair" },
+  { x: 3500, y: 420, type: "rose" },
+  { x: 4100, y: 100, type: "violet" },
+  { x: 4300, y: 480, type: "blanc" },
+  { x: 4600, y: 500, type: "orange" },
+  { x: 5000, y: 350, type: "rouge" },
+  { x: 5400, y: 400, type: "jaune_clair" },
+  { x: 5800, y: 100, type: "rose" },
+  { x: 6400, y: 100, type: "violet" },
+  { x: 6400, y: 100, type: "blanc" },
+  { x: 6400, y: 100, type: "orange" }
+];
 
-  // Nombre de minéraux à générer pour chaque couleur
-  let nombreMinerauxParCouleur = 3;  
-  
-  for (let couleur of couleurs) {
-    for (let i = 0; i < nombreMinerauxParCouleur; i++) {
-      let x = Phaser.Math.Between(50, 6400);  // Toute la largeur de la carte
-      let y = Phaser.Math.Between(0, 10);   // Hauteur contrôlée pour éviter le hors écran
-  
-      let minerau = groupe_mineraux.create(x, y, couleur);
-      minerau.setBounce(0.2);  // Petit rebond pour un effet réaliste
-      minerau.setCollideWorldBounds(true); 
-    }
-  }
+// Générer les minéraux à des positions fixes
+groupe_mineraux = this.physics.add.group();
+for (let pos of positionsMineraux) {
+  let minerau = groupe_mineraux.create(pos.x, pos.y, pos.type);
+  minerau.setBounce(0.2);  
+  minerau.setCollideWorldBounds(true);
+}
   
   // Empêcher les minéraux de flotter en les faisant tomber sur le sol
   this.physics.add.collider(groupe_mineraux, plateforme);
