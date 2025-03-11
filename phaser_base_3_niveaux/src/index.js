@@ -16,8 +16,7 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
-var Squelette_1;
-var box;
+var Squelettes = []; // Tableau pour stocker les squelettes
 
 function tirerProjectile(type, player) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
@@ -33,13 +32,15 @@ function tirerProjectile(type, player) {
   bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
-  bullet.body.allowGravity = true;
-  bullet.setVelocity(450 * coefDir, 0);
+  bullet.body.allowGravity = true;  // Activation de la gravité
+  bullet.setVelocity(300 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
 
-  // Ajouter la collision entre le projectile et le squelette
-  scene.physics.add.overlap(bullet, Squelette_1, () => {
-    Squelette_1.disableBody(true, true); // Désactiver le squelette
-    bullet.destroy(); // Détruire le projectile
+  // Ajouter la collision entre le projectile et les squelettes
+  Squelettes.forEach(squelette => {
+    scene.physics.add.overlap(bullet, squelette, () => {
+      squelette.disableBody(true, true); // Désactiver le squelette
+      bullet.destroy(); // Détruire le projectile
+    });
   });
 }
 
@@ -262,8 +263,7 @@ function preload() {
    // chargement tuiles de jeu
    this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
    this.load.image("fond", "src/assets/fond.png");
-
-   box=this.load.image("box", "src/assets/box.png");
+   this.load.image("box", "src/assets/box.png");
 
    this.load.spritesheet("esprit", "src/assets/spirit.png", { 
     frameWidth: 128, 
@@ -403,6 +403,7 @@ this.physics.add.collider(player, plateforme);
 // Création de la bulle de texte (initialement cachée)
 
 
+
   this.anims.create({
     key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("gauche", { start: 7, end: 0 }), // on prend toutes les frames de img perso numerotées de 0 à 3
@@ -424,7 +425,7 @@ this.physics.add.collider(player, plateforme);
   groupeBullets = scene.physics.add.group();
   groupe_mineraux = this.physics.add.group(); 
 
-  box = this.physics.add.sprite(2450, 100, "box"); // Création du sprite
+  let box = this.physics.add.sprite(2450, 100, "box"); // Création du sprite
   box.setCollideWorldBounds(true); // Empêche la box de sortir du monde
   box.setImmovable(true); // La box ne bougera pas si elle est touchée
   this.physics.add.collider(player, box); // Permet au joueur de rentrer en collision avec la box
@@ -434,8 +435,6 @@ this.physics.add.collider(player, plateforme);
   // Liste des positions prédéfinies pour les minéraux
 let positionsMineraux = [
   { x: 500, y: 300, type: "rouge" },
-  { x: 575, y: 310, type: "violet" },
-  { x: 555, y: 300, type: "blanc" },
   { x: 650, y: 250, type: "blanc" },
   { x: 900, y: 275, type: "rose" },
   { x: 1300, y: 320, type: "violet" },
@@ -455,10 +454,10 @@ let positionsMineraux = [
   { x: 4600, y: 500, type: "orange" },
   { x: 5000, y: 350, type: "rouge" },
   { x: 5400, y: 400, type: "jaune_clair" },
-  { x: 5800, y: 400, type: "rose" },
-  { x: 6400, y: 400, type: "violet" },
-  { x: 6400, y: 400, type: "blanc" },
-  { x: 6400, y: 400, type: "orange" }
+  { x: 5800, y: 100, type: "rose" },
+  { x: 6400, y: 100, type: "violet" },
+  { x: 6400, y: 100, type: "blanc" },
+  { x: 6400, y: 100, type: "orange" }
 ];
 
 // Générer les minéraux à des positions fixes
