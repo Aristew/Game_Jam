@@ -138,6 +138,13 @@ function preload() {
    // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
    this.load.image("img_ciel", "src/assets/sky.png"); 
    this.load.image("img_plateforme", "src/assets/platform.png");  
+   // chargement tuiles de jeu
+   this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
+   this.load.image("fond", "src/assets/fond.png");
+
+// chargement de la carte
+this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
+
 
    this.load.image("rouge", "src/assets/Red_crystal3.png"); 
    this.load.image("jaune_clair", "src/assets/Yellow-green_crystal3.png"); 
@@ -187,13 +194,31 @@ function create() {
 //  ajout du champs de la caméra de taille identique à celle du monde
 //this.cameras.main.setBounds(0, 0, 3200, 640);
   scene = this;
-  this.add.image(400, 300, "img_ciel"); 
-  groupe_plateformes = this.physics.add.staticGroup();
-  groupe_plateformes.create(200, 584, "img_plateforme");
-  groupe_plateformes.create(600, 584, "img_plateforme"); 
-  groupe_plateformes.create(50, 300, "img_plateforme");
-  groupe_plateformes.create(600, 450, "img_plateforme"); 
-  groupe_plateformes.create(750, 270, "img_plateforme"); 
+  this.add.image(2384, 320, "fond"); 
+  const carteDuNiveau = this.add.tilemap("carte");
+
+  // chargement du jeu de tuiles
+  const tileset = carteDuNiveau.addTilesetImage(
+            "Tileset",
+            "Phaser_tuilesdejeu"
+          );  
+
+          // chargement du calque calque_background
+          // chargement du calque calque_background_2
+const fond = carteDuNiveau.createLayer(
+  "fond",
+  tileset
+);
+const plateforme = carteDuNiveau.createLayer(
+  "plateforme",
+  tileset
+);
+
+plateforme.setCollisionByProperty({ estSolide: true }); 
+
+
+
+
   player = this.physics.add.sprite(100, 250, 'img_perso'); 
   player.index=100;
 
@@ -201,6 +226,14 @@ function create() {
   this.physics.add.collider(player, groupe_plateformes); 
   player.setBounce(0); 
   clavier = this.input.keyboard.createCursorKeys(); 
+
+  // redimentionnement du monde avec les dimensions calculées via tiled
+this.physics.world.setBounds(0, 0, 4768, 640);
+//  ajout du champs de la caméra de taille identique à celle du monde
+this.cameras.main.setBounds(0, 0, 4768, 640);
+// ancrage de la caméra sur le joueur
+this.cameras.main.startFollow(player);  
+this.physics.add.collider(player, plateforme); 
 
   this.anims.create({
     key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
