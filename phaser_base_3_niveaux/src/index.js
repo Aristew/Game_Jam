@@ -445,12 +445,23 @@ for (let pos of positionsMineraux) {
 
   texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
   mettreAJourCompteur();
-  this.bulleTexte = this.add.text(400, 250, 'Je suis un esprit...', {
+
+  this.bulleTexte = this.add.text(400, 250, '', {
     fontSize: '16px',
     fill: '#fff',
     backgroundColor: '#000',
     padding: { x: 10, y: 5 }
-  }).setOrigin(0.5).setVisible(false);
+}).setOrigin(0.5).setVisible(false);
+this.indexDialogue = 0; 
+this.derniereParole = 0; // Temps du dernier message
+this.dialogues = [
+    "Je suis un esprit",
+    "je suis ici pour te guider",
+    "il existe pleins de types sorts ",
+    "tu peux les créer en combinant des éléments",
+    "Ces elements apparaitront à travers ton aventure",
+    "bonne chance"
+];
   
 }
 
@@ -461,7 +472,7 @@ for (let pos of positionsMineraux) {
 /** FONCTION UPDATE 
 /***********************************************************************/
 
-function update() {
+function update(time) {
   texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
 
   if (clavier.right.isDown) {
@@ -486,21 +497,36 @@ function update() {
   if (clavier.up.isDown && player.body.blocked.down) {
     player.setVelocityY(-300);
   } 
-  if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
-    finDuJeu();
-  }
-
+  
   const distance = Phaser.Math.Distance.Between(
-        player.x, player.y,
-        this.esprit.x, this.esprit.y
-    );
+    player.x, player.y,
+    this.esprit.x, this.esprit.y
+);
 
-    if (distance < 100) {
-        this.bulleTexte.setVisible(true);
-        this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
-    } else {
-        this.bulleTexte.setVisible(false);
+if (distance < 100) {
+    if (!this.joueurDansZone) {  
+        this.joueurDansZone = true;
+        this.indexDialogue = 0;  // Recommence toujours du début à l’entrée
     }
+
+    if (time > this.derniereParole + 2300 && this.indexDialogue < this.dialogues.length) { 
+        this.derniereParole = time;
+
+        // On met la bulle invisible pour éviter d'afficher "" ou "..."
+        this.bulleTexte.setVisible(false);
+
+        this.time.delayedCall(0, () => {
+            this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
+            this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+            this.bulleTexte.setVisible(true); // Affiche la bulle seulement avec du texte
+            this.indexDialogue++;
+        });
+    }
+} else {
+    this.joueurDansZone = false;
+    this.bulleTexte.setVisible(false);
+}
+
 
   if (gameOver) {
     // arret du son background
