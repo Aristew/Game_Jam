@@ -561,6 +561,99 @@ let positionsMineraux = [
     padding: { x: 10, y: 5 }
   }).setOrigin(0.5).setVisible(false);
   
+  // Positions prédéfinies pour les squelettes
+  let positionsSquelettes1 = [
+    { x: 1000, y: 300 },
+    { x: 1400, y: 300 },
+    { x: 3000, y: 300 }
+  ];
+
+  let positionsSquelettes2 = [
+    { x:2000, y: 300 },
+  ];
+
+  // Créer les squelettes1
+  for (let pos of positionsSquelettes1) {
+    let squelette1 = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
+    squelette1.setCollideWorldBounds(true);
+    squelette1.setBounce(0);
+    squelette1.body.setSize(80, 50);
+    squelette1.body.setOffset(30, 80);
+    Squelettes1.push(squelette1);
+
+    // Initialiser l'animation et la direction
+    squelette1.anims.play('anim_Sq_1D', true);
+
+    // Boucle simple pour alterner le déplacement
+    let movingRight = true;
+    setInterval(() => {
+      if (movingRight) {
+        squelette1.setVelocityX(50); // Déplace à droite
+        squelette1.anims.play('anim_Sq_1D', true);
+      } else {
+        squelette1.setVelocityX(-50); // Déplace à gauche
+        squelette1.anims.play('anim_Sq_1G', true);
+      }
+      movingRight = !movingRight;
+    }, 3000); // Change de direction toutes les 3 secondes
+  }
+
+// Créer les squelettes2
+for (let pos of positionsSquelettes2) {
+      let squelette2 = this.physics.add.sprite(pos.x, pos.y, 'Sq_2_G');
+      squelette2.setCollideWorldBounds(true);
+      squelette2.setBounce(0);
+      squelette2.body.setSize(60, 70);
+      squelette2.body.setOffset(50, 60);
+      Squelettes2.push(squelette2);
+  
+      // Initialiser l'animation et la direction
+      squelette2.anims.play('anim_Sq_2D', true);
+  
+      // Boucle simple pour alterner le déplacement
+      let movingRight = true;
+      setInterval(() => {
+        if (movingRight) {
+          squelette2.setVelocityX(50); // Déplace à droite
+          squelette2.anims.play('anim_Sq_2D', true);
+        } else {
+          squelette2.setVelocityX(-50); // Déplace à gauche
+          squelette2.anims.play('anim_Sq_2G', true);
+        }
+        movingRight = !movingRight;
+      }, 3000); // Change de direction toutes les 3 secondes
+    }
+
+  // Ajouter les collisions entre les squelettes et les plateformes
+  Squelettes1.forEach(squelette1 => {
+    this.physics.add.collider(squelette1, plateforme);
+    this.physics.add.overlap(player, squelette1, finDuJeu);
+  });
+  Squelettes2.forEach(squelette2 => {
+    this.physics.add.collider(squelette2, plateforme);
+    this.physics.add.overlap(player, squelette2, finDuJeu);
+  });
+
+  
+
+  // Ajouter les collisions entre les projectiles et les squelettes
+  groupeBullets.children.iterate(bullet => {
+    Squelettes1.forEach(squelette1 => {
+      this.physics.add.overlap(bullet, squelette1, () => {
+        squelette1.disableBody(true, true); // Désactiver le squelette
+        bullet.destroy(); // Détruire le projectile
+      });
+    });
+  });
+   // Ajouter les collisions entre les projectiles et les squelettes
+   groupeBullets.children.iterate(bullet => {
+    Squelettes2.forEach(squelette2 => {
+      this.physics.add.overlap(bullet, squelette2, () => {
+        squelette2.disableBody(true, true); // Désactiver le squelette
+        bullet.destroy(); // Détruire le projectile
+      });
+    });
+  });
 }
 
 
