@@ -252,7 +252,7 @@ plateforme.setCollisionByProperty({ estSolide: true });
 
 
 
-  player = this.physics.add.sprite(100, 250, 'img_perso'); 
+  player = this.physics.add.sprite(100,475 , 'img_perso'); 
   player.index=100;
 
   player.setCollideWorldBounds(true); 
