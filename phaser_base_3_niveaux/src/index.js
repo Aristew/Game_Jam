@@ -16,7 +16,6 @@ var compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
-var Squelette_1;
 var Squelettes = []; // Tableau pour stocker les squelettes
 
 function tirerProjectile(type, player) {
@@ -36,10 +35,12 @@ function tirerProjectile(type, player) {
   bullet.body.allowGravity = true;  // Activation de la gravité
   bullet.setVelocity(300 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
 
-  // Ajouter la collision entre le projectile et le squelette
-  scene.physics.add.overlap(bullet, Squelette_1, () => {
-    Squelette_1.disableBody(true, true); // Désactiver le squelette
-    bullet.destroy(); // Détruire le projectile
+  // Ajouter la collision entre le projectile et les squelettes
+  Squelettes.forEach(squelette => {
+    scene.physics.add.overlap(bullet, squelette, () => {
+      squelette.disableBody(true, true); // Désactiver le squelette
+      bullet.destroy(); // Détruire le projectile
+    });
   });
 }
 
@@ -59,7 +60,7 @@ var config = {
       gravity: {
         y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: {
@@ -366,13 +367,6 @@ clavier = this.input.keyboard.createCursorKeys();
 // Créer l’esprit
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 
-// Créer le squelette
-Squelette_1 = this.physics.add.sprite(900, 300, 'Sq_1_G'); // Position fixe
-Squelette_1.setCollideWorldBounds(true);
-Squelette_1.setBounce(0);
-Squelette_1.body.setSize(80, 50);
-Squelette_1.body.setOffset(30, 80);
-
 // Créer les animations
 this.anims.create({
   key: 'anim_Sq_1D', 
@@ -387,25 +381,6 @@ this.anims.create({
   frameRate: 10,
   repeat: -1
 });
-
-// Initialiser l'animation et la direction
-Squelette_1.anims.play('anim_Sq_1D', true);
-
-// Initialiser l'animation et la direction
-Squelette_1.anims.play('anim_Sq_1D', true);
-
-// Boucle simple pour alterner le déplacement
-let movingRight = true;
-setInterval(() => {
-  if (movingRight) {
-      Squelette_1.setVelocityX(50); // Déplace à droite
-      Squelette_1.anims.play('anim_Sq_1D', true);} 
-  else {
-    Squelette_1.setVelocityX(-50); // Déplace à gauche
-    Squelette_1.anims.play('anim_Sq_1G', true);
-    }
-    movingRight = !movingRight;
-  }, 3000); // Change de direction toutes les 2 secondes
 
 // Créer les animations 
 this.anims.create({
@@ -425,7 +400,6 @@ this.cameras.main.setBounds(0, 0, 4768, 640);
 // ancrage de la caméra sur le joueur
 this.cameras.main.startFollow(player);  
 this.physics.add.collider(player, plateforme); 
-this.physics.add.collider(Squelette_1, plateforme);
 // Création de la bulle de texte (initialement cachée)
 
 
@@ -497,7 +471,6 @@ for (let pos of positionsMineraux) {
   // Empêcher les minéraux de flotter en les faisant tomber sur le sol
   this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
-  this.physics.add.overlap(player, Squelette_1, finDuJeu);
   
   this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
   this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
@@ -530,9 +503,9 @@ for (let pos of positionsMineraux) {
   
   // Positions prédéfinies pour les squelettes
   let positionsSquelettes = [
-    { x: 900, y: 300 },
-    { x: 1500, y: 300 },
-    { x: 2100, y: 300 }
+    { x: 1000, y: 300 },
+    { x: 1300, y: 300 },
+    { x: 3000, y: 300 }
   ];
 
   // Créer les squelettes
