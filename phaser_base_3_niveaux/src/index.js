@@ -58,7 +58,9 @@ function tirerProjectile(type, player) {
   
   // Collision avec une box
   scene.physics.add.overlap(bullet, box, () => {
-    box.disableBody(true, true);
+    if (type === "chaleur") {  // Vérifie si le projectile est de type "chaleur"
+      box.disableBody(true, true); // Désactive la box
+    }
     bullet.destroy();
   });
 }
