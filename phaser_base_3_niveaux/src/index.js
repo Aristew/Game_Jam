@@ -670,8 +670,8 @@ for (let pos of positionsSquelettes2) {
   
   this.anims.create({
     key: 'eau_anim',
-    frames: this.anims.generateFrameNumbers('eau', { start: 0, end: 3 }),
-    frameRate: 1,
+    frames: this.anims.generateFrameNumbers('eau', { start: 0, end: 2 }),
+    frameRate: 10,
     repeat: -1
   });
 
@@ -756,7 +756,7 @@ function update() {
 
 function collisEau(player, eau) {
 
-  if (eau.anims.currentFrame.index == 4) { // Par exemple, frame 2
+  if (eau.anims.currentFrame.index == 3) { // Par exemple, frame 2
     console.log("Collision avec l'eau !");
     return true;
   }
