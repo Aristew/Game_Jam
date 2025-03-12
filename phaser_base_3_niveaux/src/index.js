@@ -16,6 +16,7 @@ var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
+var musique_de_fond2;
 var box;
 var Squelettes1 = []; // Tableau pour stocker les squelettes a lance
 var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
@@ -50,10 +51,12 @@ class ScenePresentation extends Phaser.Scene {
 
   preload() {
     this.load.image('backgroundPres', 'src/assets/Battleground3.png'); // Charge ton image de fond
-    //this.load.audio('introMusic', 'assets/intro_music.mp3'); // Charge la musique
+    this.load.audio('background2', 'src/assets/the-shire--ambience--music--3-hours.mp3');
   }
 
   create() {
+    musique_de_fond2 = this.sound.add('background2');
+    musique_de_fond2.play();
     // Ajout de l'image de fond
     this.add.image(400, 500, 'backgroundPres').setScale(1.1);
 
@@ -98,8 +101,7 @@ class ScenePresentation extends Phaser.Scene {
       borderRadius: 10
     })
       .setInteractive()
-      .on('pointerdown', () => {
-        //this.music.stop(); // Coupe la musique
+      .on('pointerdown', () => {musique_de_fond2.stop(); // Coupe la musique
         this.scene.start('SceneJeu'); // Lance le jeu
       })
       .on('pointerover', () => {
