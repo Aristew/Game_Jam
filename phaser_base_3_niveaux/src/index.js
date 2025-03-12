@@ -285,8 +285,8 @@ class SceneJeu extends Phaser.Scene {
 
     plateforme.setCollisionByProperty({ estSolide: true });
     this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
-    this.esprit1 = this.add.sprite(832, 416, 'esprit'); // Position fixe
-
+    this.esprit1 = this.add.sprite(900, 416, 'esprit'); // Position fixe
+    this.esprit2 = this.add.sprite(1775, 285, 'esprit');
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
@@ -373,14 +373,14 @@ if (!this.anims.exists('anim_Sq_1D')) {
       });
     }
 
-    if (!this.anims.exists('phase1')) {
       this.anims.create({
         key: 'phase1',
+
         frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
         frameRate: 5,
         repeat: -1
       });
-    }
+    
     if (!this.anims.exists('anim_porte')) {
       this.anims.create({
         key: 'anim_porte',
@@ -392,7 +392,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
     
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
-  
+this.esprit2.play('phase1');
 
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
@@ -562,6 +562,53 @@ groupe_mineraux.setDepth(15);
 
     this.indexDialogue1 = 0;
     this.derniereParole1 = 0;
+
+    this.bulleTexte2 = this.add.text(400, 250, '...', {  // Texte vide au départ
+      fontSize: '16px',
+      fill: '#fff',
+      backgroundColor: '#000',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
+
+    this.dialogues2 = [
+      "Prends gardes",
+      "Tu ne sais pas nager",
+      "utilise un sort pour traverser l'eau"
+    ];
+
+    this.indexDialogue2 = 0;
+    this.derniereParole2 = 0;
+    this.joueurDansZone2 = false;
+
+    // Création du boss à la position 3400 / 100
+let boss = this.physics.add.sprite(300, 100, 'boss_marche_G');
+boss.setCollideWorldBounds(true);
+boss.setBounce(0);
+boss.body.setSize(40, 80);
+boss.body.setOffset(30, 0);
+boss.pv = 3; // Besoin de 3 balles pour mourir
+this.physics.add.collider(boss, plateforme);
+this.physics.add.overlap(player, boss, finDuJeu);
+
+
+// Jouer l'animation de marche droite au départ
+boss.anims.play('anim_boss_marche_D', true);
+let bossMovingRight = true;
+
+// Mouvement du boss (alterne gauche/droite)
+setInterval(() => {
+  if (!boss.body) return;
+  
+  if (bossMovingRight) {
+    boss.setVelocityX(50);
+    boss.anims.play('anim_boss_marche_D', true);
+  } else {
+    boss.setVelocityX(-50);
+    boss.anims.play('anim_boss_marche_G', true);
+  }
+  bossMovingRight = !bossMovingRight;
+}, 3000);
+
 
     // Positions prédéfinies pour les squelettes
     let positionsSquelettes1 = [
@@ -759,6 +806,10 @@ groupe_mineraux.setDepth(15);
       player.x, player.y,
       this.esprit1.x, this.esprit1.y
     );
+    const distance2 = Phaser.Math.Distance.Between(
+      player.x, player.y,
+      this.esprit2.x, this.esprit2.y
+    );
     if (distance1 < 100) {
     if (!this.joueurDansZone1) {  
         this.joueurDansZone1 = true;
@@ -787,31 +838,57 @@ groupe_mineraux.setDepth(15);
 }
 
 
-if (distance1 < 100) {
-  if (!this.joueurDansZone1) {  
-      this.joueurDansZone1 = true;
+if (distance < 100) {
+  if (!this.joueurDansZone) {  
+      this.joueurDansZone = true;
 
-      if (!this.anciennementDansZone1) { 
-          this.indexDialogue1 = 0;  // Ne réinitialise qu'à la première entrée
+      if (!this.anciennementDansZone) { 
+          this.indexDialogue = 0;  // Ne réinitialise qu'à la première entrée
       }
-      this.anciennementDansZone1 = true;
+      this.anciennementDansZone = true;
   }
 
-  if (time > this.derniereParole1 + 1500 && this.indexDialogue1 < this.dialogues1.length) { 
-      this.derniereParole1 = time;
-      this.bulleTexte1.setVisible(false);
+  if (time > this.derniereParole + 1500 && this.indexDialogue < this.dialogues.length) { 
+      this.derniereParole = time;
+      this.bulleTexte.setVisible(false);
 
       this.time.delayedCall(500, () => { 
-          this.bulleTexte1.setText(this.dialogues1[this.indexDialogue1]);
-          this.bulleTexte1.setPosition(this.esprit1.x, this.esprit1.y - 50);
-          this.bulleTexte1.setVisible(true); 
-          this.indexDialogue1++;
+          this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
+          this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+          this.bulleTexte.setVisible(true); 
+          this.indexDialogue++;
       });
   }
 } else {
-  this.joueurDansZone1 = false;
-  this.anciennementDansZone1 = false;  // Réinitialise seulement quand le joueur sort complètement
-  this.bulleTexte1.setVisible(false);
+  this.joueurDansZone = false;
+  this.anciennementDansZone = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte.setVisible(false);
+}
+if (distance2 < 100) {
+  if (!this.joueurDansZone2) {  
+      this.joueurDansZone2 = true;
+
+      if (!this.anciennementDansZone2) { 
+          this.indexDialogue2 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone2 = true;
+  }
+
+  if (time > this.derniereParole2 + 1500 && this.indexDialogue2 < this.dialogues2.length) { 
+      this.derniereParole2 = time;
+      this.bulleTexte2.setVisible(false);
+
+      this.time.delayedCall(500, () => { 
+          this.bulleTexte2.setText(this.dialogues2[this.indexDialogue2]);
+          this.bulleTexte2.setPosition(this.esprit2.x, this.esprit2.y - 50);
+          this.bulleTexte2.setVisible(true); 
+          this.indexDialogue2++;
+      });
+  }
+} else {
+  this.joueurDansZone2 = false;
+  this.anciennementDansZone2 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte2.setVisible(false);
 }
 
 
