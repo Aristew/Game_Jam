@@ -233,7 +233,7 @@ const plateforme = carteDuNiveau.createLayer(
 );
 
 plateforme.setCollisionByProperty({ estSolide: true }); 
-
+this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
@@ -241,7 +241,7 @@ player.setBounce(0);
 clavier = this.input.keyboard.createCursorKeys(); 
 
 // Créer l’esprit
-this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
+
 
 if (!this.anims.exists('anim_Sq_1D')) {
   this.anims.create({
