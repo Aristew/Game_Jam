@@ -239,7 +239,7 @@ const plateforme = carteDuNiveau.createLayer(
 );
 
 plateforme.setCollisionByProperty({ estSolide: true }); 
-
+this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
@@ -247,7 +247,7 @@ player.setBounce(0);
 clavier = this.input.keyboard.createCursorKeys(); 
 
 // Créer l’esprit
-this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
+
 
 // Créer l'animation de l'esprit
 if (!this.anims.exists('phase1')) {
@@ -431,7 +431,7 @@ for (let pos of positionsMineraux) {
   texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
   mettreAJourCompteur();
   
-  this.bulleTexte = this.add.text(400, 250, '', {  // Texte vide au départ
+  this.bulleTexte = this.add.text(400, 250, '...', {  // Texte vide au départ
     fontSize: '16px',
     fill: '#fff',
     backgroundColor: '#000',
@@ -439,10 +439,12 @@ for (let pos of positionsMineraux) {
 }).setOrigin(0.5).setVisible(false);
 
 this.dialogues = [
-    "Je suis un esprit...",
-    "Pourquoi es-tu ici ?",
-    "Le temps s’efface...",
-    "Tu entends les murmures ?"
+    "Je suis un esprit",
+    "je suis là pour te guider",
+    "Dans ce monde, il existe une multitude d'atomes",
+    "Combine les pour créer de puissants sorts",
+    "Mais prends garde",
+    "Les ressources sont rares"
 ];
 
 this.indexDialogue = 0;  
@@ -639,7 +641,7 @@ update(time) {
           // On met la bulle invisible pour éviter d'afficher "" ou "..."
           this.bulleTexte.setVisible(false);
 
-          this.time.delayedCall(1000, () => {
+          this.time.delayedCall(200, () => {
               this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
               this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
               this.bulleTexte.setVisible(true); // Affiche la bulle seulement avec du texte
