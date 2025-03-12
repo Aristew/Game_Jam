@@ -21,6 +21,7 @@ var Squelettes1 = []; // Tableau pour stocker les squelettes a lance
 var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
 var eaux;
 var collision;
+var porte;
 
 class ScenePresentation extends Phaser.Scene {
   constructor() {
@@ -184,6 +185,11 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
     frames: [{ key: "eau", frame: 4 }],
     frameRate: 20
   }); 
+  this.load.spritesheet("porte", "src/assets/spritesheet_porte.png", {
+    frameWidth: 96,
+    frameHeight: 120,
+  });
+
 }
 
 /***********************************************************************/
@@ -243,6 +249,29 @@ clavier = this.input.keyboard.createCursorKeys();
 // Créer l’esprit
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
 
+// Créer l'animation de l'esprit
+if (!this.anims.exists('phase1')) {
+  this.anims.create({
+    key: 'phase1',
+    frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
+    frameRate: 5,
+    repeat: -1
+  });
+}
+
+this.esprit.play('phase1');
+
+// Créer l'animation de la porte
+if (!this.anims.exists('anim_porte')) {
+  this.anims.create({
+    key: 'anim_porte',
+    frames: this.anims.generateFrameNumbers('porte', { start: 0, end: 5 }),
+    frameRate: 10,
+    repeat: -1
+});
+
+
+//Créer les Animations du Squellette 1
 if (!this.anims.exists('anim_Sq_1D')) {
   this.anims.create({
     key: 'anim_Sq_1D', 
@@ -279,16 +308,7 @@ this.anims.create({
 });
 }
 
-if (!this.anims.exists('phase1')) {
-  this.anims.create({
-    key: 'phase1',
-    frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
-    frameRate: 5,
-    repeat: -1
-  });
-}
 
-this.esprit.play('phase1');
 
   
 
@@ -338,7 +358,7 @@ if (!this.anims.exists('anim_face')) {
   box.setImmovable(true); // La box ne bougera pas si elle est touchée
   this.physics.add.collider(player, box); // Permet au joueur de rentrer en collision avec la box
   this.physics.add.collider(plateforme, box); // Permet au joueur de rentrer en collision avec la box
-
+  this.physics.add.collider(player, porte);
 
   // Liste des positions prédéfinies pour les minéraux
 let positionsMineraux = [
@@ -549,8 +569,23 @@ this.physics.add.collider(player, eaux, null, collisEau, this);
   //this.physics.add.overlap(player, eaux, collisEau, null, this);
   this.physics.add.collider(plateforme, eaux);
 
-}
+  // Créer la porte
+  porte = this.physics.add.sprite(630, 550, 'porte');
+  porte.setCollideWorldBounds(true);
+  this.physics.add.collider(porte, plateforme);
+  porte.setImmovable(true);
 
+
+  // Détecter si le joueur est près de la porte et appuie sur la touche espace
+  this.input.keyboard.on('keydown-SPACE', () => {
+    const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
+    if (distance < 50) { // Si le joueur est suffisamment proche de la porte
+      porte.anims.play('anim_porte', true);
+    }
+  });
+
+}
+}
 
 
 
