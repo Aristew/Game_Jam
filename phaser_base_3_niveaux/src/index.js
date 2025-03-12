@@ -580,7 +580,7 @@ groupe_mineraux.setDepth(15);
 
     // Gérer les collisions
 
-    //this.physics.add.overlap(player, eaux, collisEau, null, this);
+  
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
@@ -981,8 +981,7 @@ function finDuJeu() {
 
 function collisEau(player, eau) {
 
-  if (eau.anims.currentFrame.index == 3) { // Par exemple, frame 2
-    console.log("Collision avec l'eau !");
+  if (eau.anims.currentFrame.index == 4) { // Par exemple, frame 2
     return true;
   }
   return false;
