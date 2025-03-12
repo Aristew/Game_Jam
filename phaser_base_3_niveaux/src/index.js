@@ -459,6 +459,7 @@ this.physics.add.collider(player, plateforme);
     this.physics.add.collider(player, box); // Permet au joueur de rentrer en collision avec la box
     this.physics.add.collider(plateforme, box); // Permet au joueur de rentrer en collision avec la box
     this.physics.add.collider(player, porte);
+    
 
     // Liste des positions prédéfinies pour les minéraux
     let positionsMineraux = [
@@ -802,6 +803,7 @@ groupe_mineraux.setDepth(15);
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
     porte.setImmovable(true);
+    porte.setAlpha(0); 
 
 
     // Détecter si le joueur est près de la porte et appuie sur la touche espace
@@ -815,8 +817,10 @@ this.input.keyboard.on('keydown-SPACE', () => {
         musique_de_fond.stop();
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
       });
+     
   }
 });
+
 
   }
 }
@@ -1212,6 +1216,8 @@ function tirerProjectile(type, player, murs) {
       bullet.destroy();
       if (boss1.hp <= 0) {
         boss1.disableBody(true, true); // Désactiver le boss
+         // Mettre le flag à true pour indiquer que le boss est mort
+        porte.setAlpha(1); 
       };
     }
     );
