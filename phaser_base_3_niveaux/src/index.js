@@ -143,8 +143,11 @@ class SceneJeu extends Phaser.Scene {
     this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
     this.load.image("fond", "src/assets/fond.png");
 
-    box = this.load.image("box", "src/assets/box.png");
-
+    
+    box = this.load.spritesheet("box", "src/assets/box4.png", {
+      frameWidth: 48,
+      frameHeight: 48
+    });
     this.load.spritesheet("esprit", "src/assets/spirit.png", {
       frameWidth: 128,
       frameHeight: 128
@@ -383,6 +386,14 @@ if (!this.anims.exists('anim_Sq_1D')) {
         frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
         frameRate: 5,
         repeat: -1
+      });
+    }
+    if (!this.anims.exists('box_explosed')) {
+      this.anims.create({
+        key: 'box_explosed',
+        frames: this.anims.generateFrameNumbers('box', { start: 1, end: 7 }),
+        frameRate: 20,
+        repeat: 0
       });
     }
     
@@ -1175,6 +1186,7 @@ function tirerProjectile(type, player, murs) {
       bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
       break;
   }
+  
 
   // Ajouter la collision entre le projectile et les squelettes1
   Squelettes1.forEach(squelette1 => {
@@ -1214,12 +1226,20 @@ function tirerProjectile(type, player, murs) {
 
   // Collision avec une box
   scene.physics.add.overlap(bullet, box, () => {
-    if (type === "chaleur") {  // Vérifie si le projectile est de type "chaleur"
-      son_explo.play();
-      box.disableBody(true, true); // Désactive la box
+    if (bullet.texture.key === "bullet_chaleur") {  
+        son_explo.play();
+        
+        // Joue l'animation d'explosion
+        box.anims.play('box_explosed', true);
+
+        // Attends la fin de l'animation avant de désactiver la box
+        box.on('animationcomplete', () => {
+          box.disableBody(true, true); 
+      });
     }
-    bullet.destroy();
-  });
+
+    bullet.destroy(); // Détruit le projectile immédiatement après l'impact
+});
   scene.physics.add.overlap(bullet, eaux, () => {
     if (type === "congelation") {  // Vérifie si le projectile est de type "chaleur"
       devientGlace = true;
