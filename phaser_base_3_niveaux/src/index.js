@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 100, "jaune_clair": 100, "rose": 100, "violet": 100, "blanc": 100, "orange": 100 };
+var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -23,6 +23,7 @@ var eaux;
 var collision;
 var porte;
 var devientGlace = false;
+var boss;
 
 let texteSorts;
 let styleSorts = {
@@ -198,6 +199,22 @@ class SceneJeu extends Phaser.Scene {
       frameWidth: 96,
       frameHeight: 120,
     });
+    this.load.spritesheet("boss_attack_D", "src/assets/boss_attacking_D.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_attack_G", "src/assets/boss_attacking_G.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_marche_D", "src/assets/boss_idle_D.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_marche_G", "src/assets/boss_idle_G.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
 
   }
 
@@ -260,8 +277,39 @@ player.setDepth(9);
 
 
 clavier = this.input.keyboard.createCursorKeys(); 
-
-
+// Création des animations du boss
+if (!this.anims.exists('anim_boss_marche_D')) {
+  this.anims.create({
+    key: 'anim_boss_marche_D',
+    frames: this.anims.generateFrameNumbers('boss_marche_D', { start: 0, end: 3 }),
+    frameRate: 5,
+    repeat: -1
+  });
+}
+  if (!this.anims.exists('anim_boss_marche_G')) {
+    this.anims.create({
+      key: 'anim_boss_marche_G',
+      frames: this.anims.generateFrameNumbers('boss_marche_G', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: -1
+    });
+  }
+  if (!this.anims.exists('anim_boss_attack_D')) {
+    this.anims.create({
+      key: 'anim_boss_attack_D',
+      frames: this.anims.generateFrameNumbers('boss_attack_D', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: -1
+    });
+  }
+  if (!this.anims.exists('anim_boss_attack_G')) {
+    this.anims.create({
+      key: 'anim_boss_attack_G',
+      frames: this.anims.generateFrameNumbers('boss_attack_G', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: -1
+    });
+  }
 
 
 if (!this.anims.exists('anim_Sq_1D')) {
@@ -519,17 +567,23 @@ groupe_mineraux.setDepth(15);
 
       // Boucle simple pour alterner le déplacement
       let movingRight = true;
+      
+      if(squelette1) {
       setInterval(() => {
+        if (!squelette1.body) return; // Vérifier si le squelette est encore actif
         if (movingRight) {
           squelette1.setVelocityX(50); // Déplace à droite
           squelette1.anims.play('anim_Sq_1D', true);
         } else {
+          if(squelette1.body!=false) {
           squelette1.setVelocityX(-50); // Déplace à gauche
+          }
           squelette1.anims.play('anim_Sq_1G', true);
         }
         movingRight = !movingRight;
       }, 3000); // Change de direction toutes les 3 secondes
     }
+  
 
     // Créer les squelettes2
     for (let pos of positionsSquelettes2) {
@@ -544,8 +598,11 @@ groupe_mineraux.setDepth(15);
       squelette2.anims.play('anim_Sq_2D', true);
 
       // Boucle simple pour alterner le déplacement
+      
+      if(squelette2) {
       let movingRight = true;
       setInterval(() => {
+        if (!squelette2.body) return; // Vérifier si le squelette est encore actif
         if (movingRight) {
           squelette2.setVelocityX(50); // Déplace à droite
           squelette2.anims.play('anim_Sq_2D', true);
@@ -614,7 +671,8 @@ groupe_mineraux.setDepth(15);
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
-    porte = this.physics.add.sprite(630, 550, 'porte');
+    porte = this.physics.add.sprite(6300, 300, 'porte');
+    porte.body.setSize(96, 90);
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
     porte.setImmovable(true);
@@ -634,7 +692,8 @@ groupe_mineraux.setDepth(15);
     });
 
   }
-
+}
+  }
 
 
 
@@ -1023,7 +1082,7 @@ function finDuJeu() {
     .setInteractive()
     .on('pointerdown', () => {
       // Réinitialisation complète des variables du jeu
-      compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
+      compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
       gameOver = false;
       scene.scene.restart();
     });
