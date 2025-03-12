@@ -623,7 +623,34 @@ groupe_mineraux.setDepth(15);
     this.indexDialogue4 = 0;
     this.derniereParole4 = 0;
 
+    // Création du boss à la position 3400 / 100
+let boss = this.physics.add.sprite(300, 100, 'boss_marche_G');
+boss.setCollideWorldBounds(true);
+boss.setBounce(0);
+boss.body.setSize(40, 80);
+boss.body.setOffset(30, 0);
+boss.pv = 3; // Besoin de 3 balles pour mourir
+this.physics.add.collider(boss, plateforme);
+this.physics.add.overlap(player, boss, finDuJeu);
 
+
+// Jouer l'animation de marche droite au départ
+boss.anims.play('anim_boss_marche_D', true);
+let bossMovingRight = true;
+
+// Mouvement du boss (alterne gauche/droite)
+setInterval(() => {
+  if (!boss.body) return;
+  
+  if (bossMovingRight) {
+    boss.setVelocityX(50);
+    boss.anims.play('anim_boss_marche_D', true);
+  } else {
+    boss.setVelocityX(-50);
+    boss.anims.play('anim_boss_marche_G', true);
+  }
+  bossMovingRight = !bossMovingRight;
+}, 3000);
 
 
     // Positions prédéfinies pour les squelettes
@@ -1030,6 +1057,7 @@ if (distance3 < 100) {
   }
 }
 
+
 class EcranRemerciements extends Phaser.Scene {
   constructor() {
       super({ key: 'EcranRemerciements' });
@@ -1085,7 +1113,6 @@ class EcranRemerciements extends Phaser.Scene {
       });
   }
 }
-
 
 var config = {
   type: Phaser.AUTO,
