@@ -728,7 +728,6 @@ groupe_mineraux.setDepth(15);
   /***********************************************************************/
 
   update(time) {
-    texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
     if (this.physics.world.collide(player, pic)) {
       finDuJeu();
     } 
