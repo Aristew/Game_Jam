@@ -465,16 +465,16 @@ this.physics.add.collider(player, plateforme);
       
       { x: 2700, y: 350, type: "orange" },
       { x: 3200, y: 400, type: "jaune_clair" },
-      { x: 3500, y: 420, type: "rose" },
+      { x: 3500, y: 100, type: "rose" },
       { x: 3100, y: 350, type: "orange" },
       { x: 3400, y: 400, type: "jaune_clair" },
-      { x: 4000, y: 420, type: "rose" },
+      { x: 4000, y: 100, type: "rose" },
       { x: 4100, y: 100, type: "violet" },
       { x: 4300, y: 480, type: "blanc" },
       { x: 4600, y: 500, type: "rouge" },
-      { x: 5000, y: 350, type: "rose" },
+      { x: 5000, y: 100, type: "rose" },
       { x: 5400, y: 400, type: "jaune_clair" },
-      { x: 5800, y: 400, type: "rose" },
+      { x: 5800, y: 100, type: "rose" },
       { x: 6400, y: 400, type: "violet" },
       { x: 6400, y: 400, type: "blanc" },
       { x: 6400, y: 400, type: "orange" }
@@ -753,7 +753,6 @@ groupe_mineraux.setDepth(15);
     }
     if (clavier.up.isDown && player.body.blocked.down) {
       player.setVelocityY(-300);
-      son_jump.play();
     }
     
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
@@ -1156,6 +1155,9 @@ function lancerAttaque(type) {
 
   if (attaque.elements.every(e => compteurMineraux[e] > 0)) {
     attaque.elements.forEach(e => compteurMineraux[e]--);
+    if (type === "tempete") {
+      son_jump.play();
+    }
     son_spell.play()
     // Mise à jour de l'affichage des minéraux
     texteCompteur.setText(`🔮 Réserve d'Alchimiste 🔮\n🔥 Oxygène: ${compteurMineraux["rouge"]}  ⚡ Fer: ${compteurMineraux["jaune_clair"]}  💧 Hydrogène: ${compteurMineraux["rose"]}\n🌌 Sodium: ${compteurMineraux["violet"]}  ❄️ Chlore: ${compteurMineraux["blanc"]}  🏺 Silicium: ${compteurMineraux["orange"]}`);
