@@ -23,6 +23,7 @@ var eaux;
 var collision;
 var porte;
 var devientGlace = false;
+var boss;
 
 let texteSorts;
 let styleSorts = {
@@ -198,6 +199,22 @@ class SceneJeu extends Phaser.Scene {
       frameWidth: 96,
       frameHeight: 120,
     });
+    this.load.spritesheet("boss_attack_D", "src/assets/boss_attacking_D.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_attack_G", "src/assets/boss_attacking_G.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_marche_D", "src/assets/boss_idle_D.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_marche_G", "src/assets/boss_idle_G.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
 
   }
 
@@ -257,8 +274,39 @@ player.setCollideWorldBounds(true);
 player.setBounce(0); 
 player.setDepth(9);
 clavier = this.input.keyboard.createCursorKeys(); 
-
-
+// Création des animations du boss
+if (!this.anims.exists('anim_boss_marche_D')) {
+  this.anims.create({
+    key: 'anim_boss_marche_D',
+    frames: this.anims.generateFrameNumbers('boss_marche_D', { start: 0, end: 3 }),
+    frameRate: 5,
+    repeat: -1
+  });
+}
+  if (!this.anims.exists('anim_boss_marche_G')) {
+    this.anims.create({
+      key: 'anim_boss_marche_G',
+      frames: this.anims.generateFrameNumbers('boss_marche_G', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: -1
+    });
+  }
+  if (!this.anims.exists('anim_boss_attack_D')) {
+    this.anims.create({
+      key: 'anim_boss_attack_D',
+      frames: this.anims.generateFrameNumbers('boss_attack_D', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: -1
+    });
+  }
+  if (!this.anims.exists('anim_boss_attack_G')) {
+    this.anims.create({
+      key: 'anim_boss_attack_G',
+      frames: this.anims.generateFrameNumbers('boss_attack_G', { start: 0, end: 3 }),
+      frameRate: 5,
+      repeat: -1
+    });
+  }
 
 if (!this.anims.exists('anim_Sq_1D')) {
     this.anims.create({
@@ -618,7 +666,8 @@ groupe_mineraux.setDepth(15);
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
-    porte = this.physics.add.sprite(630, 550, 'porte');
+    porte = this.physics.add.sprite(6300, 300, 'porte');
+    porte.body.setSize(96, 90);
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
     porte.setImmovable(true);
