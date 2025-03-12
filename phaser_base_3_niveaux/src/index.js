@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 100, "jaune_clair": 100, "rose": 100, "violet": 100, "blanc": 100, "orange": 100 };
+var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -1077,7 +1077,7 @@ function finDuJeu() {
     .setInteractive()
     .on('pointerdown', () => {
       // Réinitialisation complète des variables du jeu
-      compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
+      compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
       gameOver = false;
       scene.scene.restart();
     });
