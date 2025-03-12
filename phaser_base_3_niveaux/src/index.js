@@ -248,11 +248,12 @@ clavier = this.input.keyboard.createCursorKeys();
 
 
 
-
+if (!this.anims.exists('anim_Sq_1D')) {
     this.anims.create({
       key: "eau_glace",
       frames: [{ key: "eau", frame: 3 }]
     }); 
+  }
 
     if (!this.anims.exists('anim_Sq_1D')) {
       this.anims.create({
@@ -585,8 +586,9 @@ groupe_mineraux.setDepth(15);
     collision = this.physics.add.collider(player, eaux);
     eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_anim'); });
 
-    // Gérer les collision
-    //this.physics.add.overlap(player, eaux, collisEau, null, this);
+    // Gérer les collisions
+
+  
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
@@ -987,8 +989,7 @@ function finDuJeu() {
 
 function collisEau(player, eau) {
 
-  if (eau.anims.currentFrame.index == 3) { // Par exemple, frame 2
-    console.log("Collision avec l'eau !");
+  if (eau.anims.currentFrame.index == 4) { // Par exemple, frame 2
     return true;
   }
   return false;
