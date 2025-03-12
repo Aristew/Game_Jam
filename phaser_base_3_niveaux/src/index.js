@@ -597,7 +597,9 @@ groupe_mineraux.setDepth(15);
     this.dialogues2 = [
         "Prends garde",
         "Tu ne sais pas nager",
-        "Utilise un sort pour traverser l'eau"
+        "Utilise un sort pour traverser l'eau",
+        "tout au long de ton aventure",
+        "tu pourras interragir avec le monde avec tes sorts"
     ];
 
     this.indexDialogue2 = 0;
@@ -1232,12 +1234,10 @@ function tirerProjectile(type, player, murs) {
 
   // Collision avec une box
   scene.physics.add.overlap(bullet, box, () => {
-    if (bullet.texture.key === "bullet_chaleur") {  
-        son_explo.play();
-        
+    if (bullet.texture.key === "bullet_chaleur") { 
         // Joue l'animation d'explosion
         box.anims.play('box_explosed', true);
-
+        son_explo.play();
         // Attends la fin de l'animation avant de désactiver la box
         box.on('animationcomplete', () => {
           box.disableBody(true, true); 
