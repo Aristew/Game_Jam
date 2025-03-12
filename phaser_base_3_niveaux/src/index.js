@@ -602,7 +602,7 @@ groupe_mineraux.setDepth(15);
     ];
     
     let positionsboss = [
-      { x: 400, y: 100 },
+      { x: 4300, y: 100 },
     ]
     for (let pos of positionsboss) {
       let boss1 = this.physics.add.sprite(pos.x, pos.y, 'boss_marche_D');
