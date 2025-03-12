@@ -663,7 +663,7 @@ groupe_mineraux.setDepth(15);
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
     }
-    if (player.x > 450) {
+    if (player.x > 900) {
       texteSorts.setVisible(true);
       texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Tempête | R - Foudre | T - Chaleur");
 
