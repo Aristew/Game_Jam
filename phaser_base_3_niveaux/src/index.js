@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 3, "jaune_clair": 3, "rose": 3, "violet": 3, "blanc": 3, "orange": 3 };
+var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -287,6 +287,8 @@ class SceneJeu extends Phaser.Scene {
     this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
     this.esprit1 = this.add.sprite(900, 416, 'esprit'); // Position fixe
     this.esprit2 = this.add.sprite(1775, 285, 'esprit');
+    this.esprit3 = this.add.sprite(2650, 475, 'esprit');
+    this.esprit4 = this.add.sprite(3936, 384, 'esprit');
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
@@ -395,6 +397,8 @@ if (!this.anims.exists('anim_Sq_1D')) {
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
 this.esprit2.play('phase1');
+this.esprit3.play('phase1');
+this.esprit4.play('phase1');
 
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
@@ -465,8 +469,8 @@ this.physics.add.collider(player, plateforme);
       { x: 2400, y: 250, type: "rose" },
       
       { x: 2700, y: 350, type: "orange" },
-      { x: 3200, y: 400, type: "jaune_clair" },
-      { x: 3500, y: 100, type: "rose" },
+      { x: 3200, y: 400, type: "rouge" },
+      { x: 3500, y: 100, type: "rouge" },
       { x: 3100, y: 350, type: "orange" },
       { x: 3400, y: 400, type: "orange" },
       { x: 4075, y: 100, type: "rose" },
@@ -585,7 +589,39 @@ groupe_mineraux.setDepth(15);
 
     this.indexDialogue2 = 0;
     this.derniereParole2 = 0;
-    this.joueurDansZone2 = false;
+  
+    this.bulleTexte3 = this.add.text(400, 250, '...', {  // Texte vide au départ
+      fontSize: '16px',
+      fill: '#fff',
+      backgroundColor: '#000',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
+
+    this.dialogues3 = [
+      "Prends garde",
+      "certains monstres sont appelés boss ou élites",
+      "Ils ont plusieurs points de vie",
+      "mais tu as maintenant des sorts puissants à ton arsenal"
+    ];
+
+    this.indexDialogue3 = 0;
+    this.derniereParole3 = 0;
+
+    this.bulleTexte4 = this.add.text(400, 250, '...', {  // Texte vide au départ
+      fontSize: '16px',
+      fill: '#fff',
+      backgroundColor: '#000',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
+
+    this.dialogues4 = [
+      "C'est trop haut",
+      "utilise un sort pour sauter plus haut",
+      "mais prends garde un boss t'attend derrière le mur"
+    ];
+
+    this.indexDialogue4 = 0;
+    this.derniereParole4 = 0;
 
 
 
@@ -851,6 +887,40 @@ this.input.keyboard.on('keydown-SPACE', () => {
       player.x, player.y,
       this.esprit2.x, this.esprit2.y
     );
+    const distance3 = Phaser.Math.Distance.Between(
+      player.x, player.y,
+      this.esprit3.x, this.esprit3.y
+    );
+    const distance4 = Phaser.Math.Distance.Between(
+      player.x, player.y,
+      this.esprit4.x, this.esprit4.y
+    );
+    if (distance4 < 100) {
+  if (!this.joueurDansZone4) {  
+      this.joueurDansZone4 = true;
+
+      if (!this.anciennementDansZone4) { 
+          this.indexDialogue4 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone4 = true;
+  }
+
+  if (time > this.derniereParole4 + 2000 && this.indexDialogue4 < this.dialogues4.length) { 
+      this.derniereParole4 = time;
+      this.bulleTexte4.setVisible(false);
+
+      this.time.delayedCall(500, () => { 
+          this.bulleTexte4.setText(this.dialogues4[this.indexDialogue4]);
+          this.bulleTexte4.setPosition(this.esprit4.x, this.esprit4.y - 50);
+          this.bulleTexte4.setVisible(true); 
+          this.indexDialogue4++;
+      });
+  }
+} else {
+  this.joueurDansZone4 = false;
+  this.anciennementDansZone4 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte4.setVisible(false);
+}
     if (distance1 < 100) {
     if (!this.joueurDansZone1) {  
         this.joueurDansZone1 = true;
@@ -861,7 +931,7 @@ this.input.keyboard.on('keydown-SPACE', () => {
         this.anciennementDansZone1 = true;
     }
 
-    if (time > this.derniereParole1 + 1500 && this.indexDialogue1 < this.dialogues1.length) { 
+    if (time > this.derniereParole1 + 2000 && this.indexDialogue1 < this.dialogues1.length) { 
         this.derniereParole1 = time;
         this.bulleTexte1.setVisible(false);
 
@@ -889,7 +959,7 @@ if (distance < 100) {
       this.anciennementDansZone = true;
   }
 
-  if (time > this.derniereParole + 1500 && this.indexDialogue < this.dialogues.length) { 
+  if (time > this.derniereParole + 2000 && this.indexDialogue < this.dialogues.length) { 
       this.derniereParole = time;
       this.bulleTexte.setVisible(false);
 
@@ -915,7 +985,7 @@ if (distance2 < 100) {
       this.anciennementDansZone2 = true;
   }
 
-  if (time > this.derniereParole2 + 1500 && this.indexDialogue2 < this.dialogues2.length) { 
+  if (time > this.derniereParole2 + 2000 && this.indexDialogue2 < this.dialogues2.length) { 
       this.derniereParole2 = time;
       this.bulleTexte2.setVisible(false);
 
