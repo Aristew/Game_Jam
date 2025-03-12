@@ -28,17 +28,17 @@ class ScenePresentation extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('background', 'assets/fantasy_bg.jpg'); // Charge ton image de fond
-    this.load.audio('introMusic', 'assets/intro_music.mp3'); // Charge la musique
+    //this.load.image('background', 'assets/fantasy_bg.jpg'); // Charge ton image de fond
+    //this.load.audio('introMusic', 'assets/intro_music.mp3'); // Charge la musique
   }
 
   create() {
     // Ajout de l'image de fond
-    this.add.image(400, 300, 'background').setScale(1.1);
+    //this.add.image(400, 300, 'background').setScale(1.1);
 
     // Lance la musique d'ambiance
-    this.music = this.sound.add('introMusic', { loop: true, volume: 0.5 });
-    this.music.play();
+    //this.music = this.sound.add('introMusic', { loop: true, volume: 0.5 });
+    //this.music.play();
 
     // Titre du jeu avec effet de fondu
     let titre = this.add.text(400, 120, "Mystic Alchemy", {
