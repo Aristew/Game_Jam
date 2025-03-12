@@ -665,7 +665,8 @@ groupe_mineraux.setDepth(15);
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
-    porte = this.physics.add.sprite(630, 550, 'porte');
+    porte = this.physics.add.sprite(6300, 300, 'porte');
+    porte.body.setSize(96, 90);
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
     porte.setImmovable(true);
