@@ -248,11 +248,12 @@ clavier = this.input.keyboard.createCursorKeys();
 
 
 
-
+if (!this.anims.exists('anim_Sq_1D')) {
     this.anims.create({
       key: "eau_glace",
       frames: [{ key: "eau", frame: 3 }]
     }); 
+  }
 
     if (!this.anims.exists('anim_Sq_1D')) {
       this.anims.create({
