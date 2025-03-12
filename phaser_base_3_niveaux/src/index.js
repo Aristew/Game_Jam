@@ -236,6 +236,7 @@ class SceneJeu extends Phaser.Scene {
     //this.physics.world.setBounds(0, 0, 3200, 640);
     //  ajout du champs de la caméra de taille identique à celle du monde
     //this.cameras.main.setBounds(0, 0, 3200, 640);
+    
     scene = this;
     this.add.image(2384, 320, "fond");
     const carteDuNiveau = this.add.tilemap("carte");
@@ -273,6 +274,8 @@ player.index=100;
 player.setCollideWorldBounds(true); 
 player.setBounce(0); 
 player.setDepth(9);
+
+
 clavier = this.input.keyboard.createCursorKeys(); 
 // Création des animations du boss
 if (!this.anims.exists('anim_boss_marche_D')) {
@@ -307,6 +310,7 @@ if (!this.anims.exists('anim_boss_marche_D')) {
       repeat: -1
     });
   }
+
 
 if (!this.anims.exists('anim_Sq_1D')) {
     this.anims.create({
@@ -367,6 +371,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
         repeat: 0
       });
     }
+    
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
   
@@ -698,7 +703,7 @@ groupe_mineraux.setDepth(15);
 
   update(time) {
     //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
-
+    
     if (clavier.right.isDown) {
       player.setVelocityX(220);
       player.anims.play('anim_tourne_droite', true);
@@ -1124,11 +1129,9 @@ function finDuJeu() {
 }
 
 function collisEau(player, eau) {
-  console.log("collision"+ eau.anims.currentFrame.index);
     
   if (  eau.estGlace== true)
    { // Par exemple, frame 2
-    console.log("collision");
     return true;
   }
   return false;
