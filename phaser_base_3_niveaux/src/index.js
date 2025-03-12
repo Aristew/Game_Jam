@@ -237,7 +237,7 @@ class SceneJeu extends Phaser.Scene {
 
     plateforme.setCollisionByProperty({ estSolide: true });
     this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
-    this.esprit1 = this.add.sprite(704, 512, 'esprit'); // Position fixe
+    this.esprit1 = this.add.sprite(832, 416, 'esprit'); // Position fixe
 
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
@@ -459,12 +459,9 @@ groupe_mineraux.setDepth(15);
     }).setOrigin(0.5).setVisible(false);
 
     this.dialogues1 = [
-      "Je suis un esprit",
-      "je suis là pour te guider",
-      "Dans ce monde, il existe une multitude d'atomes",
-      "Combine les pour créer de puissants sorts",
-      "Mais prends garde",
-      "Les ressources sont rares"
+      "Fais attention",
+      "Il y a des squelettes",
+      "combines les atomes pour créer un sort"
     ];
 
     this.indexDialogue1 = 0;
@@ -653,52 +650,60 @@ groupe_mineraux.setDepth(15);
       this.esprit1.x, this.esprit1.y
     );
     if (distance1 < 100) {
-      if (!this.joueurDansZone) {
-        this.joueurDansZone = true;
-        this.indexDialogue1 = 0;  // Recommence toujours du début à l’entrée
-      }
+    if (!this.joueurDansZone1) {  
+        this.joueurDansZone1 = true;
 
-      if (time > this.derniereParole1 + 3000 && this.indexDialogue1 < this.dialogues1.length) {
-        this.derniereParole1 = time;
-
-        // On met la bulle invisible pour éviter d'afficher "" ou "..."
-        this.bulleTexte.setVisible(false);
-
-        this.time.delayedCall(200, () => {
-          this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
-          this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
-          this.bulleTexte.setVisible(true); // Affiche la bulle seulement avec du texte
-          this.indexDialogue++;
-        });
-      }
-    } else {
-      this.joueurDansZone = false;
-      this.bulleTexte.setVisible(false);
+        if (!this.anciennementDansZone1) { 
+            this.indexDialogue1 = 0;  // Ne réinitialise qu'à la première entrée
+        }
+        this.anciennementDansZone1 = true;
     }
 
-    if (distance < 100) {
-      if (!this.joueurDansZone) {
-        this.joueurDansZone = true;
-        this.indexDialogue = 0;  // Recommence toujours du début à l’entrée
-      }
-
-      if (time > this.derniereParole + 3000 && this.indexDialogue < this.dialogues.length) {
-        this.derniereParole = time;
-
-        // On met la bulle invisible pour éviter d'afficher "" ou "..."
+    if (time > this.derniereParole1 + 1500 && this.indexDialogue1 < this.dialogues1.length) { 
+        this.derniereParole1 = time;
         this.bulleTexte1.setVisible(false);
 
-        this.time.delayedCall(200, () => {
+        this.time.delayedCall(500, () => { 
+            this.bulleTexte1.setText(this.dialogues1[this.indexDialogue1]);
+            this.bulleTexte1.setPosition(this.esprit1.x, this.esprit1.y - 50);
+            this.bulleTexte1.setVisible(true); 
+            this.indexDialogue1++;
+        });
+    }
+} else {
+    this.joueurDansZone1 = false;
+    this.anciennementDansZone1 = false;  // Réinitialise seulement quand le joueur sort complètement
+    this.bulleTexte1.setVisible(false);
+}
+
+
+if (distance1 < 100) {
+  if (!this.joueurDansZone1) {  
+      this.joueurDansZone1 = true;
+
+      if (!this.anciennementDansZone1) { 
+          this.indexDialogue1 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone1 = true;
+  }
+
+  if (time > this.derniereParole1 + 1500 && this.indexDialogue1 < this.dialogues1.length) { 
+      this.derniereParole1 = time;
+      this.bulleTexte1.setVisible(false);
+
+      this.time.delayedCall(500, () => { 
           this.bulleTexte1.setText(this.dialogues1[this.indexDialogue1]);
           this.bulleTexte1.setPosition(this.esprit1.x, this.esprit1.y - 50);
-          this.bulleTexte1.setVisible(true); // Affiche la bulle seulement avec du texte
+          this.bulleTexte1.setVisible(true); 
           this.indexDialogue1++;
-        });
-      }
-    } else {
-      this.joueurDansZone = false;
-      this.bulleTexte1.setVisible(false);
-    }
+      });
+  }
+} else {
+  this.joueurDansZone1 = false;
+  this.anciennementDansZone1 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte1.setVisible(false);
+}
+
 
     if(devientGlace){
       eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_glace'); });    }
