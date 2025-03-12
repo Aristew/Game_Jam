@@ -494,15 +494,15 @@ groupe_mineraux.setDepth(15);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
   
   this.input.keyboard.on("keydown-A", () => 
-    lancerAttaque("explosion"));
+    lancerAttaque("explosion", plateforme));
   this.input.keyboard.on("keydown-Z", () => 
-    lancerAttaque("congelation"));
+    lancerAttaque("congelation", plateforme));
   this.input.keyboard.on("keydown-E", () => 
-    lancerAttaque("tempete"));
+    lancerAttaque("tempete", plateforme));
   this.input.keyboard.on("keydown-R", () => 
-    lancerAttaque("foudre"));
+    lancerAttaque("foudre", plateforme));
   this.input.keyboard.on("keydown-T", () => 
-    lancerAttaque("chaleur"));
+    lancerAttaque("chaleur", plateforme));
 
     this.physics.add.collider(groupe_mineraux, plateforme);
 
@@ -873,7 +873,7 @@ var config = {
   scene: [ScenePresentation, SceneJeu]
 };
 
-function tirerProjectile(type, player) {
+function tirerProjectile(type, player, murs) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
   var projectiles = {
     "explosion": 'bullet_explosion',
@@ -936,6 +936,9 @@ function tirerProjectile(type, player) {
     });
   });
 
+  scene.physics.add.collider(bullet, murs, function(bullet) {
+    bullet.destroy(); // Exemple : Supprime la balle en cas de collision
+  });
 
   // Collision avec une box
   scene.physics.add.overlap(bullet, box, () => {
@@ -974,7 +977,7 @@ function mettreAJourCompteur() {
 
 
 
-function lancerAttaque(type) {
+function lancerAttaque(type, plat) {
   let attaques = {
     "explosion": {
       elements: ["jaune_clair", "rouge"],
@@ -1013,7 +1016,7 @@ function lancerAttaque(type) {
     afficherMessage(`✨ ${attaque.effet} ! ✨`);
 
     // Lancement du projectile correspondant
-    tirerProjectile(type, player);
+    tirerProjectile(type, player, plat);
   } else {
     afficherMessage("⚠️ Pas assez d'essences magiques !");
   }
