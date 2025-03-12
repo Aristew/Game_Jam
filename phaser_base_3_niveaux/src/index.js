@@ -24,6 +24,7 @@ var collision;
 var porte;
 var devientGlace = false;
 var boss;
+var pic;
 
 let texteSorts;
 let styleSorts = {
@@ -154,6 +155,7 @@ class SceneJeu extends Phaser.Scene {
       frameHeight: 50,
 
     });
+    this.load.image("pique", "src/assets/pique.png");
     this.load.image("bullet_congelation", "src/assets/boule_de_neige.png");
     this.load.image("bullet_tempete", "src/assets/sable.png");
     this.load.image("bullet_foudre", "src/assets/foudre.png");
@@ -649,7 +651,7 @@ groupe_mineraux.setDepth(15);
       this.anims.create({
         key: 'eau_anim',
         frames: this.anims.generateFrameNumbers('eau', { start: 0, end: 2 }),
-        frameRate: 1,
+        frameRate: 10,
         repeat: -1
       });
     }
@@ -658,9 +660,10 @@ groupe_mineraux.setDepth(15);
     eaux = this.physics.add.staticGroup({
       key: 'eau',
       repeat: 1,
-      setXY: { x: 2016, y: 352 }
+      setXY: { x: 2016, y: 360 }
     });
-
+    pic = this.physics.add.sprite(2016,375 , 'pique');
+    this.physics.add.collider(pic, plateforme);
     this.physics.add.collider(player, eaux, null, collisEau, this);
     
     eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_anim');eau.estGlace=false });
@@ -703,7 +706,9 @@ groupe_mineraux.setDepth(15);
 
   update(time) {
     //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
-    
+    if (this.physics.world.collide(player, pic)) {
+      finDuJeu();
+    }
     if (clavier.right.isDown) {
       player.setVelocityX(220);
       player.anims.play('anim_tourne_droite', true);
