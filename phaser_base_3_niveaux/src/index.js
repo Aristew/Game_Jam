@@ -363,7 +363,9 @@ this.physics.add.collider(player, plateforme);
     let positionsMineraux = [
       { x: 450, y: 300, type: "rouge" },
       { x: 550, y: 310, type: "violet" },
+      { x: 980, y: 350, type: "rouge" },
       { x: 485, y: 300, type: "blanc" },
+      { x: 980, y: 350, type: "rose" },
       { x: 650, y: 250, type: "blanc" },
       { x: 900, y: 275, type: "rose" },
       { x: 2400, y: 250, type: "blanc" },
