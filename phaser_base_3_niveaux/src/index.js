@@ -12,10 +12,11 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
+var compteurMineraux = { "rouge": 3, "jaune_clair": 3, "rose": 3, "violet": 3, "blanc": 3, "orange": 3 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
+var musique_de_fond2;
 var box;
 var Squelettes1 = []; // Tableau pour stocker les squelettes a lance
 var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
@@ -50,10 +51,12 @@ class ScenePresentation extends Phaser.Scene {
 
   preload() {
     this.load.image('backgroundPres', 'src/assets/Battleground3.png'); // Charge ton image de fond
-    //this.load.audio('introMusic', 'assets/intro_music.mp3'); // Charge la musique
+    this.load.audio('background2', 'src/assets/the-shire--ambience--music--3-hours.mp3');
   }
 
   create() {
+    musique_de_fond2 = this.sound.add('background2');
+    musique_de_fond2.play();
     // Ajout de l'image de fond
     this.add.image(400, 500, 'backgroundPres').setScale(1.1);
 
@@ -98,8 +101,7 @@ class ScenePresentation extends Phaser.Scene {
       borderRadius: 10
     })
       .setInteractive()
-      .on('pointerdown', () => {
-        //this.music.stop(); // Coupe la musique
+      .on('pointerdown', () => {musique_de_fond2.stop(); // Coupe la musique
         this.scene.start('SceneJeu'); // Lance le jeu
       })
       .on('pointerover', () => {
@@ -443,34 +445,34 @@ this.physics.add.collider(player, plateforme);
     // Liste des positions prédéfinies pour les minéraux
     let positionsMineraux = [
       { x: 450, y: 300, type: "rouge" },
-      { x: 550, y: 310, type: "violet" },
-      { x: 980, y: 350, type: "rouge" },
-      { x: 485, y: 300, type: "blanc" },
-      { x: 980, y: 350, type: "rose" },
-      { x: 650, y: 250, type: "blanc" },
+      { x: 485, y: 310, type: "rose" },
+      { x: 550, y: 350, type: "jaune_clair" },
+      { x: 515, y: 300, type: "rose" },
+      { x: 650, y: 350, type: "rouge" },
+      { x: 700, y: 250, type: "jaune_clair" },
       { x: 900, y: 275, type: "rose" },
-      { x: 2400, y: 250, type: "blanc" },
+      { x: 750, y: 250, type: "rouge" },
       { x: 1550, y: 275, type: "rose" },
-      { x: 1050, y: 320, type: "violet" },
-      { x: 700, y: 280, type: "orange" },
-      { x: 550, y: 310, type: "jaune_clair" },
-      { x: 2700, y: 350, type: "rouge" },
+      { x: 1050, y: 320, type: "rouge" },
+      
       { x: 1300, y: 320, type: "violet" },
-      { x: 1800, y: 280, type: "orange" },
-      { x: 1850, y: 310, type: "jaune_clair" },
+      { x: 1550, y: 275, type: "blanc" },
+      { x: 1800, y: 280, type: "violet" },
+      { x: 1850, y: 310, type: "blanc" },
       { x: 2350, y: 300, type: "rouge" },
-      { x: 2400, y: 250, type: "blanc" },
-      { x: 1550, y: 275, type: "rose" },
-      { x: 1050, y: 320, type: "violet" },
-      { x: 700, y: 280, type: "orange" },
-      { x: 515, y: 310, type: "jaune_clair" },
-      { x: 2700, y: 350, type: "rouge" },
+      { x: 2400, y: 250, type: "rose" },
+      
+      
+      { x: 2700, y: 350, type: "orange" },
       { x: 3200, y: 400, type: "jaune_clair" },
       { x: 3500, y: 420, type: "rose" },
+      { x: 3100, y: 350, type: "orange" },
+      { x: 3400, y: 400, type: "jaune_clair" },
+      { x: 4000, y: 420, type: "rose" },
       { x: 4100, y: 100, type: "violet" },
       { x: 4300, y: 480, type: "blanc" },
-      { x: 4600, y: 500, type: "orange" },
-      { x: 5000, y: 350, type: "rouge" },
+      { x: 4600, y: 500, type: "rouge" },
+      { x: 5000, y: 350, type: "rose" },
       { x: 5400, y: 400, type: "jaune_clair" },
       { x: 5800, y: 400, type: "rose" },
       { x: 6400, y: 400, type: "violet" },
@@ -726,10 +728,10 @@ groupe_mineraux.setDepth(15);
   /***********************************************************************/
 
   update(time) {
-    //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
+    texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
     if (this.physics.world.collide(player, pic)) {
       finDuJeu();
-    }
+    } 
     if (clavier.right.isDown) {
       player.setVelocityX(220);
       player.anims.play('anim_tourne_droite', true);
@@ -956,33 +958,205 @@ class SceneJeu2 extends Phaser.Scene {
     const carteDuNiveau2 = this.add.tilemap("carte2");
     const tileset2 = carteDuNiveau2.addTilesetImage("CaveG", "Phaser_tuilesdejeu2");
     const fond2 = carteDuNiveau2.createLayer("plateforme2", tileset2);
-    // Ensure the layer name matches the one in the tilemap JSON file
     const plateforme2 = carteDuNiveau2.createLayer("fond_cave", tileset2);
 
     plateforme2.setCollisionByProperty({ estSolide: true });
 
-    this.player = this.physics.add.sprite(100, 200, 'img_perso');
-    this.player.setCollideWorldBounds(true);
-    this.player.setBounce(0);
+    this.player = this.physics.add.sprite(100, 300, 'img_perso'); 
+    this.player.index = 100;
+    this.player.setCollideWorldBounds(true); 
+    this.player.setBounce(0); 
+    this.player.setDepth(9);
+
+    // Création des animations du boss
+    if (!this.anims.exists('anim_boss_marche_D')) {
+      this.anims.create({
+        key: 'anim_boss_marche_D',
+        frames: this.anims.generateFrameNumbers('boss_marche_D', { start: 0, end: 3 }),
+        frameRate: 5,
+        repeat: -1
+      });
+    }
+    if (!this.anims.exists('anim_boss_marche_G')) {
+      this.anims.create({
+        key: 'anim_boss_marche_G',
+        frames: this.anims.generateFrameNumbers('boss_marche_G', { start: 0, end: 3 }),
+        frameRate: 5,
+        repeat: -1
+      });
+    }
+    if (!this.anims.exists('anim_boss_attack_D')) {
+      this.anims.create({
+        key: 'anim_boss_attack_D',
+        frames: this.anims.generateFrameNumbers('boss_attack_D', { start: 0, end: 3 }),
+        frameRate: 5,
+        repeat: -1
+      });
+    }
+    if (!this.anims.exists('anim_boss_attack_G')) {
+      this.anims.create({
+        key: 'anim_boss_attack_G',
+        frames: this.anims.generateFrameNumbers('boss_attack_G', { start: 0, end: 3 }),
+        frameRate: 5,
+        repeat: -1
+      });
+    }
+    if (!this.anims.exists('anim_porte')) {
+      this.anims.create({
+        key: 'anim_porte',
+        frames: this.anims.generateFrameNumbers('porte', { start: 0, end: 5 }),
+        frameRate: 5,
+        repeat: 0
+      });
+    }
 
     this.physics.world.setBounds(0, 0, 6400, 640);
     this.cameras.main.setBounds(0, 0, 6400, 640);
-    this.cameras.main.startFollow(this.player);
+    this.cameras.main.startFollow(this.player);  
+    this.physics.add.collider(this.player, plateforme2); 
 
+    if (!this.anims.exists('anim_tourne_gauche')) {
+      this.anims.create({
+        key: 'anim_tourne_gauche',
+        frames: this.anims.generateFrameNumbers('gauche', { start: 7, end: 0 }),
+        frameRate: 10,
+        repeat: -1
+      });
+    }
+
+    if (!this.anims.exists('anim_tourne_droite')) {
+      this.anims.create({
+        key: 'anim_tourne_droite',
+        frames: this.anims.generateFrameNumbers('droite', { start: 0, end: 7 }),
+        frameRate: 10,
+        repeat: -1
+      });
+    }
+
+    if (!this.anims.exists('anim_face')) {
+      this.anims.create({
+        key: 'anim_face',
+        frames: this.anims.generateFrameNumbers('img_perso', { start: 0, end: 7 }),
+        frameRate: 10,
+        repeat: -1
+      });
+    }
+
+    this.groupeBullets = this.physics.add.group();
+    this.groupe_mineraux = this.physics.add.group();
+
+
+    // Liste des positions prédéfinies pour les minéraux
+    let positionsMineraux = [
+      { x: 450, y: 300, type: "rouge" },
+      { x: 550, y: 310, type: "violet" },
+      { x: 980, y: 350, type: "rouge" },
+      { x: 485, y: 300, type: "blanc" },
+      { x: 980, y: 350, type: "rose" },
+      { x: 650, y: 250, type: "blanc" },
+      { x: 900, y: 275, type: "rose" },
+      { x: 2400, y: 250, type: "blanc" },
+      { x: 1550, y: 275, type: "rose" },
+      { x: 1050, y: 320, type: "violet" },
+      { x: 700, y: 280, type: "orange" },
+      { x: 550, y: 310, type: "jaune_clair" },
+      { x: 2700, y: 350, type: "rouge" },
+      { x: 1300, y: 320, type: "violet" },
+      { x: 1800, y: 280, type: "orange" },
+      { x: 1850, y: 310, type: "jaune_clair" },
+      { x: 2350, y: 300, type: "rouge" },
+      { x: 2400, y: 250, type: "blanc" },
+      { x: 1550, y: 275, type: "rose" },
+      { x: 1050, y: 320, type: "violet" },
+      { x: 700, y: 280, type: "orange" },
+      { x: 515, y: 310, type: "jaune_clair" },
+      { x: 2700, y: 350, type: "rouge" },
+      { x: 3200, y: 400, type: "jaune_clair" },
+      { x: 3500, y: 420, type: "rose" },
+      { x: 4100, y: 100, type: "violet" },
+      { x: 4300, y: 480, type: "blanc" },
+      { x: 4600, y: 500, type: "orange" },
+      { x: 5000, y: 350, type: "rouge" },
+      { x: 5400, y: 400, type: "jaune_clair" },
+      { x: 5800, y: 400, type: "rose" },
+      { x: 6400, y: 400, type: "violet" },
+      { x: 6400, y: 400, type: "blanc" },
+      { x: 6400, y: 400, type: "orange" }
+    ];
+
+// Générer les minéraux à des positions fixes
+    this.groupe_mineraux = this.physics.add.group();
+    for (let pos of positionsMineraux) {
+      let minerau = this.groupe_mineraux.create(pos.x, pos.y, pos.type);
+      minerau.setBounce(0.2);  
+      minerau.setCollideWorldBounds(true);
+    }
+    this.groupe_mineraux.setDepth(15);
+
+    // Empêcher les minéraux de flotter en les faisant tomber sur le sol
+    this.physics.add.collider(this.groupe_mineraux, plateforme2);
+    this.physics.add.overlap(this.player, this.groupe_mineraux, ramasserMineraux, null, this);
+    
+    this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
+    this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
+    this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
+    this.input.keyboard.on("keydown-R", () => lancerAttaque("foudre"));
+    this.input.keyboard.on("keydown-T", () => lancerAttaque("chaleur"));
+
+    this.physics.add.collider(this.groupe_mineraux, plateforme2);
+
+    // Création de l'affichage des sorts (invisible au départ)
+    texteSorts = this.add.text(600, 20, "", styleSorts).setDepth(10).setVisible(false);
+    texteSorts.setScrollFactor(0); // Reste fixe à l'écran
+    // Création du texte du compteur avec un fond semi-transparent
+    let styleCompteur = {
+      fontSize: '18px',
+      fill: '#FFD700', // Doré
+      fontStyle: 'bold',
+      stroke: '#8B0000',
+      strokeThickness: 3,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fond semi-transparent
+      padding: { x: 10, y: 5 },
+      align: 'left'
+    };
+
+    texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
+    texteCompteur.setScrollFactor(0); // Reste fixe à l'écran
+    mettreAJourCompteur();
+  
+    this.physics.world.setBounds(0, 0, 4768, 640);
+    this.cameras.main.setBounds(0, 0, 4768, 640);
+    this.cameras.main.startFollow(this.player);
 
     this.physics.add.collider(this.player, plateforme2);
 
-    clavier = this.input.keyboard.createCursorKeys(); // Initialiser les touches de direction
+   
+    // Ajouter les collisions entre les projectiles et les squelettes
+    this.groupeBullets.children.iterate(bullet => {
+      this.Squelettes1.forEach(squelette1 => {
+        this.physics.add.overlap(bullet, squelette1, () => {
+          squelette1.disableBody(true, true); // Désactiver le squelette
+          bullet.destroy(); // Détruire le projectile
+        });
+      });
+      this.Squelettes2.forEach(squelette2 => {
+        this.physics.add.overlap(bullet, squelette2, () => {
+          squelette2.disableBody(true, true); // Désactiver le squelette
+          bullet.destroy(); // Détruire le projectile
+        });
+      });
+    });
+    this.clavier = this.input.keyboard.createCursorKeys();
   }
 
   update() {
-    if (clavier.right.isDown) {
+    if (this.clavier.right.isDown) {
       this.player.setVelocityX(220);
       this.player.anims.play('anim_tourne_droite', true);
       this.player.body.setSize(50, 67);
       this.player.body.setOffset(32, 5);
       this.player.direction = 'right';  // Mise à jour de la direction
-    } else if (clavier.left.isDown) {
+    } else if (this.clavier.left.isDown) {
       this.player.setVelocityX(-220);
       this.player.anims.play('anim_tourne_gauche', true);
       this.player.body.setSize(50, 67);
@@ -994,7 +1168,7 @@ class SceneJeu2 extends Phaser.Scene {
       this.player.body.setSize(50, 67);
       this.player.body.setOffset(35, 5);
     }
-    if (clavier.up.isDown && this.player.body.blocked.down) {
+    if (this.clavier.up.isDown && this.player.body.blocked.down) {
       this.player.setVelocityY(-300);
     }
     if (this.player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
@@ -1089,22 +1263,7 @@ function tirerProjectile(type, player) {
   });
 
 
-  // Collision avec une box
-  scene.physics.add.overlap(bullet, box, () => {
-    if (type === "chaleur") {  // Vérifie si le projectile est de type "chaleur"
-      son_explo.play();
-      box.disableBody(true, true); // Désactive la box
-    }
-    bullet.destroy();
-  });
-  scene.physics.add.overlap(bullet, eaux, () => {
-    if (type === "congelation") {  // Vérifie si le projectile est de type "chaleur"
-      devientGlace = true;
-      son_ice.play();
-    }
-    bullet.destroy();
-  });
-  return devientGlace;
+ 
 }
 
 // création et lancement du jeu
