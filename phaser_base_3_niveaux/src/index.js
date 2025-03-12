@@ -817,15 +817,34 @@ class SceneJeu2 extends Phaser.Scene {
   constructor() {
     super({ key: 'SceneJeu2' });
   }
-  preLoad(){
+
+  preload() {
     this.load.image("Phaser_tuilesdejeu2", "src/assets/CaveG.png");
     this.load.tilemapTiledJSON("carte2", "src/assets/Map_cave.json");
   }
-  create(){
 
-  }
-  update(){
+  create() {
+    const carteDuNiveau2 = this.add.tilemap("carte2");
+    const tileset2 = carteDuNiveau2.addTilesetImage("CaveG", "Phaser_tuilesdejeu2");
+
     
+    const plateforme2 = carteDuNiveau2.createLayer("plateforme", tileset2);
+
+    plateforme2.setCollisionByProperty({ estSolide: true });
+
+    this.player = this.physics.add.sprite(100, 475, 'img_perso');
+    this.player.setCollideWorldBounds(true);
+    this.player.setBounce(0);
+
+    this.physics.world.setBounds(0, 0, 4768, 640);
+    this.cameras.main.setBounds(0, 0, 4768, 640);
+    this.cameras.main.startFollow(this.player);
+
+    this.physics.add.collider(this.player, plateforme2);
+  }
+
+  update() {
+    // ...existing code...
   }
 }
 
