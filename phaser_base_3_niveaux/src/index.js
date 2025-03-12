@@ -588,12 +588,25 @@ for (let pos of positionsMineraux) {
 
   texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
   mettreAJourCompteur();
-  this.bulleTexte = this.add.text(400, 250, 'Je suis un esprit...', {
+  
+  this.bulleTexte = this.add.text(400, 250, '', {  // Texte vide au départ
     fontSize: '16px',
     fill: '#fff',
     backgroundColor: '#000',
     padding: { x: 10, y: 5 }
-  }).setOrigin(0.5).setVisible(false);
+}).setOrigin(0.5).setVisible(false);
+
+this.dialogues = [
+    "Je suis un esprit...",
+    "Pourquoi es-tu ici ?",
+    "Le temps s’efface...",
+    "Tu entends les murmures ?"
+];
+
+this.indexDialogue = 0;  
+this.derniereParole = 0; 
+this.joueurDansZone = false;
+
   
   // Positions prédéfinies pour les squelettes
   let positionsSquelettes1 = [
@@ -723,7 +736,7 @@ this.physics.add.collider(player, eaux, null, collisEau, this);
 /** FONCTION UPDATE 
 /***********************************************************************/
 
-function update() {
+function update(time) {
   texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
 
   if (clavier.right.isDown) {
@@ -758,16 +771,28 @@ function update() {
     );
 
     if (distance < 100) {
-        this.bulleTexte.setVisible(true);
-        this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
-    } else {
-        this.bulleTexte.setVisible(false);
-    }
-    if (eaux.getChildren()[0].anims.currentFrame.index == 3){
-      collision.active = true;
-    } else {
-      collision.active = false;
-    }
+      if (!this.joueurDansZone) {  
+          this.joueurDansZone = true;
+          this.indexDialogue = 0;  // Recommence toujours du début à l’entrée
+      }
+
+      if (time > this.derniereParole + 3000 && this.indexDialogue < this.dialogues.length) { 
+          this.derniereParole = time;
+
+          // On met la bulle invisible pour éviter d'afficher "" ou "..."
+          this.bulleTexte.setVisible(false);
+
+          this.time.delayedCall(1000, () => {
+              this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
+              this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+              this.bulleTexte.setVisible(true); // Affiche la bulle seulement avec du texte
+              this.indexDialogue++;
+          });
+      }
+  } else {
+      this.joueurDansZone = false;
+      this.bulleTexte.setVisible(false);
+  }
   
 
   if (gameOver) {
