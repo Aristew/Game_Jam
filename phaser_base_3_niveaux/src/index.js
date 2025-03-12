@@ -298,7 +298,14 @@ clavier = this.input.keyboard.createCursorKeys();
         repeat: -1
       });
     }
-
+    if (!this.anims.exists('anim_porte')) {
+      this.anims.create({
+        key: 'anim_porte',
+        frames: this.anims.generateFrameNumbers('porte', { start: 0, end: 5 }),
+        frameRate: 5,
+        repeat: 0
+      });
+    }
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
   
@@ -578,8 +585,7 @@ groupe_mineraux.setDepth(15);
     collision = this.physics.add.collider(player, eaux);
     eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_anim'); });
 
-    // Gérer les collisions
-
+    // Gérer les collision
     //this.physics.add.overlap(player, eaux, collisEau, null, this);
     this.physics.add.collider(plateforme, eaux);
 
