@@ -674,7 +674,7 @@ groupe_mineraux.setDepth(15);
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
-    porte = this.physics.add.sprite(6300, 300, 'porte');
+    porte = this.physics.add.sprite(200, 300, 'porte'); // Vraie coordonnée 6300, 300
     porte.body.setSize(96, 90);
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
@@ -831,6 +831,102 @@ class SceneJeu2 extends Phaser.Scene {
   preload() {
     this.load.image("Phaser_tuilesdejeu2", "src/assets/CaveG.png");
     this.load.tilemapTiledJSON("carte2", "src/assets/Map_cave.json");
+    // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
+    this.load.audio('background', 'src/assets/dd-fantasy-music-and-ambience.mp3');
+
+    this.load.image("img_ciel", "src/assets/sky.png");
+    this.load.image("img_plateforme", "src/assets/platform.png");
+    // chargement tuiles de jeu
+    this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
+    this.load.image("fond", "src/assets/fond.png");
+
+    box = this.load.image("box", "src/assets/box.png");
+
+    this.load.spritesheet("esprit", "src/assets/spirit.png", {
+      frameWidth: 128,
+      frameHeight: 128
+    });
+
+    // chargement de la carte
+    this.load.tilemapTiledJSON("carte", "src/assets/map.json");
+
+
+    this.load.image("rouge", "src/assets/Red_crystal3.png");
+    this.load.image("jaune_clair", "src/assets/Yellow-green_crystal3.png");
+    this.load.image("rose", "src/assets/Pink_crystal3.png");
+    this.load.image("violet", "src/assets/Violet_crystal3.png");
+    this.load.image("blanc", "src/assets/White_crystal3.png");
+    this.load.image("orange", "src/assets/Yellow_crystal3.png");
+
+    this.load.image("bullet_explosion", "src/assets/boule_chimique.png");
+    this.load.spritesheet("eau", "src/assets/eau.png", {
+      frameWidth: 320,
+      frameHeight: 50,
+
+    });
+    this.load.image("pique", "src/assets/pique.png");
+    this.load.image("bullet_congelation", "src/assets/boule_de_neige.png");
+    this.load.image("bullet_tempete", "src/assets/sable.png");
+    this.load.image("bullet_foudre", "src/assets/foudre.png");
+    this.load.image("bullet_chaleur", "src/assets/boules_de_feu.png");
+    this.load.spritesheet("img_perso", "src/assets/Idle.png", {
+
+      frameWidth: 128,
+      frameHeight: 73,
+
+    });
+    this.load.spritesheet("gauche", "src/assets/RunG.png", {
+      frameWidth: 128,
+      frameHeight: 70,
+
+    });
+    this.load.spritesheet("droite", "src/assets/Run.png", {
+      frameWidth: 128,
+      frameHeight: 70,
+    });
+
+
+    this.load.spritesheet("Sq_1_D", "src/assets/Squelette_1D.png", {
+      frameWidth: 128,
+      frameHeight: 128,
+    });
+    this.load.spritesheet("Sq_1_G", "src/assets/Squelette_1G.png", {
+      frameWidth: 128,
+      frameHeight: 128,
+    });
+    this.load.spritesheet("Sq_1_Mort", "src/assets/Dead_Squelette_1D.png", {
+      frameWidth: 128,
+      frameHeight: 128,
+    });
+    this.load.spritesheet("Sq_2_D", "src/assets/Squelette_2D.png", {
+      frameWidth: 128,
+      frameHeight: 128,
+    });
+    this.load.spritesheet("Sq_2_G", "src/assets/Squelette_2G.png", {
+      frameWidth: 128,
+      frameHeight: 128,
+    });
+    this.load.spritesheet("porte", "src/assets/spritesheet_porte.png", {
+      frameWidth: 96,
+      frameHeight: 120,
+    });
+    this.load.spritesheet("boss_attack_D", "src/assets/boss_attacking_D.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_attack_G", "src/assets/boss_attacking_G.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_marche_D", "src/assets/boss_idle_D.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+    this.load.spritesheet("boss_marche_G", "src/assets/boss_idle_G.png", {
+      frameWidth: 100,
+      frameHeight: 100,
+    });
+
   }
 
   create() {
@@ -842,7 +938,7 @@ class SceneJeu2 extends Phaser.Scene {
 
     plateforme2.setCollisionByProperty({ estSolide: true });
 
-    this.player = this.physics.add.sprite(100, 475, 'img_perso');
+    this.player = this.physics.add.sprite(100, 200, 'img_perso');
     this.player.setCollideWorldBounds(true);
     this.player.setBounce(0);
 
@@ -850,11 +946,37 @@ class SceneJeu2 extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, 4768, 640);
     this.cameras.main.startFollow(this.player);
 
+
     this.physics.add.collider(this.player, plateforme2);
+
+    clavier = this.input.keyboard.createCursorKeys(); // Initialiser les touches de direction
   }
 
   update() {
-    // ...existing code...
+    if (clavier.right.isDown) {
+      this.player.setVelocityX(220);
+      this.player.anims.play('anim_tourne_droite', true);
+      this.player.body.setSize(50, 67);
+      this.player.body.setOffset(32, 5);
+      this.player.direction = 'right';  // Mise à jour de la direction
+    } else if (clavier.left.isDown) {
+      this.player.setVelocityX(-220);
+      this.player.anims.play('anim_tourne_gauche', true);
+      this.player.body.setSize(50, 67);
+      this.player.body.setOffset(45, 5);
+      this.player.direction = 'left';  // Mise à jour de la direction
+    } else {
+      this.player.setVelocityX(0);
+      this.player.anims.play('anim_face', true);
+      this.player.body.setSize(50, 67);
+      this.player.body.setOffset(35, 5);
+    }
+    if (clavier.up.isDown && this.player.body.blocked.down) {
+      this.player.setVelocityY(-300);
+    }
+    if (this.player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
+      finDuJeu();
+    }
   }
 }
 
