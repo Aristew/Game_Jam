@@ -298,8 +298,14 @@ if (!this.anims.exists('phase1')) {
 
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
-  
-
+// Création anim porte  
+if (!this.anims.exists('anim_porte')) {
+  this.anims.create({
+    key: 'anim_porte',
+    frames: this.anims.generateFrameNumbers('porte', { start: 0, end: 3 }),
+    frameRate: 5,
+    repeat: 0
+  });
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
 //  ajout du champs de la caméra de taille identique à celle du monde
