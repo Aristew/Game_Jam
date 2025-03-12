@@ -731,6 +731,7 @@ groupe_mineraux.setDepth(15);
     if (clavier.up.isDown && player.body.blocked.down) {
       player.setVelocityY(-300);
     }
+    
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
     }
@@ -907,8 +908,9 @@ function tirerProjectile(type, player) {
       bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
       break;
     case "tempete":
-      bullet.setDisplaySize(40, 40);  // Exemple : taille de la boule de sable
-      bullet.setVelocity(450 * coefDir, 10); // Moins de vitesse horizontale, tir plus haut
+      bullet.setDisplaySize(25, 25);  // Exemple : taille de la boule de neige
+      bullet.setVelocity(450 * coefDir, 0);
+            player.setVelocityY(-400);
       break;
     case "foudre":
       bullet.setDisplaySize(15, 40);  // Exemple : taille de la foudre
@@ -973,6 +975,7 @@ function mettreAJourCompteur() {
     `🌌 Sodium: ${compteurMineraux["violet"]}  ❄️ Chlore: ${compteurMineraux["blanc"]}  🏺 Silicium: ${compteurMineraux["orange"]}`
   );
 }
+
 
 
 function lancerAttaque(type) {
@@ -1142,3 +1145,6 @@ function collisEau(player, eau) {
   }
   return false;
 }
+
+
+
