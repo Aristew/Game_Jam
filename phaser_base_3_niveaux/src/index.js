@@ -797,8 +797,8 @@ groupe_mineraux.setDepth(15);
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
-    porte = this.physics.add.sprite(6400, 300, 'porte'); // Vraie coordonnée 6300, 300
-    porte.body.setSize(96, 90);
+    porte = this.physics.add.sprite(4640, 100, 'porte'); // Vraie coordonnée 6300, 300
+    
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
     porte.setImmovable(true);
@@ -1087,7 +1087,7 @@ class EcranRemerciements extends Phaser.Scene {
       }).setOrigin(0.5);
 
       // Ajouter un texte pour remercier
-      const texteDev = this.add.text(0, 50, "Merci à ChatGPT et aux professeurs pour nous avoir guidés sur la noble voie du développement...", {
+      const texteDev = this.add.text(0, 50, "Merci à ChatGPT, copilot et aux professeurs pour nous avoir guidés sur la noble voie du développement...", {
           fontSize: '18px',
           fill: '#FFFFFF',
           wordWrap: { width: width - 100 }
