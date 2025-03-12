@@ -27,35 +27,65 @@ class ScenePresentation extends Phaser.Scene {
     super({ key: 'ScenePresentation' });
   }
 
+  preload() {
+    //this.load.image('background', 'assets/fantasy_bg.jpg'); // Charge ton image de fond
+    //this.load.audio('introMusic', 'assets/intro_music.mp3'); // Charge la musique
+  }
+
   create() {
-    // Fond noir
-    this.add.rectangle(400, 300, 800, 600, 0x000000);
+    // Ajout de l'image de fond
+    //this.add.image(400, 300, 'background').setScale(1.1);
 
-    // Titre du jeu
-    this.add.text(400, 150, "Mon Jeu Épique", {
-      fontSize: '48px',
-      fill: '#ffffff',
+    // Lance la musique d'ambiance
+    //this.music = this.sound.add('introMusic', { loop: true, volume: 0.5 });
+    //this.music.play();
+
+    // Titre du jeu avec effet de fondu
+    let titre = this.add.text(400, 120, "Mystic Alchemy", {
+      fontSize: '64px',
+      fill: '#ffdd44',
       fontStyle: 'bold',
-      stroke: '#ff0000',
-      strokeThickness: 6
+      stroke: '#703200',
+      strokeThickness: 6,
+      shadow: { offsetX: 4, offsetY: 4, color: '#000', blur: 2, fill: true }
     }).setOrigin(0.5);
 
-    // Texte de description
-    this.add.text(400, 250, "Partez à l'aventure et affrontez des squelettes !", {
-      fontSize: '24px',
-      fill: '#ffffff'
-    }).setOrigin(0.5);
+    this.tweens.add({
+      targets: titre,
+      alpha: { from: 0, to: 1 },
+      duration: 2000,
+      ease: 'Power2'
+    });
 
-    // Bouton "Jouer"
-    let boutonJouer = this.add.text(400, 400, "▶ Jouer", {
-      fontSize: '32px',
+    // Texte d'introduction
+    this.add.text(400, 250, "Découvrez les secrets de l'alchimie et affrontez les ténèbres !", {
+      fontSize: '26px',
       fill: '#ffffff',
-      backgroundColor: '#008000',
-      padding: { x: 10, y: 5 }
+      fontStyle: 'italic',
+      stroke: '#000',
+      strokeThickness: 3,
+      align: 'center',
+      wordWrap: { width: 700 }
+    }).setOrigin(0.5);
+
+    // Bouton "Jouer" avec animation
+    let boutonJouer = this.add.text(400, 400, "▶ Commencer l'aventure", {
+      fontSize: '28px',
+      fill: '#ffffff',
+      backgroundColor: '#004d00',
+      padding: { x: 20, y: 10 },
+      borderRadius: 10
     })
     .setInteractive()
     .on('pointerdown', () => {
+      this.music.stop(); // Coupe la musique
       this.scene.start('SceneJeu'); // Lance le jeu
+    })
+    .on('pointerover', () => {
+      boutonJouer.setStyle({ backgroundColor: '#008000' });
+    })
+    .on('pointerout', () => {
+      boutonJouer.setStyle({ backgroundColor: '#004d00' });
     });
 
     boutonJouer.setOrigin(0.5);
@@ -627,12 +657,39 @@ function tirerProjectile(type, player) {
     "chaleur": 'bullet_chaleur'
   };
   
+
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
-  bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
-  bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+
+  // Ajuster la taille du projectile en fonction de son type
+  switch (type) {
+    case "explosion":
+      bullet.setDisplaySize(30, 30);  // Exemple : taille de la boule d'explosion
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "congelation":
+      bullet.setDisplaySize(25, 25);  // Exemple : taille de la boule de neige
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "tempete":
+      bullet.setDisplaySize(40, 40);  // Exemple : taille de la boule de sable
+      bullet.setVelocity(450 * coefDir, 10); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "foudre":
+      bullet.setDisplaySize(15, 40);  // Exemple : taille de la foudre
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "chaleur":
+      bullet.setDisplaySize(30, 30);  // Exemple : taille de la boule de feu
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    default:
+      bullet.setDisplaySize(20, 20);  // Taille par défaut
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+  }
 
   // Ajouter la collision entre le projectile et les squelettes1
   Squelettes1.forEach(squelette1 => {
