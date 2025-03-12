@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 3, "jaune_clair": 3, "rose": 3, "violet": 3, "blanc": 3, "orange": 3 };
+var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -465,8 +465,8 @@ this.physics.add.collider(player, plateforme);
       { x: 2400, y: 250, type: "rose" },
       
       { x: 2700, y: 350, type: "orange" },
-      { x: 3200, y: 400, type: "jaune_clair" },
-      { x: 3500, y: 100, type: "rose" },
+      { x: 3200, y: 400, type: "rouge" },
+      { x: 3500, y: 100, type: "rouge" },
       { x: 3100, y: 350, type: "orange" },
       { x: 3400, y: 400, type: "orange" },
       { x: 4075, y: 100, type: "rose" },
