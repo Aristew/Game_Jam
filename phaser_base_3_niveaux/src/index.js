@@ -16,6 +16,7 @@ var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "
 var texteCompteur;
 var scene;
 var musique_de_fond;
+var musique_de_fond2;
 var box;
 var Squelettes1 = []; // Tableau pour stocker les squelettes a lance
 var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
@@ -25,6 +26,11 @@ var porte;
 var devientGlace = false;
 var boss;
 var pic;
+var son_jump;
+var son_bone;
+var son_explo;
+var son_spell;
+var son_ice;
 
 let texteSorts;
 let styleSorts = {
@@ -45,10 +51,12 @@ class ScenePresentation extends Phaser.Scene {
 
   preload() {
     this.load.image('backgroundPres', 'src/assets/Battleground3.png'); // Charge ton image de fond
-    //this.load.audio('introMusic', 'assets/intro_music.mp3'); // Charge la musique
+    this.load.audio('background2', 'src/assets/the-shire--ambience--music--3-hours.mp3');
   }
 
   create() {
+    musique_de_fond2 = this.sound.add('background2');
+    musique_de_fond2.play();
     // Ajout de l'image de fond
     this.add.image(400, 500, 'backgroundPres').setScale(1.1);
 
@@ -93,8 +101,7 @@ class ScenePresentation extends Phaser.Scene {
       borderRadius: 10
     })
       .setInteractive()
-      .on('pointerdown', () => {
-        //this.music.stop(); // Coupe la musique
+      .on('pointerdown', () => {musique_de_fond2.stop(); // Coupe la musique
         this.scene.start('SceneJeu'); // Lance le jeu
       })
       .on('pointerover', () => {
@@ -124,7 +131,11 @@ class SceneJeu extends Phaser.Scene {
   preload() {
     // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
     this.load.audio('background', 'src/assets/dd-fantasy-music-and-ambience.mp3');
-
+    this.load.audio('jump', 'src/assets/elemental-magic-spell-impact-outgoing-228342.mp3');
+    this.load.audio('explosion', 'src/assets/small-explosion-94980.mp3');
+    this.load.audio('ice', 'src/assets/ice-cracking-field-recording-06-139709.mp3');
+    this.load.audio('bone', 'src/assets/bone-break-sound-269658.mp3');
+    this.load.audio('spell', 'src/assets/magical-spell-cast-190272.mp3');
     this.load.image("img_ciel", "src/assets/sky.png");
     this.load.image("img_plateforme", "src/assets/platform.png");
     // chargement tuiles de jeu
@@ -234,6 +245,11 @@ class SceneJeu extends Phaser.Scene {
     // lancement du son background
     musique_de_fond = this.sound.add('background');
     musique_de_fond.play();
+    son_explo = this.sound.add('explosion');
+    son_jump = this.sound.add('jump');
+    son_spell= this.sound.add('spell');
+    son_ice = this.sound.add('ice');
+    son_bone = this.sound.add('bone');
     // redimentionnement du monde avec les dimensions calculées via tiled
     //this.physics.world.setBounds(0, 0, 3200, 640);
     //  ajout du champs de la caméra de taille identique à celle du monde
@@ -477,11 +493,16 @@ groupe_mineraux.setDepth(15);
   this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
   
-  this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
-  this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
-  this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
-  this.input.keyboard.on("keydown-R", () => lancerAttaque("foudre"));
-  this.input.keyboard.on("keydown-T", () => lancerAttaque("chaleur"));
+  this.input.keyboard.on("keydown-A", () => 
+    lancerAttaque("explosion"));
+  this.input.keyboard.on("keydown-Z", () => 
+    lancerAttaque("congelation"));
+  this.input.keyboard.on("keydown-E", () => 
+    lancerAttaque("tempete"));
+  this.input.keyboard.on("keydown-R", () => 
+    lancerAttaque("foudre"));
+  this.input.keyboard.on("keydown-T", () => 
+    lancerAttaque("chaleur"));
 
     this.physics.add.collider(groupe_mineraux, plateforme);
 
@@ -633,6 +654,7 @@ groupe_mineraux.setDepth(15);
       Squelettes1.forEach(squelette1 => {
         this.physics.add.overlap(bullet, squelette1, () => {
           squelette1.disableBody(true, true); // Désactiver le squelette
+          son_bone.play();
           bullet.destroy(); // Détruire le projectile
         });
       });
@@ -642,6 +664,7 @@ groupe_mineraux.setDepth(15);
       Squelettes2.forEach(squelette2 => {
         this.physics.add.overlap(bullet, squelette2, () => {
           squelette2.disableBody(true, true); // Désactiver le squelette
+          son_bone.play();
           bullet.destroy(); // Détruire le projectile
         });
       });
@@ -730,7 +753,9 @@ groupe_mineraux.setDepth(15);
     }
     if (clavier.up.isDown && player.body.blocked.down) {
       player.setVelocityY(-300);
+      son_jump.play();
     }
+    
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
     }
@@ -985,8 +1010,8 @@ class SceneJeu2 extends Phaser.Scene {
       });
     }
 
-    this.physics.world.setBounds(0, 0, 4768, 640);
-    this.cameras.main.setBounds(0, 0, 4768, 640);
+    this.physics.world.setBounds(0, 0, 6400, 640);
+    this.cameras.main.setBounds(0, 0, 6400, 640);
     this.cameras.main.startFollow(this.player);  
     this.physics.add.collider(this.player, plateforme2); 
 
@@ -1201,8 +1226,10 @@ function tirerProjectile(type, player) {
       bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
       break;
     case "tempete":
-      bullet.setDisplaySize(40, 40);  // Exemple : taille de la boule de sable
-      bullet.setVelocity(450 * coefDir, 10); // Moins de vitesse horizontale, tir plus haut
+      bullet.setPosition(player.x, player.y + player.height / 2); // Déplace le projectile au bon endroit
+    bullet.setVelocity(0, 0); // Pas de mouvement initial pour l'orbe de tempête
+    player.setVelocityY(-400);
+    break;
       break;
     case "foudre":
       bullet.setDisplaySize(15, 40);  // Exemple : taille de la foudre
@@ -1256,6 +1283,7 @@ function mettreAJourCompteur() {
 }
 
 
+
 function lancerAttaque(type) {
   let attaques = {
     "explosion": {
@@ -1284,7 +1312,7 @@ function lancerAttaque(type) {
 
   if (attaque.elements.every(e => compteurMineraux[e] > 0)) {
     attaque.elements.forEach(e => compteurMineraux[e]--);
-
+    son_spell.play()
     // Mise à jour de l'affichage des minéraux
     texteCompteur.setText(`🔮 Réserve d'Alchimiste 🔮\n🔥 Oxygène: ${compteurMineraux["rouge"]}  ⚡ Fer: ${compteurMineraux["jaune_clair"]}  💧 Hydrogène: ${compteurMineraux["rose"]}\n🌌 Sodium: ${compteurMineraux["violet"]}  ❄️ Chlore: ${compteurMineraux["blanc"]}  🏺 Silicium: ${compteurMineraux["orange"]}`);
 
@@ -1423,3 +1451,6 @@ function collisEau(player, eau) {
   }
   return false;
 }
+
+
+
