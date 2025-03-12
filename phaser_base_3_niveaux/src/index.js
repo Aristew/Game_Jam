@@ -234,13 +234,15 @@ const plateforme = carteDuNiveau.createLayer(
 
 plateforme.setCollisionByProperty({ estSolide: true }); 
 this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
+this.esprit1 = this.add.sprite(704, 512, 'esprit'); // Position fixe
+
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
 player.setBounce(0); 
 clavier = this.input.keyboard.createCursorKeys(); 
 
-// Créer l’esprit
+
 
 
 if (!this.anims.exists('anim_Sq_1D')) {
@@ -289,7 +291,7 @@ if (!this.anims.exists('phase1')) {
 }
 
 this.esprit.play('phase1');
-
+this.esprit1.play('phase1');
   
 
   // redimentionnement du monde avec les dimensions calculées via tiled
@@ -430,6 +432,26 @@ this.dialogues = [
 this.indexDialogue = 0;  
 this.derniereParole = 0; 
 this.joueurDansZone = false;
+
+this.bulleTexte1 = this.add.text(400, 250, '...', {  // Texte vide au départ
+  fontSize: '16px',
+  fill: '#fff',
+  backgroundColor: '#000',
+  padding: { x: 10, y: 5 }
+}).setOrigin(0.5).setVisible(false);
+
+this.dialogues1 = [
+  "Je suis un esprit",
+  "je suis là pour te guider",
+  "Dans ce monde, il existe une multitude d'atomes",
+  "Combine les pour créer de puissants sorts",
+  "Mais prends garde",
+  "Les ressources sont rares"
+];
+
+this.indexDialogue1 = 0;  
+this.derniereParole1 = 0; 
+
 
   
   // Positions prédéfinies pour les squelettes
@@ -593,6 +615,33 @@ update(time) {
         player.x, player.y,
         this.esprit.x, this.esprit.y
     );
+    const distance1 = Phaser.Math.Distance.Between(
+      player.x, player.y,
+      this.esprit1.x, this.esprit1.y
+  );
+  if (distance1 < 100) {
+    if (!this.joueurDansZone) {  
+        this.joueurDansZone = true;
+        this.indexDialogue1 = 0;  // Recommence toujours du début à l’entrée
+    }
+
+    if (time > this.derniereParole1 + 3000 && this.indexDialogue1 < this.dialogues1.length) { 
+        this.derniereParole1 = time;
+
+        // On met la bulle invisible pour éviter d'afficher "" ou "..."
+        this.bulleTexte.setVisible(false);
+
+        this.time.delayedCall(200, () => {
+            this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
+            this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+            this.bulleTexte.setVisible(true); // Affiche la bulle seulement avec du texte
+            this.indexDialogue++;
+        });
+    }
+} else {
+    this.joueurDansZone = false;
+    this.bulleTexte.setVisible(false);
+}
 
     if (distance < 100) {
       if (!this.joueurDansZone) {  
@@ -604,18 +653,18 @@ update(time) {
           this.derniereParole = time;
 
           // On met la bulle invisible pour éviter d'afficher "" ou "..."
-          this.bulleTexte.setVisible(false);
+          this.bulleTexte1.setVisible(false);
 
           this.time.delayedCall(200, () => {
-              this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
-              this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
-              this.bulleTexte.setVisible(true); // Affiche la bulle seulement avec du texte
-              this.indexDialogue++;
+              this.bulleTexte1.setText(this.dialogues1[this.indexDialogue1]);
+              this.bulleTexte1.setPosition(this.esprit1.x, this.esprit1.y - 50);
+              this.bulleTexte1.setVisible(true); // Affiche la bulle seulement avec du texte
+              this.indexDialogue1++;
           });
       }
   } else {
       this.joueurDansZone = false;
-      this.bulleTexte.setVisible(false);
+      this.bulleTexte1.setVisible(false);
   }
   
 
