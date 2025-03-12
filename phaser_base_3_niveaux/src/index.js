@@ -24,6 +24,18 @@ var collision;
 var porte;
 var devientGlace = false;
 
+let texteSorts;
+let styleSorts = {
+    fontSize: 16,
+    fill: '#FFD700', // Doré
+    fontStyle: 'bold',
+    stroke: '#8B0000',
+    strokeThickness: 3,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fond semi-transparent
+    padding: { x: 10, y: 5 },
+    align: 'right'
+};
+
 class ScenePresentation extends Phaser.Scene {
   constructor() {
     super({ key: 'ScenePresentation' });
@@ -418,6 +430,9 @@ groupe_mineraux.setDepth(15);
 
     this.physics.add.collider(groupe_mineraux, plateforme);
 
+    // Création de l'affichage des sorts (invisible au départ)
+    texteSorts = this.add.text(600, 20, "", styleSorts).setDepth(10).setVisible(false);
+
     // Création du texte du compteur avec un fond semi-transparent
     let styleCompteur = {
       fontSize: '18px',
@@ -433,6 +448,7 @@ groupe_mineraux.setDepth(15);
     texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
     mettreAJourCompteur();
 
+    
     this.bulleTexte = this.add.text(400, 250, '...', {  // Texte vide au départ
       fontSize: '16px',
       fill: '#fff',
@@ -644,6 +660,16 @@ groupe_mineraux.setDepth(15);
     }
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
+    }
+    if (player.x > 450) {
+      texteSorts.setVisible(true);
+      texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Tempête | R - Foudre | T - Chaleur");
+
+      // Position en bas de l'écran
+      let cam = this.cameras.main;
+      texteSorts.setPosition(cam.scrollX + cam.width / 2 - 395, cam.scrollY + cam.height - 40);
+      } else {
+          texteSorts.setVisible(false);
     }
 
     const distance = Phaser.Math.Distance.Between(
