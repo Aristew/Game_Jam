@@ -618,6 +618,11 @@ groupe_mineraux.setDepth(15);
       const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
       if (distance < 50) { // Si le joueur est suffisamment proche de la porte
         porte.anims.play('anim_porte', true);
+    
+        // Ajouter un délai de 1 seconde avant de lancer la scène 2
+        this.time.delayedCall(1000, () => {
+          this.scene.start('SceneJeu2');
+        });
       }
     });
 
@@ -779,7 +784,7 @@ var config = {
       debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
-  scene: [ScenePresentation, SceneJeu]
+  scene: [ScenePresentation, SceneJeu, SceneJeu2]
 };
 
 function tirerProjectile(type, player) {
