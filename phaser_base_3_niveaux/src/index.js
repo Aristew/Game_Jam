@@ -22,258 +22,50 @@ var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
 var eaux;
 var collision;
 
-function tirerProjectile(type, player) {
-  var coefDir = (player.direction == 'left') ? -1 : 1;
-  var projectiles = {
-    "explosion": 'bullet_explosion',
-    "congelation": 'bullet_congelation',
-    "tempete": 'bullet_tempete',
-    "foudre": 'bullet_foudre',
-    "chaleur": 'bullet_chaleur'
-  };
-  
-  var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
-  bullet.setDisplaySize(20, 20);
-  bullet.setCollideWorldBounds(false);
-  bullet.body.onWorldBounds = true;
-  bullet.body.allowGravity = true;  // Activation de la gravité
-  bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
-
-  // Ajouter la collision entre le projectile et les squelettes1
-  Squelettes1.forEach(squelette1 => {
-    scene.physics.add.overlap(bullet, squelette1, () => {
-      squelette1.disableBody(true, true); // Désactiver le squelette
-      bullet.destroy(); // Détruire le projectile
-    });
-  });
-
-  // Ajouter la collision entre le projectile et les squelettes
-  Squelettes2.forEach(squelette2 => {
-    scene.physics.add.overlap(bullet, squelette2, () => {
-      squelette2.disableBody(true, true); // Désactiver le squelette
-      bullet.destroy(); // Détruire le projectile
-      });
-    });
-    
-  
-  // Collision avec une box
-  scene.physics.add.overlap(bullet, box, () => {
-    if (type === "chaleur") {  // Vérifie si le projectile est de type "chaleur"
-      box.disableBody(true, true); // Désactive la box
-    }
-    bullet.destroy();
-  });
-  scene.physics.add.overlap(bullet, eaux, () => {
-    if (type === "congelation") {  // Vérifie si le projectile est de type "chaleur"
-      eau.anims.play('eau_glace'); // Désactive la box
-    }
-    bullet.destroy();
-  });
-
-}
-
-var config = {
-  type: Phaser.AUTO,
-  scale : {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
-  width: 800, // largeur en pixels
-  height: 600, // hauteur en pixels
-  physics: {
-    // définition des parametres physiques
-    default: "arcade", // mode arcade : le plus simple : des rectangles pour gérer les collisions. Pas de pentes
-    arcade: {
-      // parametres du mode arcade
-      gravity: {
-        y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
-      },
-      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
-    }
-  },
-  scene: {
-    // une scene est un écran de jeu. Pour fonctionner il lui faut 3 fonctions  : create, preload, update
-    preload: preload, // la phase preload est associée à la fonction preload, du meme nom (on aurait pu avoir un autre nom)
-    create: create, // la phase create est associée à la fonction create, du meme nom (on aurait pu avoir un autre nom)
-    update: update // la phase update est associée à la fonction update, du meme nom (on aurait pu avoir un autre nom)
-  }
-};
-
-// création et lancement du jeu
-var game = new Phaser.Game(config);
-
-function ramasserMineraux(un_player, un_minerau) {
-  compteurMineraux[un_minerau.texture.key]++;
-  un_minerau.disableBody(true, true);
-  mettreAJourCompteur();
-}
-
-function mettreAJourCompteur() {
-  texteCompteur.setText(
-    `🔮 Réserve d'Alchimiste 🔮\n` +
-    `🔥 Oxygène: ${compteurMineraux["rouge"]}  ⚡ Fer: ${compteurMineraux["jaune_clair"]}  💧 Hydrogène: ${compteurMineraux["rose"]}\n` +
-    `🌌 Sodium: ${compteurMineraux["violet"]}  ❄️ Chlore: ${compteurMineraux["blanc"]}  🏺 Silicium: ${compteurMineraux["orange"]}`
-  );
-}
-
-
-function lancerAttaque(type) {
-  let attaques = {
-    "explosion": { 
-      elements: ["jaune_clair", "rouge"], 
-      effet: "Déflagration Alchimique !" 
-    },
-    "congelation": { 
-      elements: ["rose", "rouge"], 
-      effet: "Malédiction de Givre !" 
-    },
-    "tempete": { 
-      elements: ["orange", "rouge"], 
-      effet: "Invocation de la Tempête !" 
-    },
-    "foudre": { 
-      elements: ["jaune_clair", "violet"], 
-      effet: "Éclair du Chaos !" 
-    },
-    "chaleur": { 
-      elements: ["violet", "blanc"], 
-      effet: "Brasier Astral !" 
-    }
-  };
-
-  let attaque = attaques[type];
-
-  if (attaque.elements.every(e => compteurMineraux[e] > 0)) {
-    attaque.elements.forEach(e => compteurMineraux[e]--);
-
-    // Mise à jour de l'affichage des minéraux
-    texteCompteur.setText(`🔮 Réserve d'Alchimiste 🔮\n🔥 Oxygène: ${compteurMineraux["rouge"]}  ⚡ Fer: ${compteurMineraux["jaune_clair"]}  💧 Hydrogène: ${compteurMineraux["rose"]}\n🌌 Sodium: ${compteurMineraux["violet"]}  ❄️ Chlore: ${compteurMineraux["blanc"]}  🏺 Silicium: ${compteurMineraux["orange"]}`);
-
-    // Effet magique
-    afficherMessage(`✨ ${attaque.effet} ! ✨`);
-
-    // Lancement du projectile correspondant
-    tirerProjectile(type, player);
-  } else {
-    afficherMessage("⚠️ Pas assez d'essences magiques !");
-  }
-}
-
-
-function afficherMessage(message) {
-  if (!scene.texteMessage) {
-    scene.texteMessage = scene.add.text(0, 0, "", { 
-      fontSize: '20px', 
-      fill: '#FFD700', 
-      fontStyle: 'bold', 
-      stroke: '#8B0000', 
-      strokeThickness: 3 
-    });
-    scene.texteMessage.setOrigin(0.5, 0.5);
+class ScenePresentation extends Phaser.Scene {
+  constructor() {
+    super({ key: 'ScenePresentation' });
   }
 
-  // Stopper toute animation en cours sur le texte
-  scene.tweens.killTweensOf(scene.texteMessage);
+  create() {
+    // Fond noir
+    this.add.rectangle(400, 300, 800, 600, 0x000000);
 
-  // Positionner le message au centre de l'écran en fonction de la caméra
-  scene.texteMessage.setPosition(scene.cameras.main.scrollX + scene.cameras.main.width / 2, 
-                                 scene.cameras.main.scrollY + scene.cameras.main.height / 2);
-  
-  // Réinitialiser l'alpha (rendre visible immédiatement)
-  scene.texteMessage.setAlpha(1);
-  
-  // Mettre à jour le texte
-  scene.texteMessage.setText(message);
-  
-  // Lancer une nouvelle animation pour le faire disparaître
-  scene.tweens.add({
-    targets: scene.texteMessage,
-    alpha: 0,
-    duration: 2000,
-    ease: 'Power2'
-  });
-}
+    // Titre du jeu
+    this.add.text(400, 150, "Mon Jeu Épique", {
+      fontSize: '48px',
+      fill: '#ffffff',
+      fontStyle: 'bold',
+      stroke: '#ff0000',
+      strokeThickness: 6
+    }).setOrigin(0.5);
 
-function finDuJeu() {
-  gameOver = true;
-  player.setVelocity(0, 0); // Arrête le joueur
-  player.anims.stop(); // Stop l'animation du joueur
-  player.body.moves = false; // Empêche tout mouvement
-  musique_de_fond.stop(); // Stop la musique
+    // Texte de description
+    this.add.text(400, 250, "Partez à l'aventure et affrontez des squelettes !", {
+      fontSize: '24px',
+      fill: '#ffffff'
+    }).setOrigin(0.5);
 
-  // Fond noir semi-transparent
-  let overlay = scene.add.rectangle(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 300, 
-    800, 600, 
-    0x000000, 0.7
-  );
-  overlay.setDepth(20);
-
-  // Texte "Game Over" avec effet de fondu
-  let texteGameOver = scene.add.text(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 200, 
-    "GAME OVER", 
-    { 
-      fontSize: '64px', 
-      fill: '#ff0000', 
-      fontStyle: 'bold', 
-      stroke: '#000', 
-      strokeThickness: 6 
-    }
-  );
-  texteGameOver.setOrigin(0.5);
-  texteGameOver.setDepth(21);
-
-  scene.tweens.add({
-    targets: texteGameOver,
-    alpha: { from: 0, to: 1 },
-    duration: 1000,
-    ease: 'Power2'
-  });
-
-  // Bouton "Rejouer"
-  let boutonRejouer = scene.add.text(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 320, 
-    "🔄 Rejouer", 
-    { 
-      fontSize: '30px', 
-      fill: '#ffffff', 
-      backgroundColor: '#008000', 
+    // Bouton "Jouer"
+    let boutonJouer = this.add.text(400, 400, "▶ Jouer", {
+      fontSize: '32px',
+      fill: '#ffffff',
+      backgroundColor: '#008000',
       padding: { x: 10, y: 5 }
-    }
-  )
-  .setInteractive()
-  .on('pointerdown', () => { 
-    // Réinitialisation complète des variables du jeu
-    compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
-    gameOver = false;
-    scene.scene.restart();
-  });
-  boutonRejouer.setOrigin(0.5);
-  boutonRejouer.setDepth(21);
+    })
+    .setInteractive()
+    .on('pointerdown', () => {
+      this.scene.start('SceneJeu'); // Lance le jeu
+    });
 
-  // Bouton "Quitter"
-  let boutonQuitter = scene.add.text(
-    scene.cameras.main.scrollX + 400, 
-    scene.cameras.main.scrollY + 390, 
-    "🚪 Quitter", 
-    { 
-      fontSize: '30px', 
-      fill: '#ffffff', 
-      backgroundColor: '#800000', 
-      padding: { x: 10, y: 5 }
-    }
-  )
-  .setInteractive()
-  .on('pointerdown', () => { 
-    game.destroy(true); // Ferme complètement le jeu
-  });
-  boutonQuitter.setOrigin(0.5);
-  boutonQuitter.setDepth(21);
+    boutonJouer.setOrigin(0.5);
+  }
 }
+
+class SceneJeu extends Phaser.Scene {
+  constructor() {
+    super({ key: 'SceneJeu' });
+  }
 
 /***********************************************************************/
 /** FONCTION PRELOAD 
@@ -283,7 +75,7 @@ function finDuJeu() {
  * lors du chargement de la scene dans le jeu.
  * On y trouve surtout le chargement des assets (images, son ..)
  */
-function preload() {
+preload() {
    // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
    this.load.audio('background', 'src/assets/dd-fantasy-music-and-ambience.mp3'); 
 
@@ -374,7 +166,7 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
  * placement des peronnages, des sprites, des platesformes, création des animations
  * ainsi que toutes les instructions permettant de planifier des evenements
  */
-function create() {
+create() {
 // lancement du son background
 musique_de_fond = this.sound.add('background');
 musique_de_fond.play();
@@ -800,6 +592,255 @@ function update(time) {
     musique_de_fond.stop(); 
     return;
   }
+}
+}
+
+var config = {
+  type: Phaser.AUTO,
+  scale : {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
+  width: 800, // largeur en pixels
+  height: 600, // hauteur en pixels
+  physics: {
+    // définition des parametres physiques
+    default: "arcade", // mode arcade : le plus simple : des rectangles pour gérer les collisions. Pas de pentes
+    arcade: {
+      // parametres du mode arcade
+      gravity: {
+        y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
+      },
+      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+    }
+  },
+  scene: [ScenePresentation, SceneJeu] 
+};
+
+function tirerProjectile(type, player) {
+  var coefDir = (player.direction == 'left') ? -1 : 1;
+  var projectiles = {
+    "explosion": 'bullet_explosion',
+    "congelation": 'bullet_congelation',
+    "tempete": 'bullet_tempete',
+    "foudre": 'bullet_foudre',
+    "chaleur": 'bullet_chaleur'
+  };
+  
+  var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
+  bullet.setDisplaySize(20, 20);
+  bullet.setCollideWorldBounds(false);
+  bullet.body.onWorldBounds = true;
+  bullet.body.allowGravity = true;  // Activation de la gravité
+  bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+
+  // Ajouter la collision entre le projectile et les squelettes1
+  Squelettes1.forEach(squelette1 => {
+    scene.physics.add.overlap(bullet, squelette1, () => {
+      squelette1.disableBody(true, true); // Désactiver le squelette
+      bullet.destroy(); // Détruire le projectile
+    });
+  });
+
+  // Ajouter la collision entre le projectile et les squelettes
+  Squelettes2.forEach(squelette2 => {
+    scene.physics.add.overlap(bullet, squelette2, () => {
+      squelette2.disableBody(true, true); // Désactiver le squelette
+      bullet.destroy(); // Détruire le projectile
+      });
+    });
+    
+  
+  // Collision avec une box
+  scene.physics.add.overlap(bullet, box, () => {
+    if (type === "chaleur") {  // Vérifie si le projectile est de type "chaleur"
+      box.disableBody(true, true); // Désactive la box
+    }
+    bullet.destroy();
+  });
+  scene.physics.add.overlap(bullet, eaux, () => {
+    if (type === "congelation") {  // Vérifie si le projectile est de type "chaleur"
+      eau.anims.play('eau_glace'); // Désactive la box
+    }
+    bullet.destroy();
+  });
+
+}
+
+// création et lancement du jeu
+var game = new Phaser.Game(config);
+
+function ramasserMineraux(un_player, un_minerau) {
+  compteurMineraux[un_minerau.texture.key]++;
+  un_minerau.disableBody(true, true);
+  mettreAJourCompteur();
+}
+
+function mettreAJourCompteur() {
+  texteCompteur.setText(
+    `🔮 Réserve d'Alchimiste 🔮\n` +
+    `🔥 Oxygène: ${compteurMineraux["rouge"]}  ⚡ Fer: ${compteurMineraux["jaune_clair"]}  💧 Hydrogène: ${compteurMineraux["rose"]}\n` +
+    `🌌 Sodium: ${compteurMineraux["violet"]}  ❄️ Chlore: ${compteurMineraux["blanc"]}  🏺 Silicium: ${compteurMineraux["orange"]}`
+  );
+}
+
+
+function lancerAttaque(type) {
+  let attaques = {
+    "explosion": { 
+      elements: ["jaune_clair", "rouge"], 
+      effet: "Déflagration Alchimique !" 
+    },
+    "congelation": { 
+      elements: ["rose", "rouge"], 
+      effet: "Malédiction de Givre !" 
+    },
+    "tempete": { 
+      elements: ["orange", "rouge"], 
+      effet: "Invocation de la Tempête !" 
+    },
+    "foudre": { 
+      elements: ["jaune_clair", "violet"], 
+      effet: "Éclair du Chaos !" 
+    },
+    "chaleur": { 
+      elements: ["violet", "blanc"], 
+      effet: "Brasier Astral !" 
+    }
+  };
+
+  let attaque = attaques[type];
+
+  if (attaque.elements.every(e => compteurMineraux[e] > 0)) {
+    attaque.elements.forEach(e => compteurMineraux[e]--);
+
+    // Mise à jour de l'affichage des minéraux
+    texteCompteur.setText(`🔮 Réserve d'Alchimiste 🔮\n🔥 Oxygène: ${compteurMineraux["rouge"]}  ⚡ Fer: ${compteurMineraux["jaune_clair"]}  💧 Hydrogène: ${compteurMineraux["rose"]}\n🌌 Sodium: ${compteurMineraux["violet"]}  ❄️ Chlore: ${compteurMineraux["blanc"]}  🏺 Silicium: ${compteurMineraux["orange"]}`);
+
+    // Effet magique
+    afficherMessage(`✨ ${attaque.effet} ! ✨`);
+
+    // Lancement du projectile correspondant
+    tirerProjectile(type, player);
+  } else {
+    afficherMessage("⚠️ Pas assez d'essences magiques !");
+  }
+}
+
+
+function afficherMessage(message) {
+  if (!scene.texteMessage) {
+    scene.texteMessage = scene.add.text(0, 0, "", { 
+      fontSize: '20px', 
+      fill: '#FFD700', 
+      fontStyle: 'bold', 
+      stroke: '#8B0000', 
+      strokeThickness: 3 
+    });
+    scene.texteMessage.setOrigin(0.5, 0.5);
+  }
+
+  // Stopper toute animation en cours sur le texte
+  scene.tweens.killTweensOf(scene.texteMessage);
+
+  // Positionner le message au centre de l'écran en fonction de la caméra
+  scene.texteMessage.setPosition(scene.cameras.main.scrollX + scene.cameras.main.width / 2, 
+                                 scene.cameras.main.scrollY + scene.cameras.main.height / 2);
+  
+  // Réinitialiser l'alpha (rendre visible immédiatement)
+  scene.texteMessage.setAlpha(1);
+  
+  // Mettre à jour le texte
+  scene.texteMessage.setText(message);
+  
+  // Lancer une nouvelle animation pour le faire disparaître
+  scene.tweens.add({
+    targets: scene.texteMessage,
+    alpha: 0,
+    duration: 2000,
+    ease: 'Power2'
+  });
+}
+
+function finDuJeu() {
+  gameOver = true;
+  player.setVelocity(0, 0); // Arrête le joueur
+  player.anims.stop(); // Stop l'animation du joueur
+  player.body.moves = false; // Empêche tout mouvement
+  musique_de_fond.stop(); // Stop la musique
+
+  // Fond noir semi-transparent
+  let overlay = scene.add.rectangle(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 300, 
+    800, 600, 
+    0x000000, 0.7
+  );
+  overlay.setDepth(20);
+
+  // Texte "Game Over" avec effet de fondu
+  let texteGameOver = scene.add.text(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 200, 
+    "GAME OVER", 
+    { 
+      fontSize: '64px', 
+      fill: '#ff0000', 
+      fontStyle: 'bold', 
+      stroke: '#000', 
+      strokeThickness: 6 
+    }
+  );
+  texteGameOver.setOrigin(0.5);
+  texteGameOver.setDepth(21);
+
+  scene.tweens.add({
+    targets: texteGameOver,
+    alpha: { from: 0, to: 1 },
+    duration: 1000,
+    ease: 'Power2'
+  });
+
+  // Bouton "Rejouer"
+  let boutonRejouer = scene.add.text(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 320, 
+    "🔄 Rejouer", 
+    { 
+      fontSize: '30px', 
+      fill: '#ffffff', 
+      backgroundColor: '#008000', 
+      padding: { x: 10, y: 5 }
+    }
+  )
+  .setInteractive()
+  .on('pointerdown', () => { 
+    // Réinitialisation complète des variables du jeu
+    compteurMineraux = { "rouge": 0, "jaune_clair": 0, "rose": 0, "violet": 0, "blanc": 0, "orange": 0 };
+    gameOver = false;
+    scene.scene.restart();
+  });
+  boutonRejouer.setOrigin(0.5);
+  boutonRejouer.setDepth(21);
+
+  // Bouton "Quitter"
+  let boutonQuitter = scene.add.text(
+    scene.cameras.main.scrollX + 400, 
+    scene.cameras.main.scrollY + 390, 
+    "🚪 Quitter", 
+    { 
+      fontSize: '30px', 
+      fill: '#ffffff', 
+      backgroundColor: '#800000', 
+      padding: { x: 10, y: 5 }
+    }
+  )
+  .setInteractive()
+  .on('pointerdown', () => { 
+    game.destroy(true); // Ferme complètement le jeu
+  });
+  boutonQuitter.setOrigin(0.5);
+  boutonQuitter.setDepth(21);
 }
 
 function collisEau(player, eau) {
