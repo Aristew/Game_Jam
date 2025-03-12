@@ -836,9 +836,9 @@ class SceneJeu2 extends Phaser.Scene {
   create() {
     const carteDuNiveau2 = this.add.tilemap("carte2");
     const tileset2 = carteDuNiveau2.addTilesetImage("CaveG", "Phaser_tuilesdejeu2");
-
-    
-    const plateforme2 = carteDuNiveau2.createLayer("plateforme", tileset2);
+    const fond2 = carteDuNiveau2.createLayer("fond_cave", tileset2);
+    // Ensure the layer name matches the one in the tilemap JSON file
+    const plateforme2 = carteDuNiveau2.createLayer("plateforme2", tileset2);
 
     plateforme2.setCollisionByProperty({ estSolide: true });
 
