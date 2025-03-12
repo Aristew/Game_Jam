@@ -307,7 +307,7 @@ if (!this.anims.exists('anim_boss_marche_D')) {
   if (!this.anims.exists('anim_boss_marche_G')) {
     this.anims.create({
       key: 'anim_boss_marche_G',
-      frames: this.anims.generateFrameNumbers('boss_marche_G', { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers('boss_marche_G', { start: 3, end: 0 }),
       frameRate: 5,
       repeat: -1
     });
@@ -563,19 +563,46 @@ groupe_mineraux.setDepth(15);
     this.indexDialogue1 = 0;
     this.derniereParole1 = 0;
 
+    // Création du boss à la position 3400 / 100
+let boss = this.physics.add.sprite(300, 100, 'boss_marche_G');
+boss.setCollideWorldBounds(true);
+boss.setBounce(0);
+boss.body.setSize(40, 80);
+boss.body.setOffset(30, 0);
+boss.pv = 3; // Besoin de 3 balles pour mourir
+this.physics.add.collider(boss, plateforme);
+this.physics.add.overlap(player, boss, finDuJeu);
+
+
+// Jouer l'animation de marche droite au départ
+boss.anims.play('anim_boss_marche_D', true);
+let bossMovingRight = true;
+
+// Mouvement du boss (alterne gauche/droite)
+setInterval(() => {
+  if (!boss.body) return;
+  
+  if (bossMovingRight) {
+    boss.setVelocityX(50);
+    boss.anims.play('anim_boss_marche_D', true);
+  } else {
+    boss.setVelocityX(-50);
+    boss.anims.play('anim_boss_marche_G', true);
+  }
+  bossMovingRight = !bossMovingRight;
+}, 3000);
 
 
     // Positions prédéfinies pour les squelettes
     let positionsSquelettes1 = [
       { x: 1000, y: 300 },
-      { x: 1400, y: 300 },
-      { x: 3000, y: 300 }
+      { x: 1400, y: 300 }
     ];
 
     let positionsSquelettes2 = [
-      { x: 3400, y: 100 },
+      { x: 3000, y: 100 },
     ];
-
+    
     // Créer les squelettes1
     for (let pos of positionsSquelettes1) {
       let squelette1 = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
@@ -647,28 +674,6 @@ groupe_mineraux.setDepth(15);
       this.physics.add.overlap(player, squelette2, finDuJeu);
     });
 
-
-
-    // Ajouter les collisions entre les projectiles et les squelettes
-    groupeBullets.children.iterate(bullet => {
-      Squelettes1.forEach(squelette1 => {
-        this.physics.add.overlap(bullet, squelette1, () => {
-          squelette1.disableBody(true, true); // Désactiver le squelette
-          son_bone.play();
-          bullet.destroy(); // Détruire le projectile
-        });
-      });
-    });
-    // Ajouter les collisions entre les projectiles et les squelettes
-    groupeBullets.children.iterate(bullet => {
-      Squelettes2.forEach(squelette2 => {
-        this.physics.add.overlap(bullet, squelette2, () => {
-          squelette2.disableBody(true, true); // Désactiver le squelette
-          son_bone.play();
-          bullet.destroy(); // Détruire le projectile
-        });
-      });
-    });
 
     if (!this.anims.exists('eau_anim')) {
       this.anims.create({
@@ -921,6 +926,7 @@ function tirerProjectile(type, player) {
   Squelettes1.forEach(squelette1 => {
     scene.physics.add.overlap(bullet, squelette1, () => {
       squelette1.disableBody(true, true); // Désactiver le squelette
+      son_bone.play();
       bullet.destroy(); // Détruire le projectile
     });
   });
@@ -929,10 +935,11 @@ function tirerProjectile(type, player) {
   Squelettes2.forEach(squelette2 => {
     scene.physics.add.overlap(bullet, squelette2, () => {
       squelette2.disableBody(true, true); // Désactiver le squelette
+      son_bone.play();
       bullet.destroy(); // Détruire le projectile
     });
   });
-
+  
 
   // Collision avec une box
   scene.physics.add.overlap(bullet, box, () => {
