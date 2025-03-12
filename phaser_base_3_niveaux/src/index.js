@@ -315,16 +315,16 @@ if (!this.anims.exists('anim_boss_marche_D')) {
   if (!this.anims.exists('anim_boss_attack_D')) {
     this.anims.create({
       key: 'anim_boss_attack_D',
-      frames: this.anims.generateFrameNumbers('boss_attack_D', { start: 0, end: 3 }),
-      frameRate: 5,
+      frames: this.anims.generateFrameNumbers('boss_attack_D', { start: 0, end: 12 }),
+      frameRate: 12,
       repeat: -1
     });
   }
   if (!this.anims.exists('anim_boss_attack_G')) {
     this.anims.create({
       key: 'anim_boss_attack_G',
-      frames: this.anims.generateFrameNumbers('boss_attack_G', { start: 0, end: 3 }),
-      frameRate: 5,
+      frames: this.anims.generateFrameNumbers('boss_attack_G', { start: 0, end: 12 }),
+      frameRate: 12,
       repeat: -1
     });
   }
@@ -602,37 +602,51 @@ groupe_mineraux.setDepth(15);
     ];
     
     let positionsboss = [
-      { x: 4300, y: 100 },
-    ]
+      { x: 4350, y: 100 },
+    ];
     for (let pos of positionsboss) {
       let boss1 = this.physics.add.sprite(pos.x, pos.y, 'boss_marche_D');
       boss1.setCollideWorldBounds(true);
       boss1.setBounce(0);
-      boss1.setDisplaySize(280, 360)
+      boss1.setDisplaySize(140, 180);
       boss1.body.setSize(70, 90);
-      boss1.body.setOffset(20, 10); 
+      boss1.body.setOffset(30, 0); 
       boss1.hp = 5;
       boss.push(boss1);
       // Initialiser l'animation et la direction
       boss1.anims.play('anim_boss_marche_D', true);
 
-      // Boucle simple pour alterner le déplacement
+      // Boucle simple pour alterner le déplacement et l'attaque
       let movingRight = true;
 
       if(boss1) {
-      setInterval(() => {
-        if (!boss1.body) return; // Vérifier si le squelette est encore actif
-        if (movingRight) {
-          boss1.setVelocityX(50); // Déplace à droite
-          boss1.anims.play('anim_boss_marche_D', true);
-        } else {
-          boss1.setVelocityX(-50); // Déplace à gauche
-          boss1.anims.play('anim_boss_marche_G', true);
-        }
-        movingRight = !movingRight;
-      }, 3000); // Change de direction toutes les 3 secondes
+        setInterval(() => {
+          if (!boss1.body) return; // Vérifier si le boss est encore actif
+          if (movingRight) {
+            boss1.setVelocityX(100); // Déplace à droite
+            boss1.anims.play('anim_boss_marche_D', true);
+          } else {
+            boss1.setVelocityX(-100); // Déplace à gauche
+            boss1.anims.play('anim_boss_marche_G', true);
+          }
+          movingRight = !movingRight;
+
+          // Attaque après avoir marché
+          
+            if (movingRight) {
+              boss1.anims.play('anim_boss_attack_G', true);
+              boss1.setSize(110, 90);
+              boss1.setOffset(-30, 0);
+            } else {
+              boss1.anims.play('anim_boss_attack_D', true);
+              boss1.setSize(110, 90);
+              boss1.setOffset(30, 0);
+            }
+           
+        }, 4000); // Change de direction toutes les 4 secondes
+      }
     }
-  }
+
     // Créer les squelettes1
     for (let pos of positionsSquelettes1) {
       let squelette1 = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
