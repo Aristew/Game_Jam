@@ -713,6 +713,21 @@ groupe_mineraux.setDepth(15);
     }
   }
 }
+class SceneJeu2 extends Phaser.Scene {
+  constructor() {
+    super({ key: 'SceneJeu2' });
+  }
+  preLoad(){
+    this.load.image("Phaser_tuilesdejeu2", "src/assets/CaveG.png");
+    this.load.tilemapTiledJSON("carte2", "src/assets/Map_cave.json");
+  }
+  create(){
+
+  }
+  update(){
+    
+  }
+}
 
 var config = {
   type: Phaser.AUTO,
