@@ -398,7 +398,8 @@ for (let pos of positionsMineraux) {
   minerau.setBounce(0.2);  
   minerau.setCollideWorldBounds(true);
 }
-  
+groupe_mineraux.setDepth(15);
+
   // Empêcher les minéraux de flotter en les faisant tomber sur le sol
   this.physics.add.collider(groupe_mineraux, plateforme);
   this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
