@@ -632,12 +632,39 @@ function tirerProjectile(type, player) {
     "chaleur": 'bullet_chaleur'
   };
   
+
   var bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, projectiles[type]);
-  bullet.setDisplaySize(20, 20);
   bullet.setCollideWorldBounds(false);
   bullet.body.onWorldBounds = true;
   bullet.body.allowGravity = true;  // Activation de la gravité
-  bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+
+  // Ajuster la taille du projectile en fonction de son type
+  switch (type) {
+    case "explosion":
+      bullet.setDisplaySize(30, 30);  // Exemple : taille de la boule d'explosion
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "congelation":
+      bullet.setDisplaySize(25, 25);  // Exemple : taille de la boule de neige
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "tempete":
+      bullet.setDisplaySize(40, 40);  // Exemple : taille de la boule de sable
+      bullet.setVelocity(450 * coefDir, 10); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "foudre":
+      bullet.setDisplaySize(15, 40);  // Exemple : taille de la foudre
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    case "chaleur":
+      bullet.setDisplaySize(30, 30);  // Exemple : taille de la boule de feu
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+    default:
+      bullet.setDisplaySize(20, 20);  // Taille par défaut
+      bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
+      break;
+  }
 
   // Ajouter la collision entre le projectile et les squelettes1
   Squelettes1.forEach(squelette1 => {
