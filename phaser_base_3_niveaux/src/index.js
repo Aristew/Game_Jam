@@ -286,7 +286,9 @@ class SceneJeu extends Phaser.Scene {
     plateforme.setCollisionByProperty({ estSolide: true });
     this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
     this.esprit1 = this.add.sprite(900, 416, 'esprit'); // Position fixe
-    this.esprit2 = this.add.sprite(1775, 285, 'esprit');
+    this.esprit2 = this.add.sprite(1775, 285, 'esprit'); // Position fixe
+    this.esprit3 = this.add.sprite(2650, 475, 'esprit');
+    this.esprit4 = this.add.sprite(3936, 384, 'esprit');
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
@@ -393,7 +395,8 @@ if (!this.anims.exists('anim_Sq_1D')) {
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
 this.esprit2.play('phase1');
-
+this.esprit3.play('phase1');
+this.esprit4.play('phase1');
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
 //  ajout du champs de la caméra de taille identique à celle du monde
@@ -579,6 +582,39 @@ groupe_mineraux.setDepth(15);
     this.indexDialogue2 = 0;
     this.derniereParole2 = 0;
     this.joueurDansZone2 = false;
+
+    this.bulleTexte3 = this.add.text(400, 250, '...', {  // Texte vide au départ
+      fontSize: '16px',
+      fill: '#fff',
+      backgroundColor: '#000',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
+
+    this.dialogues3 = [
+      "Prends garde",
+      "certains monstres sont appelés boss ou élites",
+      "Ils ont plusieurs points de vie",
+      "mais tu as maintenant des sorts puissants à ton arsenal"
+    ];
+
+    this.indexDialogue3 = 0;
+    this.derniereParole3 = 0;
+
+    this.bulleTexte4 = this.add.text(400, 250, '...', {  // Texte vide au départ
+      fontSize: '16px',
+      fill: '#fff',
+      backgroundColor: '#000',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
+
+    this.dialogues4 = [
+      "C'est trop haut",
+      "utilise un sort pour sauter plus haut",
+      "mais prends garde un boss t'attend derrière le mur"
+    ];
+
+    this.indexDialogue4 = 0;
+    this.derniereParole4 = 0;
 
     // Création du boss à la position 3400 / 100
 let boss = this.physics.add.sprite(300, 100, 'boss_marche_G');
@@ -806,6 +842,14 @@ setInterval(() => {
       player.x, player.y,
       this.esprit2.x, this.esprit2.y
     );
+    const distance3 = Phaser.Math.Distance.Between(
+      player.x, player.y,
+      this.esprit3.x, this.esprit3.y
+    );
+    const distance4 = Phaser.Math.Distance.Between(
+      player.x, player.y,
+      this.esprit4.x, this.esprit4.y
+    );
     if (distance1 < 100) {
     if (!this.joueurDansZone1) {  
         this.joueurDansZone1 = true;
@@ -833,6 +877,32 @@ setInterval(() => {
     this.bulleTexte1.setVisible(false);
 }
 
+if (distance4 < 100) {
+  if (!this.joueurDansZone4) {  
+      this.joueurDansZone4 = true;
+
+      if (!this.anciennementDansZone4) { 
+          this.indexDialogue4 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone4 = true;
+  }
+
+  if (time > this.derniereParole4 + 1500 && this.indexDialogue4 < this.dialogues4.length) { 
+      this.derniereParole4 = time;
+      this.bulleTexte4.setVisible(false);
+
+      this.time.delayedCall(500, () => { 
+          this.bulleTexte4.setText(this.dialogues4[this.indexDialogue4]);
+          this.bulleTexte4.setPosition(this.esprit4.x, this.esprit4.y - 50);
+          this.bulleTexte4.setVisible(true); 
+          this.indexDialogue4++;
+      });
+  }
+} else {
+  this.joueurDansZone4 = false;
+  this.anciennementDansZone4 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte4.setVisible(false);
+}
 
 if (distance < 100) {
   if (!this.joueurDansZone) {  
@@ -886,6 +956,32 @@ if (distance2 < 100) {
   this.anciennementDansZone2 = false;  // Réinitialise seulement quand le joueur sort complètement
   this.bulleTexte2.setVisible(false);
 }
+if (distance3 < 100) {
+  if (!this.joueurDansZone3) {  
+      this.joueurDansZone3 = true;
+  
+      if (!this.anciennementDansZone3) { 
+          this.indexDialogue3 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone3 = true;
+  }
+  
+  if (time > this.derniereParole3 + 1500 && this.indexDialogue3 < this.dialogues3.length) { 
+      this.derniereParole3 = time;
+      this.bulleTexte3.setVisible(false);
+  
+      this.time.delayedCall(500, () => { 
+          this.bulleTexte3.setText(this.dialogues3[this.indexDialogue3]);
+          this.bulleTexte3.setPosition(this.esprit3.x, this.esprit3.y - 50);
+          this.bulleTexte3.setVisible(true); 
+          this.indexDialogue3++;
+      });
+  }
+  } else {
+  this.joueurDansZone3 = false;
+  this.anciennementDansZone3 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte3.setVisible(false);
+  }
 
 
     if(devientGlace){
@@ -902,6 +998,7 @@ if (distance2 < 100) {
     }
   }
 }
+
 
 var config = {
   type: Phaser.AUTO,
