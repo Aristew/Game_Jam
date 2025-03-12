@@ -24,6 +24,18 @@ var collision;
 var porte;
 var devientGlace = false;
 
+let texteSorts;
+let styleSorts = {
+    fontSize: 16,
+    fill: '#FFD700', // Doré
+    fontStyle: 'bold',
+    stroke: '#8B0000',
+    strokeThickness: 3,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fond semi-transparent
+    padding: { x: 10, y: 5 },
+    align: 'right'
+};
+
 class ScenePresentation extends Phaser.Scene {
   constructor() {
     super({ key: 'ScenePresentation' });
@@ -418,7 +430,11 @@ groupe_mineraux.setDepth(15);
 
     this.physics.add.collider(groupe_mineraux, plateforme);
 
-    // Création du texte du compteur avec un fond semi-transparent
+    // Création de l'affichage des sorts (invisible au départ)
+    texteSorts = this.add.text(600, 20, "", styleSorts).setDepth(10).setVisible(false);
+    texteSorts.setScrollFactor(0); // Reste fixe à l'écran
+    // Création du texte du compteur avec un fond semi-transpa
+    // rent
     let styleCompteur = {
       fontSize: '18px',
       fill: '#FFD700', // Doré
@@ -431,8 +447,10 @@ groupe_mineraux.setDepth(15);
     };
 
     texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
+    texteCompteur.setScrollFactor(0); // Reste fixe à l'écran
     mettreAJourCompteur();
 
+    
     this.bulleTexte = this.add.text(400, 250, '...', {  // Texte vide au départ
       fontSize: '16px',
       fill: '#fff',
@@ -602,6 +620,11 @@ groupe_mineraux.setDepth(15);
       const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
       if (distance < 50) { // Si le joueur est suffisamment proche de la porte
         porte.anims.play('anim_porte', true);
+    
+        // Ajouter un délai de 1 seconde avant de lancer la scène 2
+        this.time.delayedCall(1000, () => {
+          this.scene.start('SceneJeu2');
+        });
       }
     });
 
@@ -615,7 +638,7 @@ groupe_mineraux.setDepth(15);
   /***********************************************************************/
 
   update(time) {
-    texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
+    //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
 
     if (clavier.right.isDown) {
       player.setVelocityX(220);
@@ -641,6 +664,16 @@ groupe_mineraux.setDepth(15);
     }
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
+    }
+    if (player.x > 900) {
+      texteSorts.setVisible(true);
+      texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Tempête | R - Foudre | T - Chaleur");
+
+      // Position en bas de l'écran
+      let cam = this.cameras.main;
+      texteSorts.setPosition(cam.width / 2 - 395, cam.height - 40);
+      } else {
+          texteSorts.setVisible(false);
     }
 
     const distance = Phaser.Math.Distance.Between(
@@ -756,7 +789,7 @@ var config = {
       debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
-  scene: [ScenePresentation, SceneJeu]
+  scene: [ScenePresentation, SceneJeu, SceneJeu2]
 };
 
 function tirerProjectile(type, player) {
