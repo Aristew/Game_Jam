@@ -432,8 +432,9 @@ groupe_mineraux.setDepth(15);
 
     // Création de l'affichage des sorts (invisible au départ)
     texteSorts = this.add.text(600, 20, "", styleSorts).setDepth(10).setVisible(false);
-
-    // Création du texte du compteur avec un fond semi-transparent
+    texteSorts.setScrollFactor(0); // Reste fixe à l'écran
+    // Création du texte du compteur avec un fond semi-transpa
+    // rent
     let styleCompteur = {
       fontSize: '18px',
       fill: '#FFD700', // Doré
@@ -446,6 +447,7 @@ groupe_mineraux.setDepth(15);
     };
 
     texteCompteur = this.add.text(20, 20, "", styleCompteur).setDepth(10);
+    texteCompteur.setScrollFactor(0); // Reste fixe à l'écran
     mettreAJourCompteur();
 
     
@@ -631,7 +633,7 @@ groupe_mineraux.setDepth(15);
   /***********************************************************************/
 
   update(time) {
-    texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
+    //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
 
     if (clavier.right.isDown) {
       player.setVelocityX(220);
@@ -664,7 +666,7 @@ groupe_mineraux.setDepth(15);
 
       // Position en bas de l'écran
       let cam = this.cameras.main;
-      texteSorts.setPosition(cam.scrollX + cam.width / 2 - 395, cam.scrollY + cam.height - 40);
+      texteSorts.setPosition(cam.width / 2 - 395, cam.height - 40);
       } else {
           texteSorts.setVisible(false);
     }
