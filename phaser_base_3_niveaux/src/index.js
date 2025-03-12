@@ -754,6 +754,9 @@ groupe_mineraux.setDepth(15);
     if (clavier.up.isDown && player.body.blocked.down) {
       player.setVelocityY(-300);
     }
+    if (clavier.down.isDown){
+      player.setVelocityY(300);
+    }
     
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
