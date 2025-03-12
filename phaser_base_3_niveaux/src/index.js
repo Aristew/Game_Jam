@@ -580,34 +580,7 @@ groupe_mineraux.setDepth(15);
     this.derniereParole2 = 0;
     this.joueurDansZone2 = false;
 
-    // Création du boss à la position 3400 / 100
-let boss = this.physics.add.sprite(300, 100, 'boss_marche_G');
-boss.setCollideWorldBounds(true);
-boss.setBounce(0);
-boss.body.setSize(40, 80);
-boss.body.setOffset(30, 0);
-boss.pv = 3; // Besoin de 3 balles pour mourir
-this.physics.add.collider(boss, plateforme);
-this.physics.add.overlap(player, boss, finDuJeu);
 
-
-// Jouer l'animation de marche droite au départ
-boss.anims.play('anim_boss_marche_D', true);
-let bossMovingRight = true;
-
-// Mouvement du boss (alterne gauche/droite)
-setInterval(() => {
-  if (!boss.body) return;
-  
-  if (bossMovingRight) {
-    boss.setVelocityX(50);
-    boss.anims.play('anim_boss_marche_D', true);
-  } else {
-    boss.setVelocityX(-50);
-    boss.anims.play('anim_boss_marche_G', true);
-  }
-  bossMovingRight = !bossMovingRight;
-}, 3000);
 
 
     // Positions prédéfinies pour les squelettes
@@ -622,8 +595,37 @@ setInterval(() => {
     ];
     
     let positionsboss = [
-      { x: 4000, y: 100 },
+      { x: 400, y: 100 },
     ]
+    for (let pos of positionsboss) {
+      let boss1 = this.physics.add.sprite(pos.x, pos.y, 'boss_marche_D');
+      boss1.setCollideWorldBounds(true);
+      boss1.setBounce(0);
+      boss1.setDisplaySize(280, 360)
+      boss1.body.setSize(70, 90);
+      boss1.body.setOffset(20, 10); 
+      boss1.hp = 5;
+      boss.push(boss1);
+      // Initialiser l'animation et la direction
+      boss1.anims.play('anim_boss_marche_D', true);
+
+      // Boucle simple pour alterner le déplacement
+      let movingRight = true;
+
+      if(boss1) {
+      setInterval(() => {
+        if (!boss1.body) return; // Vérifier si le squelette est encore actif
+        if (movingRight) {
+          boss1.setVelocityX(50); // Déplace à droite
+          boss1.anims.play('anim_boss_marche_D', true);
+        } else {
+          boss1.setVelocityX(-50); // Déplace à gauche
+          boss1.anims.play('anim_boss_marche_G', true);
+        }
+        movingRight = !movingRight;
+      }, 3000); // Change de direction toutes les 3 secondes
+    }
+  }
     // Créer les squelettes1
     for (let pos of positionsSquelettes1) {
       let squelette1 = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
@@ -685,7 +687,7 @@ setInterval(() => {
       }, 3000); // Change de direction toutes les 3 secondes
     }
 
-    // Ajouter les collisions entre les squelettes et les plateformes
+    // Ajouter les collisions entre les squelettes et les plateformes et le joueur
     Squelettes1.forEach(squelette1 => {
       this.physics.add.collider(squelette1, plateforme);
       this.physics.add.overlap(player, squelette1, finDuJeu);
@@ -694,7 +696,10 @@ setInterval(() => {
       this.physics.add.collider(squelette2, plateforme);
       this.physics.add.overlap(player, squelette2, finDuJeu);
     });
-
+    boss.forEach(boss1 => {
+      this.physics.add.collider(boss1, plateforme);
+      this.physics.add.overlap(player, boss1, finDuJeu);
+    });
 
     if (!this.anims.exists('eau_anim')) {
       this.anims.create({
@@ -994,6 +999,19 @@ function tirerProjectile(type, player, murs) {
     });
   });
 
+  boss.forEach(boss1 => {
+    scene.physics.add.overlap(bullet, boss1, () => {
+      boss1.hp--;
+      bullet.destroy();
+      if (boss1.hp <= 0) {
+        boss1.disableBody(true, true); // Désactiver le boss
+      };
+    }
+    );
+  });
+
+
+  
 
   scene.physics.add.collider(bullet, murs, function(bullet) {
     bullet.destroy(); // Exemple : Supprime la balle en cas de collision
