@@ -373,6 +373,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
       });
     }
 
+    if (!this.anims.exists('phase1')) {
       this.anims.create({
         key: 'phase1',
 
@@ -380,6 +381,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
         frameRate: 5,
         repeat: -1
       });
+    }
     
     if (!this.anims.exists('anim_porte')) {
       this.anims.create({
@@ -462,22 +464,27 @@ this.physics.add.collider(player, plateforme);
       { x: 2350, y: 300, type: "rouge" },
       { x: 2400, y: 250, type: "rose" },
       
-      
       { x: 2700, y: 350, type: "orange" },
       { x: 3200, y: 400, type: "jaune_clair" },
       { x: 3500, y: 100, type: "rose" },
       { x: 3100, y: 350, type: "orange" },
-      { x: 3400, y: 400, type: "jaune_clair" },
-      { x: 4000, y: 100, type: "rose" },
-      { x: 4100, y: 100, type: "violet" },
-      { x: 4300, y: 480, type: "blanc" },
-      { x: 4600, y: 500, type: "rouge" },
-      { x: 5000, y: 100, type: "rose" },
-      { x: 5400, y: 400, type: "jaune_clair" },
-      { x: 5800, y: 100, type: "rose" },
-      { x: 6400, y: 400, type: "violet" },
-      { x: 6400, y: 400, type: "blanc" },
-      { x: 6400, y: 400, type: "orange" }
+      { x: 3400, y: 400, type: "orange" },
+      { x: 4075, y: 100, type: "rose" },
+      { x: 4075, y: 100, type: "violet" },
+      { x: 4075, y: 100, type: "blanc" },
+      { x: 4075, y: 100, type: "rouge" },
+      { x: 4075, y: 100, type: "orange" },
+      { x: 4075, y: 100, type: "jaune_clair" },
+      { x: 4075, y: 100, type: "rouge" },
+      { x: 4075, y: 100, type: "rouge" },
+      { x: 4075, y: 100, type: "orange" },
+      { x: 4075, y: 100, type: "jaune_clair" },
+      { x: 4075, y: 100, type: "rouge" },
+      { x: 4075, y: 100, type: "rouge" },
+      { x: 4075, y: 100, type: "rouge" },
+      { x: 4075, y: 100, type: "orange" },
+      { x: 4075, y: 100, type: "jaune_clair" },
+      { x: 4075, y: 100, type: "rouge" },
     ];
 
 // Générer les minéraux à des positions fixes
@@ -498,11 +505,11 @@ groupe_mineraux.setDepth(15);
   this.input.keyboard.on("keydown-Z", () => 
     lancerAttaque("congelation", plateforme));
   this.input.keyboard.on("keydown-E", () => 
-    lancerAttaque("tempete", plateforme));
+    lancerAttaque("chaleur", plateforme));
   this.input.keyboard.on("keydown-R", () => 
     lancerAttaque("foudre", plateforme));
   this.input.keyboard.on("keydown-T", () => 
-    lancerAttaque("chaleur", plateforme));
+    lancerAttaque("tempete", plateforme));
 
     this.physics.add.collider(groupe_mineraux, plateforme);
 
@@ -728,7 +735,7 @@ groupe_mineraux.setDepth(15);
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
-    porte = this.physics.add.sprite(200, 300, 'porte'); // Vraie coordonnée 6300, 300
+    porte = this.physics.add.sprite(6400, 300, 'porte'); // Vraie coordonnée 6300, 300
     porte.body.setSize(96, 90);
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
@@ -736,17 +743,17 @@ groupe_mineraux.setDepth(15);
 
 
     // Détecter si le joueur est près de la porte et appuie sur la touche espace
-    this.input.keyboard.on('keydown-SPACE', () => {
-      const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
-      if (distance < 50) { // Si le joueur est suffisamment proche de la porte
-        porte.anims.play('anim_porte', true);
-    
-        // Ajouter un délai de 1 seconde avant de lancer la scène 2
-        this.time.delayedCall(1000, () => {
-          this.scene.start('SceneJeu2');
-        });
-      }
-    });
+this.input.keyboard.on('keydown-SPACE', () => {
+  const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
+  if (distance < 50) { // Si le joueur est suffisamment proche de la porte
+      porte.anims.play('anim_porte', true);
+
+      // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
+      this.time.delayedCall(1000, () => {
+          this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
+      });
+  }
+});
 
   }
 }
@@ -792,16 +799,31 @@ groupe_mineraux.setDepth(15);
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
     }
-    if (player.x > 900) {
+    // Position en bas de l'écran
+    let cam = this.cameras.main;
+    if (player.x > 900 && player.x < 1500) {
       texteSorts.setVisible(true);
-      texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Tempête | R - Foudre | T - Chaleur");
-
-      // Position en bas de l'écran
-      let cam = this.cameras.main;
+      texteSorts.setText("Sort : A - Explosion");
+  } else if (player.x < 2000) {
+      texteSorts.setVisible(true);
+      texteSorts.setText("Sorts : A - Explosion | Z - Congélation");
+  } else if (player.x < 3000) {
+      texteSorts.setVisible(true);
+      texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Chaleur ");
+  } else if (player.x < 3800) {
+      texteSorts.setVisible(true);
+      texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Chaleur | R - Foudre");
+  } else if (player.x >= 3900) { 
+      texteSorts.setVisible(true);
+      texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Chaleur | R - Foudre | T - Tempete");
+  }
+  
+  // Positionne toujours le texte correctement quand il est visible
+  if (player.x > 900) {
       texteSorts.setPosition(cam.width / 2 - 395, cam.height - 40);
-      } else {
-          texteSorts.setVisible(false);
-    }
+  } else {
+      texteSorts.setVisible(false);
+  }
 
     const distance = Phaser.Math.Distance.Between(
       player.x, player.y,
@@ -912,6 +934,62 @@ if (distance2 < 100) {
   }
 }
 
+class EcranRemerciements extends Phaser.Scene {
+  constructor() {
+      super({ key: 'EcranRemerciements' });
+  }
+
+  create() {
+      // Récupérer les dimensions de la caméra
+      const { width, height } = this.cameras.main;
+
+      // Créer un conteneur pour tout le contenu qui va descendre
+      this.container = this.add.container(width / 2, -height); // Départ en haut, hors de l'écran
+
+      // Ajouter un fond noir au conteneur
+      const fond = this.add.rectangle(0, 0, width, height, 0x000000).setOrigin(0.5);
+
+      // Ajouter un message de remerciements
+      const texteMerci = this.add.text(0, -50, "Merci d'avoir joué ! 🎮", {
+          fontSize: '32px',
+          fill: '#FFD700', // Texte doré
+          fontStyle: 'bold',
+          stroke: '#8B0000',
+          strokeThickness: 3,
+          align: 'center'
+      }).setOrigin(0.5);
+
+      // Ajouter un texte pour remercier
+      const texteDev = this.add.text(0, 50, "Merci à ChatGPT et aux professeurs pour nous avoir guidés sur la noble voie du développement...", {
+          fontSize: '18px',
+          fill: '#FFFFFF',
+          wordWrap: { width: width - 100 }
+      }).setOrigin(0.5);
+
+      // Ajouter un texte pour revenir au menu
+      const texteRetour = this.add.text(0, 150, "Appuyez sur ESPACE pour revenir au menu", {
+          fontSize: '18px',
+          fill: '#AAAAAA'
+      }).setOrigin(0.5);
+
+      // Ajouter les éléments au conteneur
+      this.container.add([fond, texteMerci, texteDev, texteRetour]);
+
+      // Faire descendre l'écran avec un tween
+      this.tweens.add({
+          targets: this.container,
+          y: height / 2,
+          duration: 2000, // 2 secondes pour descendre
+          ease: 'Quad.easeOut'
+      });
+
+      // Détecter la touche espace pour retourner au menu
+      this.input.keyboard.on('keydown-SPACE', () => {
+          this.scene.start('ScenePresentation'); // Remplace 'MenuPrincipal' par la scène du menu si besoin
+      });
+  }
+}
+
 var config = {
   type: Phaser.AUTO,
   scale: {
@@ -931,7 +1009,7 @@ var config = {
       debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
-  scene: [ScenePresentation, SceneJeu]
+  scene: [ScenePresentation, SceneJeu, EcranRemerciements] // liste des scènes du jeu
 };
 
 function tirerProjectile(type, player, murs) {
