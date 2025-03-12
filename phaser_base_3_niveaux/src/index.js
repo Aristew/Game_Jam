@@ -373,6 +373,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
       });
     }
 
+    if (!this.anims.exists('phase1')) {
       this.anims.create({
         key: 'phase1',
 
@@ -380,6 +381,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
         frameRate: 5,
         repeat: -1
       });
+    }
     
     if (!this.anims.exists('anim_porte')) {
       this.anims.create({
