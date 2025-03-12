@@ -438,7 +438,7 @@ this.joueurDansZone = false;
   ];
 
   let positionsSquelettes2 = [
-    { x:2000, y: 300 },
+    { x:2800, y: 300 },
   ];
 
   // Créer les squelettes1
