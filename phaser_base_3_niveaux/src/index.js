@@ -286,9 +286,7 @@ class SceneJeu extends Phaser.Scene {
     plateforme.setCollisionByProperty({ estSolide: true });
     this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
     this.esprit1 = this.add.sprite(900, 416, 'esprit'); // Position fixe
-    this.esprit2 = this.add.sprite(1775, 285, 'esprit'); // Position fixe
-    this.esprit3 = this.add.sprite(2650, 475, 'esprit');
-    this.esprit4 = this.add.sprite(3936, 384, 'esprit');
+    this.esprit2 = this.add.sprite(1775, 285, 'esprit');
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
@@ -397,8 +395,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
 this.esprit2.play('phase1');
-this.esprit3.play('phase1');
-this.esprit4.play('phase1');
+
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
 //  ajout du champs de la caméra de taille identique à celle du monde
@@ -590,39 +587,6 @@ groupe_mineraux.setDepth(15);
     this.derniereParole2 = 0;
     this.joueurDansZone2 = false;
 
-    this.bulleTexte3 = this.add.text(400, 250, '...', {  // Texte vide au départ
-      fontSize: '16px',
-      fill: '#fff',
-      backgroundColor: '#000',
-      padding: { x: 10, y: 5 }
-    }).setOrigin(0.5).setVisible(false);
-
-    this.dialogues3 = [
-      "Prends garde",
-      "certains monstres sont appelés boss ou élites",
-      "Ils ont plusieurs points de vie",
-      "mais tu as maintenant des sorts puissants à ton arsenal"
-    ];
-
-    this.indexDialogue3 = 0;
-    this.derniereParole3 = 0;
-
-    this.bulleTexte4 = this.add.text(400, 250, '...', {  // Texte vide au départ
-      fontSize: '16px',
-      fill: '#fff',
-      backgroundColor: '#000',
-      padding: { x: 10, y: 5 }
-    }).setOrigin(0.5).setVisible(false);
-
-    this.dialogues4 = [
-      "C'est trop haut",
-      "utilise un sort pour sauter plus haut",
-      "mais prends garde un boss t'attend derrière le mur"
-    ];
-
-    this.indexDialogue4 = 0;
-    this.derniereParole4 = 0;
-
     // Création du boss à la position 3400 / 100
 let boss = this.physics.add.sprite(300, 100, 'boss_marche_G');
 boss.setCollideWorldBounds(true);
@@ -665,37 +629,8 @@ setInterval(() => {
     ];
     
     let positionsboss = [
-      { x: 4300, y: 100 },
+      { x: 4000, y: 100 },
     ]
-    for (let pos of positionsboss) {
-      let boss1 = this.physics.add.sprite(pos.x, pos.y, 'boss_marche_D');
-      boss1.setCollideWorldBounds(true);
-      boss1.setBounce(0);
-      boss1.setDisplaySize(280, 360)
-      boss1.body.setSize(70, 90);
-      boss1.body.setOffset(20, 10); 
-      boss1.hp = 5;
-      boss.push(boss1);
-      // Initialiser l'animation et la direction
-      boss1.anims.play('anim_boss_marche_D', true);
-
-      // Boucle simple pour alterner le déplacement
-      let movingRight = true;
-
-      if(boss1) {
-      setInterval(() => {
-        if (!boss1.body) return; // Vérifier si le squelette est encore actif
-        if (movingRight) {
-          boss1.setVelocityX(50); // Déplace à droite
-          boss1.anims.play('anim_boss_marche_D', true);
-        } else {
-          boss1.setVelocityX(-50); // Déplace à gauche
-          boss1.anims.play('anim_boss_marche_G', true);
-        }
-        movingRight = !movingRight;
-      }, 3000); // Change de direction toutes les 3 secondes
-    }
-  }
     // Créer les squelettes1
     for (let pos of positionsSquelettes1) {
       let squelette1 = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
@@ -757,7 +692,7 @@ setInterval(() => {
       }, 3000); // Change de direction toutes les 3 secondes
     }
 
-    // Ajouter les collisions entre les squelettes et les plateformes et le joueur
+    // Ajouter les collisions entre les squelettes et les plateformes
     Squelettes1.forEach(squelette1 => {
       this.physics.add.collider(squelette1, plateforme);
       this.physics.add.overlap(player, squelette1, finDuJeu);
@@ -766,10 +701,7 @@ setInterval(() => {
       this.physics.add.collider(squelette2, plateforme);
       this.physics.add.overlap(player, squelette2, finDuJeu);
     });
-    boss.forEach(boss1 => {
-      this.physics.add.collider(boss1, plateforme);
-      this.physics.add.overlap(player, boss1, finDuJeu);
-    });
+
 
     if (!this.anims.exists('eau_anim')) {
       this.anims.create({
@@ -900,14 +832,6 @@ this.input.keyboard.on('keydown-SPACE', () => {
       player.x, player.y,
       this.esprit2.x, this.esprit2.y
     );
-    const distance3 = Phaser.Math.Distance.Between(
-      player.x, player.y,
-      this.esprit3.x, this.esprit3.y
-    );
-    const distance4 = Phaser.Math.Distance.Between(
-      player.x, player.y,
-      this.esprit4.x, this.esprit4.y
-    );
     if (distance1 < 100) {
     if (!this.joueurDansZone1) {  
         this.joueurDansZone1 = true;
@@ -935,32 +859,6 @@ this.input.keyboard.on('keydown-SPACE', () => {
     this.bulleTexte1.setVisible(false);
 }
 
-if (distance4 < 100) {
-  if (!this.joueurDansZone4) {  
-      this.joueurDansZone4 = true;
-
-      if (!this.anciennementDansZone4) { 
-          this.indexDialogue4 = 0;  // Ne réinitialise qu'à la première entrée
-      }
-      this.anciennementDansZone4 = true;
-  }
-
-  if (time > this.derniereParole4 + 1500 && this.indexDialogue4 < this.dialogues4.length) { 
-      this.derniereParole4 = time;
-      this.bulleTexte4.setVisible(false);
-
-      this.time.delayedCall(500, () => { 
-          this.bulleTexte4.setText(this.dialogues4[this.indexDialogue4]);
-          this.bulleTexte4.setPosition(this.esprit4.x, this.esprit4.y - 50);
-          this.bulleTexte4.setVisible(true); 
-          this.indexDialogue4++;
-      });
-  }
-} else {
-  this.joueurDansZone4 = false;
-  this.anciennementDansZone4 = false;  // Réinitialise seulement quand le joueur sort complètement
-  this.bulleTexte4.setVisible(false);
-}
 
 if (distance < 100) {
   if (!this.joueurDansZone) {  
@@ -1014,32 +912,6 @@ if (distance2 < 100) {
   this.anciennementDansZone2 = false;  // Réinitialise seulement quand le joueur sort complètement
   this.bulleTexte2.setVisible(false);
 }
-if (distance3 < 100) {
-  if (!this.joueurDansZone3) {  
-      this.joueurDansZone3 = true;
-  
-      if (!this.anciennementDansZone3) { 
-          this.indexDialogue3 = 0;  // Ne réinitialise qu'à la première entrée
-      }
-      this.anciennementDansZone3 = true;
-  }
-  
-  if (time > this.derniereParole3 + 1500 && this.indexDialogue3 < this.dialogues3.length) { 
-      this.derniereParole3 = time;
-      this.bulleTexte3.setVisible(false);
-  
-      this.time.delayedCall(500, () => { 
-          this.bulleTexte3.setText(this.dialogues3[this.indexDialogue3]);
-          this.bulleTexte3.setPosition(this.esprit3.x, this.esprit3.y - 50);
-          this.bulleTexte3.setVisible(true); 
-          this.indexDialogue3++;
-      });
-  }
-  } else {
-  this.joueurDansZone3 = false;
-  this.anciennementDansZone3 = false;  // Réinitialise seulement quand le joueur sort complètement
-  this.bulleTexte3.setVisible(false);
-  }
 
 
     if(devientGlace){
@@ -1056,7 +928,6 @@ if (distance3 < 100) {
     }
   }
 }
-
 
 class EcranRemerciements extends Phaser.Scene {
   constructor() {
@@ -1201,19 +1072,6 @@ function tirerProjectile(type, player, murs) {
     });
   });
 
-  boss.forEach(boss1 => {
-    scene.physics.add.overlap(bullet, boss1, () => {
-      boss1.hp--;
-      bullet.destroy();
-      if (boss1.hp <= 0) {
-        boss1.disableBody(true, true); // Désactiver le boss
-      };
-    }
-    );
-  });
-
-
-  
 
   scene.physics.add.collider(bullet, murs, function(bullet) {
     bullet.destroy(); // Exemple : Supprime la balle en cas de collision
