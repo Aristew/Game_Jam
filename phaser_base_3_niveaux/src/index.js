@@ -1054,9 +1054,10 @@ function tirerProjectile(type, player) {
       bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
       break;
     case "tempete":
-      bullet.setDisplaySize(25, 25);  // Exemple : taille de la boule de neige
-      bullet.setVelocity(450 * coefDir, 0);
-            player.setVelocityY(-400);
+      bullet.setPosition(player.x, player.y + player.height / 2); // Déplace le projectile au bon endroit
+    bullet.setVelocity(0, 0); // Pas de mouvement initial pour l'orbe de tempête
+    player.setVelocityY(-400);
+    break;
       break;
     case "foudre":
       bullet.setDisplaySize(15, 40);  // Exemple : taille de la foudre
