@@ -1124,8 +1124,8 @@ class SceneJeu2 extends Phaser.Scene {
     texteCompteur.setScrollFactor(0); // Reste fixe à l'écran
     mettreAJourCompteur();
   
-    this.physics.world.setBounds(0, 0, 4768, 640);
-    this.cameras.main.setBounds(0, 0, 4768, 640);
+    this.physics.world.setBounds(0, 0, 6400, 640);
+    this.cameras.main.setBounds(0, 0, 6400, 640);
     this.cameras.main.startFollow(this.player);
 
     this.physics.add.collider(this.player, plateforme2);
