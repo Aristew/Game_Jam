@@ -564,10 +564,14 @@ groupe_mineraux.setDepth(15);
       let movingRight = true;
       setInterval(() => {
         if (movingRight) {
+          if(squelette1!=false) {
           squelette1.setVelocityX(50); // Déplace à droite
+          }
           squelette1.anims.play('anim_Sq_1D', true);
         } else {
+          if(squelette1!=false) {
           squelette1.setVelocityX(-50); // Déplace à gauche
+          }
           squelette1.anims.play('anim_Sq_1G', true);
         }
         movingRight = !movingRight;
@@ -590,10 +594,14 @@ groupe_mineraux.setDepth(15);
       let movingRight = true;
       setInterval(() => {
         if (movingRight) {
+          if(squelette2!=false) {
           squelette2.setVelocityX(50); // Déplace à droite
+          }
           squelette2.anims.play('anim_Sq_2D', true);
         } else {
+          if(squelette2!=false) {
           squelette2.setVelocityX(-50); // Déplace à gauche
+          }
           squelette2.anims.play('anim_Sq_2G', true);
         }
         movingRight = !movingRight;
@@ -635,21 +643,21 @@ groupe_mineraux.setDepth(15);
       this.anims.create({
         key: 'eau_anim',
         frames: this.anims.generateFrameNumbers('eau', { start: 0, end: 2 }),
-        frameRate: 10,
+        frameRate: 1,
         repeat: -1
       });
     }
 
     //eau = this.physics.add.staticSprite(400, 400, 'eau');
-    eaux = this.physics.add.group({
+    eaux = this.physics.add.staticGroup({
       key: 'eau',
       repeat: 1,
       setXY: { x: 2016, y: 352 }
     });
 
     this.physics.add.collider(player, eaux, null, collisEau, this);
-    collision = this.physics.add.collider(player, eaux);
-    eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_anim'); });
+    
+    eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_anim');eau.estGlace=false });
 
     // Gérer les collisions
 
@@ -789,7 +797,10 @@ if (distance1 < 100) {
 
 
     if(devientGlace){
-      eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_glace'); });    }
+      eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_glace'); 
+          eau.estGlace= true;
+
+      });    }
 
 
     if (gameOver) {
@@ -1091,8 +1102,11 @@ function finDuJeu() {
 }
 
 function collisEau(player, eau) {
-
-  if (eau.anims.currentFrame.index == 4) { // Par exemple, frame 2
+  console.log("collision"+ eau.anims.currentFrame.index);
+    
+  if (  eau.estGlace== true)
+   { // Par exemple, frame 2
+    console.log("collision");
     return true;
   }
   return false;
