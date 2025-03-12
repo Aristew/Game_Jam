@@ -28,13 +28,13 @@ class ScenePresentation extends Phaser.Scene {
   }
 
   preload() {
-    //this.load.image('background', 'assets/fantasy_bg.jpg'); // Charge ton image de fond
+    this.load.image('backgroundPres', 'src/assets/Battleground3.png'); // Charge ton image de fond
     //this.load.audio('introMusic', 'assets/intro_music.mp3'); // Charge la musique
   }
 
   create() {
     // Ajout de l'image de fond
-    //this.add.image(400, 300, 'background').setScale(1.1);
+    this.add.image(400, 500, 'backgroundPres').setScale(1.1);
 
     // Lance la musique d'ambiance
     //this.music = this.sound.add('introMusic', { loop: true, volume: 0.5 });
@@ -58,7 +58,7 @@ class ScenePresentation extends Phaser.Scene {
     });
 
     // Texte d'introduction
-    this.add.text(400, 250, "Découvrez les secrets de l'alchimie et affrontez les ténèbres !", {
+    this.add.text(400, 250, "Découvrez les secrets de la chimie et affrontez les ténèbres !", {
       fontSize: '26px',
       fill: '#ffffff',
       fontStyle: 'italic',
@@ -78,7 +78,7 @@ class ScenePresentation extends Phaser.Scene {
     })
     .setInteractive()
     .on('pointerdown', () => {
-      this.music.stop(); // Coupe la musique
+      //this.music.stop(); // Coupe la musique
       this.scene.start('SceneJeu'); // Lance le jeu
     })
     .on('pointerover', () => {
