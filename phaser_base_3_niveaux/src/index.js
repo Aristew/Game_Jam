@@ -31,6 +31,7 @@ var son_bone;
 var son_explo;
 var son_spell;
 var son_ice;
+var outro;
 
 let texteSorts;
 let styleSorts = {
@@ -786,6 +787,7 @@ this.input.keyboard.on('keydown-SPACE', () => {
 
       // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
       this.time.delayedCall(1000, () => {
+        musique_de_fond.stop();
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
       });
   }
@@ -992,7 +994,6 @@ if (distance2 < 100) {
     if(devientGlace){
       eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_glace'); 
           eau.estGlace= true;
-
       });    }
 
 
@@ -1009,7 +1010,12 @@ class EcranRemerciements extends Phaser.Scene {
       super({ key: 'EcranRemerciements' });
   }
 
+  preload() {
+    this.load.audio('outro', 'src/assets/xenogenesis-outro-song.mp3');
+  }
   create() {
+    outro = this.sound.add('outro', { loop: true });
+    outro.play();
       // Récupérer les dimensions de la caméra
       const { width, height } = this.cameras.main;
 
@@ -1055,7 +1061,8 @@ class EcranRemerciements extends Phaser.Scene {
 
       // Détecter la touche espace pour retourner au menu
       this.input.keyboard.on('keydown-SPACE', () => {
-          this.scene.start('ScenePresentation'); // Remplace 'MenuPrincipal' par la scène du menu si besoin
+        outro.stop();
+        this.scene.start('ScenePresentation'); // Remplace 'MenuPrincipal' par la scène du menu si besoin
       });
   }
 }
