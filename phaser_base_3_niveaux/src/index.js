@@ -239,11 +239,12 @@ class SceneJeu extends Phaser.Scene {
     this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
     this.esprit1 = this.add.sprite(704, 512, 'esprit'); // Position fixe
 
-    player = this.physics.add.sprite(100, 475, 'img_perso');
-    player.index = 100;
-    player.setCollideWorldBounds(true);
-    player.setBounce(0);
-    clavier = this.input.keyboard.createCursorKeys();
+player = this.physics.add.sprite(100,475 , 'img_perso'); 
+player.index=100;
+player.setCollideWorldBounds(true); 
+player.setBounce(0); 
+player.setDepth(9);
+clavier = this.input.keyboard.createCursorKeys(); 
 
 
 
@@ -298,18 +299,18 @@ class SceneJeu extends Phaser.Scene {
       });
     }
 
-    this.esprit.play('phase1');
-    this.esprit1.play('phase1');
+this.esprit.play('phase1');
+this.esprit1.play('phase1');
+  
 
-
-    // redimentionnement du monde avec les dimensions calculées via tiled
-    this.physics.world.setBounds(0, 0, 4768, 640);
-    //  ajout du champs de la caméra de taille identique à celle du monde
-    this.cameras.main.setBounds(0, 0, 4768, 640);
-    // ancrage de la caméra sur le joueur
-    this.cameras.main.startFollow(player);
-    this.physics.add.collider(player, plateforme);
-    // Création de la bulle de texte (initialement cachée)
+  // redimentionnement du monde avec les dimensions calculées via tiled
+this.physics.world.setBounds(0, 0, 4768, 640);
+//  ajout du champs de la caméra de taille identique à celle du monde
+this.cameras.main.setBounds(0, 0, 4768, 640);
+// ancrage de la caméra sur le joueur
+this.cameras.main.startFollow(player);  
+this.physics.add.collider(player, plateforme); 
+// Création de la bulle de texte (initialement cachée)
 
 
 
@@ -386,23 +387,24 @@ class SceneJeu extends Phaser.Scene {
       { x: 6400, y: 400, type: "orange" }
     ];
 
-    // Générer les minéraux à des positions fixes
-    groupe_mineraux = this.physics.add.group();
-    for (let pos of positionsMineraux) {
-      let minerau = groupe_mineraux.create(pos.x, pos.y, pos.type);
-      minerau.setBounce(0.2);
-      minerau.setCollideWorldBounds(true);
-    }
+// Générer les minéraux à des positions fixes
+groupe_mineraux = this.physics.add.group();
+for (let pos of positionsMineraux) {
+  let minerau = groupe_mineraux.create(pos.x, pos.y, pos.type);
+  minerau.setBounce(0.2);  
+  minerau.setCollideWorldBounds(true);
+}
+groupe_mineraux.setDepth(15);
 
-    // Empêcher les minéraux de flotter en les faisant tomber sur le sol
-    this.physics.add.collider(groupe_mineraux, plateforme);
-    this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
-
-    this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
-    this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
-    this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
-    this.input.keyboard.on("keydown-R", () => lancerAttaque("foudre"));
-    this.input.keyboard.on("keydown-T", () => lancerAttaque("chaleur"));
+  // Empêcher les minéraux de flotter en les faisant tomber sur le sol
+  this.physics.add.collider(groupe_mineraux, plateforme);
+  this.physics.add.overlap(player, groupe_mineraux, ramasserMineraux, null, this);
+  
+  this.input.keyboard.on("keydown-A", () => lancerAttaque("explosion"));
+  this.input.keyboard.on("keydown-Z", () => lancerAttaque("congelation"));
+  this.input.keyboard.on("keydown-E", () => lancerAttaque("tempete"));
+  this.input.keyboard.on("keydown-R", () => lancerAttaque("foudre"));
+  this.input.keyboard.on("keydown-T", () => lancerAttaque("chaleur"));
 
     this.physics.add.collider(groupe_mineraux, plateforme);
 
@@ -876,7 +878,7 @@ function afficherMessage(message) {
 
   // Stopper toute animation en cours sur le texte
   scene.tweens.killTweensOf(scene.texteMessage);
-
+  scene.texteMessage.setDepth(10);
   // Positionner le message au centre de l'écran en fonction de la caméra
   scene.texteMessage.setPosition(scene.cameras.main.scrollX + scene.cameras.main.width / 2,
     scene.cameras.main.scrollY + scene.cameras.main.height / 2);
