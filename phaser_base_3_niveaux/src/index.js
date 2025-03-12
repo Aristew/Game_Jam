@@ -1103,6 +1103,7 @@ function finDuJeu() {
       // Réinitialisation complète des variables du jeu
       compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
       gameOver = false;
+      devientGlace = false;
       scene.scene.restart();
     });
   boutonRejouer.setOrigin(0.5);
