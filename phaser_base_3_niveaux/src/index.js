@@ -943,8 +943,8 @@ class SceneJeu2 extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
     this.player.setBounce(0);
 
-    this.physics.world.setBounds(0, 0, 4768, 640);
-    this.cameras.main.setBounds(0, 0, 4768, 640);
+    this.physics.world.setBounds(0, 0, 6400, 640);
+    this.cameras.main.setBounds(0, 0, 6400, 640);
     this.cameras.main.startFollow(this.player);
 
 
