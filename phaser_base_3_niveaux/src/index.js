@@ -516,10 +516,14 @@ groupe_mineraux.setDepth(15);
       let movingRight = true;
       setInterval(() => {
         if (movingRight) {
+          if(squelette1!=false) {
           squelette1.setVelocityX(50); // Déplace à droite
+          }
           squelette1.anims.play('anim_Sq_1D', true);
         } else {
+          if(squelette1!=false) {
           squelette1.setVelocityX(-50); // Déplace à gauche
+          }
           squelette1.anims.play('anim_Sq_1G', true);
         }
         movingRight = !movingRight;
@@ -542,10 +546,14 @@ groupe_mineraux.setDepth(15);
       let movingRight = true;
       setInterval(() => {
         if (movingRight) {
+          if(squelette2!=false) {
           squelette2.setVelocityX(50); // Déplace à droite
+          }
           squelette2.anims.play('anim_Sq_2D', true);
         } else {
+          if(squelette2!=false) {
           squelette2.setVelocityX(-50); // Déplace à gauche
+          }
           squelette2.anims.play('anim_Sq_2G', true);
         }
         movingRight = !movingRight;
