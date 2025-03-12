@@ -878,7 +878,7 @@ function afficherMessage(message) {
 
   // Stopper toute animation en cours sur le texte
   scene.tweens.killTweensOf(scene.texteMessage);
-
+  scene.texteMessage.setDepth(10);
   // Positionner le message au centre de l'écran en fonction de la caméra
   scene.texteMessage.setPosition(scene.cameras.main.scrollX + scene.cameras.main.width / 2, 
                                  scene.cameras.main.scrollY + scene.cameras.main.height / 2);
