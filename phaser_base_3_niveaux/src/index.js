@@ -246,6 +246,7 @@ player = this.physics.add.sprite(100,475 , 'img_perso');
 player.index=100;
 player.setCollideWorldBounds(true); 
 player.setBounce(0); 
+player.setDepth(9);
 clavier = this.input.keyboard.createCursorKeys(); 
 
 
