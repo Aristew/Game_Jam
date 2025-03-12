@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
+var compteurMineraux = { "rouge": 3, "jaune_clair": 3, "rose": 3, "violet": 3, "blanc": 3, "orange": 3 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -445,34 +445,34 @@ this.physics.add.collider(player, plateforme);
     // Liste des positions prédéfinies pour les minéraux
     let positionsMineraux = [
       { x: 450, y: 300, type: "rouge" },
-      { x: 550, y: 310, type: "violet" },
-      { x: 980, y: 350, type: "rouge" },
-      { x: 485, y: 300, type: "blanc" },
-      { x: 980, y: 350, type: "rose" },
-      { x: 650, y: 250, type: "blanc" },
+      { x: 485, y: 310, type: "rose" },
+      { x: 550, y: 350, type: "jaune_clair" },
+      { x: 515, y: 300, type: "rose" },
+      { x: 650, y: 350, type: "rouge" },
+      { x: 700, y: 250, type: "jaune_clair" },
       { x: 900, y: 275, type: "rose" },
-      { x: 2400, y: 250, type: "blanc" },
+      { x: 750, y: 250, type: "rouge" },
       { x: 1550, y: 275, type: "rose" },
-      { x: 1050, y: 320, type: "violet" },
-      { x: 700, y: 280, type: "orange" },
-      { x: 550, y: 310, type: "jaune_clair" },
-      { x: 2700, y: 350, type: "rouge" },
+      { x: 1050, y: 320, type: "rouge" },
+      
       { x: 1300, y: 320, type: "violet" },
-      { x: 1800, y: 280, type: "orange" },
-      { x: 1850, y: 310, type: "jaune_clair" },
+      { x: 1550, y: 275, type: "blanc" },
+      { x: 1800, y: 280, type: "violet" },
+      { x: 1850, y: 310, type: "blanc" },
       { x: 2350, y: 300, type: "rouge" },
-      { x: 2400, y: 250, type: "blanc" },
-      { x: 1550, y: 275, type: "rose" },
-      { x: 1050, y: 320, type: "violet" },
-      { x: 700, y: 280, type: "orange" },
-      { x: 515, y: 310, type: "jaune_clair" },
-      { x: 2700, y: 350, type: "rouge" },
+      { x: 2400, y: 250, type: "rose" },
+      
+      
+      { x: 2700, y: 350, type: "orange" },
       { x: 3200, y: 400, type: "jaune_clair" },
       { x: 3500, y: 420, type: "rose" },
+      { x: 3100, y: 350, type: "orange" },
+      { x: 3400, y: 400, type: "jaune_clair" },
+      { x: 4000, y: 420, type: "rose" },
       { x: 4100, y: 100, type: "violet" },
       { x: 4300, y: 480, type: "blanc" },
-      { x: 4600, y: 500, type: "orange" },
-      { x: 5000, y: 350, type: "rouge" },
+      { x: 4600, y: 500, type: "rouge" },
+      { x: 5000, y: 350, type: "rose" },
       { x: 5400, y: 400, type: "jaune_clair" },
       { x: 5800, y: 400, type: "rose" },
       { x: 6400, y: 400, type: "violet" },
