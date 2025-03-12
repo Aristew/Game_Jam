@@ -558,7 +558,7 @@ this.physics.add.collider(player, eaux, null, collisEau, this);
 /** FONCTION UPDATE 
 /***********************************************************************/
 
-function update(time) {
+update(time) {
   texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
 
   if (clavier.right.isDown) {
