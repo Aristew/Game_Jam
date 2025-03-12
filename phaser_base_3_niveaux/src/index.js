@@ -24,7 +24,7 @@ var eaux;
 var collision;
 var porte;
 var devientGlace = false;
-var boss;
+var boss = [];
 var pic;
 var son_jump;
 var son_bone;
@@ -285,8 +285,8 @@ class SceneJeu extends Phaser.Scene {
 
     plateforme.setCollisionByProperty({ estSolide: true });
     this.esprit = this.add.sprite(400, 475, 'esprit'); // Position fixe
-    this.esprit1 = this.add.sprite(832, 416, 'esprit'); // Position fixe
-
+    this.esprit1 = this.add.sprite(900, 416, 'esprit'); // Position fixe
+    this.esprit2 = this.add.sprite(1775, 285, 'esprit');
 player = this.physics.add.sprite(100,475 , 'img_perso'); 
 player.index=100;
 player.setCollideWorldBounds(true); 
@@ -307,7 +307,7 @@ if (!this.anims.exists('anim_boss_marche_D')) {
   if (!this.anims.exists('anim_boss_marche_G')) {
     this.anims.create({
       key: 'anim_boss_marche_G',
-      frames: this.anims.generateFrameNumbers('boss_marche_G', { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers('boss_marche_G', { start: 3, end: 0 }),
       frameRate: 5,
       repeat: -1
     });
@@ -373,14 +373,14 @@ if (!this.anims.exists('anim_Sq_1D')) {
       });
     }
 
-    if (!this.anims.exists('phase1')) {
       this.anims.create({
         key: 'phase1',
+
         frames: this.anims.generateFrameNumbers('esprit', { start: 0, end: 3 }),
         frameRate: 5,
         repeat: -1
       });
-    }
+    
     if (!this.anims.exists('anim_porte')) {
       this.anims.create({
         key: 'anim_porte',
@@ -392,7 +392,7 @@ if (!this.anims.exists('anim_Sq_1D')) {
     
 this.esprit.play('phase1');
 this.esprit1.play('phase1');
-  
+this.esprit2.play('phase1');
 
   // redimentionnement du monde avec les dimensions calculées via tiled
 this.physics.world.setBounds(0, 0, 4768, 640);
@@ -568,19 +568,67 @@ groupe_mineraux.setDepth(15);
     this.indexDialogue1 = 0;
     this.derniereParole1 = 0;
 
+    this.bulleTexte2 = this.add.text(400, 250, '...', {  // Texte vide au départ
+      fontSize: '16px',
+      fill: '#fff',
+      backgroundColor: '#000',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
+
+    this.dialogues2 = [
+      "Prends gardes",
+      "Tu ne sais pas nager",
+      "utilise un sort pour traverser l'eau"
+    ];
+
+    this.indexDialogue2 = 0;
+    this.derniereParole2 = 0;
+    this.joueurDansZone2 = false;
+
+    // Création du boss à la position 3400 / 100
+let boss = this.physics.add.sprite(300, 100, 'boss_marche_G');
+boss.setCollideWorldBounds(true);
+boss.setBounce(0);
+boss.body.setSize(40, 80);
+boss.body.setOffset(30, 0);
+boss.pv = 3; // Besoin de 3 balles pour mourir
+this.physics.add.collider(boss, plateforme);
+this.physics.add.overlap(player, boss, finDuJeu);
+
+
+// Jouer l'animation de marche droite au départ
+boss.anims.play('anim_boss_marche_D', true);
+let bossMovingRight = true;
+
+// Mouvement du boss (alterne gauche/droite)
+setInterval(() => {
+  if (!boss.body) return;
+  
+  if (bossMovingRight) {
+    boss.setVelocityX(50);
+    boss.anims.play('anim_boss_marche_D', true);
+  } else {
+    boss.setVelocityX(-50);
+    boss.anims.play('anim_boss_marche_G', true);
+  }
+  bossMovingRight = !bossMovingRight;
+}, 3000);
 
 
     // Positions prédéfinies pour les squelettes
     let positionsSquelettes1 = [
       { x: 1000, y: 300 },
       { x: 1400, y: 300 },
-      { x: 3000, y: 300 }
+      {x: 3000, y: 100}
     ];
 
     let positionsSquelettes2 = [
       { x: 3400, y: 100 },
     ];
-
+    
+    let positionsboss = [
+      { x: 4000, y: 100 },
+    ]
     // Créer les squelettes1
     for (let pos of positionsSquelettes1) {
       let squelette1 = this.physics.add.sprite(pos.x, pos.y, 'Sq_1_G');
@@ -652,28 +700,6 @@ groupe_mineraux.setDepth(15);
       this.physics.add.overlap(player, squelette2, finDuJeu);
     });
 
-
-
-    // Ajouter les collisions entre les projectiles et les squelettes
-    groupeBullets.children.iterate(bullet => {
-      Squelettes1.forEach(squelette1 => {
-        this.physics.add.overlap(bullet, squelette1, () => {
-          squelette1.disableBody(true, true); // Désactiver le squelette
-          son_bone.play();
-          bullet.destroy(); // Détruire le projectile
-        });
-      });
-    });
-    // Ajouter les collisions entre les projectiles et les squelettes
-    groupeBullets.children.iterate(bullet => {
-      Squelettes2.forEach(squelette2 => {
-        this.physics.add.overlap(bullet, squelette2, () => {
-          squelette2.disableBody(true, true); // Désactiver le squelette
-          son_bone.play();
-          bullet.destroy(); // Détruire le projectile
-        });
-      });
-    });
 
     if (!this.anims.exists('eau_anim')) {
       this.anims.create({
@@ -759,6 +785,9 @@ this.input.keyboard.on('keydown-SPACE', () => {
     if (clavier.up.isDown && player.body.blocked.down) {
       player.setVelocityY(-300);
     }
+    if (clavier.down.isDown){
+      player.setVelocityY(300);
+    }
     
     if (player.y > 600 && !gameOver) {  // Si le joueur tombe trop bas
       finDuJeu();
@@ -797,6 +826,10 @@ this.input.keyboard.on('keydown-SPACE', () => {
       player.x, player.y,
       this.esprit1.x, this.esprit1.y
     );
+    const distance2 = Phaser.Math.Distance.Between(
+      player.x, player.y,
+      this.esprit2.x, this.esprit2.y
+    );
     if (distance1 < 100) {
     if (!this.joueurDansZone1) {  
         this.joueurDansZone1 = true;
@@ -825,31 +858,57 @@ this.input.keyboard.on('keydown-SPACE', () => {
 }
 
 
-if (distance1 < 100) {
-  if (!this.joueurDansZone1) {  
-      this.joueurDansZone1 = true;
+if (distance < 100) {
+  if (!this.joueurDansZone) {  
+      this.joueurDansZone = true;
 
-      if (!this.anciennementDansZone1) { 
-          this.indexDialogue1 = 0;  // Ne réinitialise qu'à la première entrée
+      if (!this.anciennementDansZone) { 
+          this.indexDialogue = 0;  // Ne réinitialise qu'à la première entrée
       }
-      this.anciennementDansZone1 = true;
+      this.anciennementDansZone = true;
   }
 
-  if (time > this.derniereParole1 + 1500 && this.indexDialogue1 < this.dialogues1.length) { 
-      this.derniereParole1 = time;
-      this.bulleTexte1.setVisible(false);
+  if (time > this.derniereParole + 1500 && this.indexDialogue < this.dialogues.length) { 
+      this.derniereParole = time;
+      this.bulleTexte.setVisible(false);
 
       this.time.delayedCall(500, () => { 
-          this.bulleTexte1.setText(this.dialogues1[this.indexDialogue1]);
-          this.bulleTexte1.setPosition(this.esprit1.x, this.esprit1.y - 50);
-          this.bulleTexte1.setVisible(true); 
-          this.indexDialogue1++;
+          this.bulleTexte.setText(this.dialogues[this.indexDialogue]);
+          this.bulleTexte.setPosition(this.esprit.x, this.esprit.y - 50);
+          this.bulleTexte.setVisible(true); 
+          this.indexDialogue++;
       });
   }
 } else {
-  this.joueurDansZone1 = false;
-  this.anciennementDansZone1 = false;  // Réinitialise seulement quand le joueur sort complètement
-  this.bulleTexte1.setVisible(false);
+  this.joueurDansZone = false;
+  this.anciennementDansZone = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte.setVisible(false);
+}
+if (distance2 < 100) {
+  if (!this.joueurDansZone2) {  
+      this.joueurDansZone2 = true;
+
+      if (!this.anciennementDansZone2) { 
+          this.indexDialogue2 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone2 = true;
+  }
+
+  if (time > this.derniereParole2 + 1500 && this.indexDialogue2 < this.dialogues2.length) { 
+      this.derniereParole2 = time;
+      this.bulleTexte2.setVisible(false);
+
+      this.time.delayedCall(500, () => { 
+          this.bulleTexte2.setText(this.dialogues2[this.indexDialogue2]);
+          this.bulleTexte2.setPosition(this.esprit2.x, this.esprit2.y - 50);
+          this.bulleTexte2.setVisible(true); 
+          this.indexDialogue2++;
+      });
+  }
+} else {
+  this.joueurDansZone2 = false;
+  this.anciennementDansZone2 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte2.setVisible(false);
 }
 
 
@@ -997,6 +1056,7 @@ function tirerProjectile(type, player, murs) {
   Squelettes1.forEach(squelette1 => {
     scene.physics.add.overlap(bullet, squelette1, () => {
       squelette1.disableBody(true, true); // Désactiver le squelette
+      son_bone.play();
       bullet.destroy(); // Détruire le projectile
     });
   });
@@ -1005,9 +1065,11 @@ function tirerProjectile(type, player, murs) {
   Squelettes2.forEach(squelette2 => {
     scene.physics.add.overlap(bullet, squelette2, () => {
       squelette2.disableBody(true, true); // Désactiver le squelette
+      son_bone.play();
       bullet.destroy(); // Détruire le projectile
     });
   });
+
 
   scene.physics.add.collider(bullet, murs, function(bullet) {
     bullet.destroy(); // Exemple : Supprime la balle en cas de collision
