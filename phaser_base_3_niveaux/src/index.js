@@ -1226,6 +1226,7 @@ function tirerProjectile(type, player) {
       bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
       break;
     case "tempete":
+      bullet.setDisplaySize(25, 25); 
       bullet.setPosition(player.x, player.y + player.height / 2); // Déplace le projectile au bon endroit
     bullet.setVelocity(0, 0); // Pas de mouvement initial pour l'orbe de tempête
     player.setVelocityY(-400);
