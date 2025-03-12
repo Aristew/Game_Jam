@@ -550,7 +550,7 @@ groupe_mineraux.setDepth(15);
       "Je suis un esprit",
       "je suis là pour te guider",
       "Dans ce monde, il existe une multitude d'atomes",
-      "Combine les pour créer de puissants sorts",
+      "Combine-les pour créer de puissants sorts",
       "Mais prends garde",
       "Les ressources sont rares"
     ];
@@ -569,7 +569,7 @@ groupe_mineraux.setDepth(15);
     this.dialogues1 = [
       "Fais attention",
       "Il y a des squelettes",
-      "combines les atomes pour créer un sort"
+      "combine les atomes pour créer un sort"
     ];
 
     this.indexDialogue1 = 0;
@@ -583,9 +583,9 @@ groupe_mineraux.setDepth(15);
     }).setOrigin(0.5).setVisible(false);
 
     this.dialogues2 = [
-      "Prends gardes",
-      "Tu ne sais pas nager",
-      "utilise un sort pour traverser l'eau"
+        "Prends garde",
+        "Tu ne sais pas nager",
+        "Utilise un sort pour traverser l'eau"
     ];
 
     this.indexDialogue2 = 0;
@@ -600,9 +600,9 @@ groupe_mineraux.setDepth(15);
 
     this.dialogues3 = [
       "Prends garde",
-      "certains monstres sont appelés boss ou élites",
-      "Ils ont plusieurs points de vie",
-      "mais tu as maintenant des sorts puissants à ton arsenal"
+      "Certains monstres sont appelés boss ou élites",
+      "Ils possèdent plusieurs points de vie",
+      "Mais tu as maintenant de puissants sorts à ton arsenal"
     ];
 
     this.indexDialogue3 = 0;
@@ -618,7 +618,7 @@ groupe_mineraux.setDepth(15);
     this.dialogues4 = [
       "C'est trop haut",
       "utilise un sort pour sauter plus haut",
-      "mais prends garde un boss t'attend derrière le mur"
+      "Mais prends garde, un boss t'attend derrière le mur"
     ];
 
     this.indexDialogue4 = 0;
@@ -1002,6 +1002,32 @@ if (distance2 < 100) {
   this.joueurDansZone2 = false;
   this.anciennementDansZone2 = false;  // Réinitialise seulement quand le joueur sort complètement
   this.bulleTexte2.setVisible(false);
+}
+if (distance3 < 100) {
+  if (!this.joueurDansZone3) {  
+      this.joueurDansZone3 = true;
+
+      if (!this.anciennementDansZone3) { 
+          this.indexDialogue3 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone3 = true;
+  }
+
+  if (time > this.derniereParole3 + 2000 && this.indexDialogue3 < this.dialogues3.length) { 
+      this.derniereParole3 = time;
+      this.bulleTexte3.setVisible(false);
+
+      this.time.delayedCall(500, () => { 
+          this.bulleTexte3.setText(this.dialogues3[this.indexDialogue3]);
+          this.bulleTexte3.setPosition(this.esprit3.x, this.esprit3.y - 50);
+          this.bulleTexte3.setVisible(true); 
+          this.indexDialogue3++;
+      });
+  }
+} else {
+  this.joueurDansZone3 = false;
+  this.anciennementDansZone3 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte3.setVisible(false);
 }
 
 
