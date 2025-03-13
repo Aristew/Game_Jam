@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
+var compteurMineraux = { "rouge": 20, "jaune_clair": 15, "rose": 15, "violet": 15, "blanc": 15, "orange": 15 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -1471,7 +1471,7 @@ function finDuJeu() {
     .setInteractive()
     .on('pointerdown', () => {
       // Réinitialisation complète des variables du jeu
-      compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
+      compteurMineraux = { "rouge": 20, "jaune_clair": 15, "rose": 15, "violet": 15, "blanc": 15, "orange": 15 };
       gameOver = false;
       devientGlace = false;
       scene.bouclierTimer.remove(); // Remove the existing timer
