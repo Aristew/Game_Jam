@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
+var compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -869,6 +869,7 @@ this.input.keyboard.on('keydown-SPACE', () => {
       // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
       this.time.delayedCall(1000, () => {
         musique_de_fond.stop();
+        compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
       });
      
