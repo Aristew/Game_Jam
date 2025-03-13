@@ -860,22 +860,31 @@ groupe_mineraux.setDepth(15);
     porte.setImmovable(true);
     porte.setAlpha(0); 
 
+    // Ajouter un texte pour indiquer d'appuyer sur espace
+    this.textePorte = this.add.text(porte.x, porte.y - 50, "Appuyez sur ESPACE", {
+      fontSize: '18px',
+      fill: '#FFD700',
+      fontStyle: 'bold',
+      stroke: '#8B0000',
+      strokeThickness: 3,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
 
     // Détecter si le joueur est près de la porte et appuie sur la touche espace
-this.input.keyboard.on('keydown-SPACE', () => {
-  const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
-  if (distance < 50) { // Si le joueur est suffisamment proche de la porte
-      porte.anims.play('anim_porte', true);
+    this.input.keyboard.on('keydown-SPACE', () => {
+      const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
+      if (distance < 50) { // Si le joueur est suffisamment proche de la porte
+        porte.anims.play('anim_porte', true);
 
-      // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
-      this.time.delayedCall(1000, () => {
-        musique_de_fond.stop();
-        compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
+        // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
+        this.time.delayedCall(1000, () => {
+          musique_de_fond.stop();
+          compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
-      });
-     
-  }
-});
+        });
+      }
+    });
 
 
   }
@@ -1118,6 +1127,14 @@ if (distance3 < 100) {
       musique_de_fond.stop();
       return;
     }
+
+    // Afficher ou cacher le texte d'instruction près de la porte
+    const distanceToPorte = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
+    if (distanceToPorte < 100) {
+      this.textePorte.setVisible(true);
+    } else {
+      this.textePorte.setVisible(false);
+    }
   }
 }
 
@@ -1277,11 +1294,12 @@ function tirerProjectile(type, player, murs) {
       bullet.destroy();
       if (boss1.hp <= 0) {
         boss1.disableBody(true, true); // Désactiver le boss
-         // Mettre le flag à true pour indiquer que le boss est mort
-        porte.setAlpha(1); 
-      };
-    }
-    );
+        porte.setAlpha(1); // Rendre la porte visible
+        scene.bouclier.setVisible(false); // Cacher le bouclier
+        scene.bouclier.body.enable = false; // Désactiver le bouclier
+        scene.bouclierTimer.remove(); // Arrêter le timer du bouclier
+      }
+    });
   });
 
 // Ajouter la collision entre le projectile et le bouclier
