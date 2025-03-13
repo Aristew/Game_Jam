@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
+var compteurMineraux = { "rouge": 2, "jaune_clair": 2, "rose": 2, "violet": 2, "blanc": 2, "orange": 0 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -485,13 +485,14 @@ this.physics.add.collider(player, plateforme);
       { x: 450, y: 300, type: "rouge" },
       { x: 485, y: 310, type: "rose" },
       { x: 550, y: 350, type: "jaune_clair" },
+      { x: 560, y: 350, type: "jaune_clair" },
       { x: 515, y: 300, type: "rose" },
       { x: 650, y: 350, type: "rouge" },
       { x: 700, y: 250, type: "jaune_clair" },
       { x: 900, y: 275, type: "rose" },
       { x: 750, y: 250, type: "rouge" },
       { x: 1550, y: 275, type: "rose" },
-      { x: 1050, y: 320, type: "rouge" },
+      { x: 1050, y: 320, type: "jaune_clair" },
       
       { x: 1300, y: 320, type: "violet" },
       { x: 1550, y: 275, type: "blanc" },
@@ -502,7 +503,7 @@ this.physics.add.collider(player, plateforme);
       
       { x: 2700, y: 350, type: "orange" },
       { x: 3200, y: 400, type: "rouge" },
-      { x: 3500, y: 100, type: "rouge" },
+      { x: 3500, y: 100, type: "jaune_clair" },
       { x: 3100, y: 350, type: "orange" },
       { x: 3400, y: 400, type: "orange" },
       { x: 4075, y: 100, type: "rose" },
@@ -512,15 +513,15 @@ this.physics.add.collider(player, plateforme);
       { x: 4075, y: 100, type: "orange" },
       { x: 4075, y: 100, type: "jaune_clair" },
       { x: 4075, y: 100, type: "rouge" },
-      { x: 4075, y: 100, type: "rouge" },
-      { x: 4075, y: 100, type: "orange" },
-      { x: 4075, y: 100, type: "jaune_clair" },
-      { x: 4075, y: 100, type: "rouge" },
-      { x: 4075, y: 100, type: "rouge" },
-      { x: 4075, y: 100, type: "rouge" },
-      { x: 4075, y: 100, type: "orange" },
-      { x: 4075, y: 100, type: "jaune_clair" },
-      { x: 4075, y: 100, type: "rouge" },
+      { x: 4275, y: 100, type: "rouge" },
+      { x: 4275, y: 100, type: "orange" },
+      { x: 4275, y: 100, type: "jaune_clair" },
+      { x: 4275, y: 100, type: "rouge" },
+      { x: 4275, y: 100, type: "jaune_clair" },
+      { x: 4275, y: 100, type: "rouge" },
+      { x: 4375, y: 100, type: "orange" },
+      { x: 4375, y: 100, type: "jaune_clair" },
+      { x: 4375, y: 100, type: "rouge" },
     ];
 
 // Générer les minéraux à des positions fixes
@@ -1437,7 +1438,7 @@ function finDuJeu() {
     .setInteractive()
     .on('pointerdown', () => {
       // Réinitialisation complète des variables du jeu
-      compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
+      compteurMineraux = { "rouge": 2, "jaune_clair": 2, "rose": 2, "violet": 2, "blanc": 2, "orange": 0 };
       gameOver = false;
       devientGlace = false;
       scene.scene.restart();
