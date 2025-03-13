@@ -31,6 +31,7 @@ var son_bone;
 var son_explo;
 var son_spell;
 var son_ice;
+var outro;
 
 let texteSorts;
 let styleSorts = {
@@ -142,8 +143,11 @@ class SceneJeu extends Phaser.Scene {
     this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
     this.load.image("fond", "src/assets/fond.png");
 
-    box = this.load.image("box", "src/assets/box.png");
-
+    
+    box = this.load.spritesheet("box", "src/assets/box4.png", {
+      frameWidth: 48,
+      frameHeight: 48
+    });
     this.load.spritesheet("esprit", "src/assets/spirit.png", {
       frameWidth: 128,
       frameHeight: 128
@@ -384,6 +388,14 @@ if (!this.anims.exists('anim_Sq_1D')) {
         repeat: -1
       });
     }
+    if (!this.anims.exists('box_explosed')) {
+      this.anims.create({
+        key: 'box_explosed',
+        frames: this.anims.generateFrameNumbers('box', { start: 1, end: 7 }),
+        frameRate: 20,
+        repeat: 0
+      });
+    }
     
     if (!this.anims.exists('anim_porte')) {
       this.anims.create({
@@ -447,6 +459,7 @@ this.physics.add.collider(player, plateforme);
     this.physics.add.collider(player, box); // Permet au joueur de rentrer en collision avec la box
     this.physics.add.collider(plateforme, box); // Permet au joueur de rentrer en collision avec la box
     this.physics.add.collider(player, porte);
+    
 
     // Liste des positions prédéfinies pour les minéraux
     let positionsMineraux = [
@@ -549,7 +562,7 @@ groupe_mineraux.setDepth(15);
       "Je suis un esprit",
       "je suis là pour te guider",
       "Dans ce monde, il existe une multitude d'atomes",
-      "Combine les pour créer de puissants sorts",
+      "Combine-les pour créer de puissants sorts",
       "Mais prends garde",
       "Les ressources sont rares"
     ];
@@ -568,7 +581,7 @@ groupe_mineraux.setDepth(15);
     this.dialogues1 = [
       "Fais attention",
       "Il y a des squelettes",
-      "combines les atomes pour créer un sort"
+      "combine les atomes pour créer un sort"
     ];
 
     this.indexDialogue1 = 0;
@@ -582,9 +595,11 @@ groupe_mineraux.setDepth(15);
     }).setOrigin(0.5).setVisible(false);
 
     this.dialogues2 = [
-      "Prends gardes",
-      "Tu ne sais pas nager",
-      "utilise un sort pour traverser l'eau"
+        "Prends garde",
+        "Tu ne sais pas nager",
+        "Utilise un sort pour traverser l'eau",
+        "tout au long de ton aventure",
+        "tu pourras interragir avec le monde avec tes sorts"
     ];
 
     this.indexDialogue2 = 0;
@@ -599,9 +614,9 @@ groupe_mineraux.setDepth(15);
 
     this.dialogues3 = [
       "Prends garde",
-      "certains monstres sont appelés boss ou élites",
-      "Ils ont plusieurs points de vie",
-      "mais tu as maintenant des sorts puissants à ton arsenal"
+      "Certains monstres sont appelés boss ou élites",
+      "Ils possèdent plusieurs points de vie",
+      "Mais tu as maintenant de puissants sorts à ton arsenal"
     ];
 
     this.indexDialogue3 = 0;
@@ -617,7 +632,7 @@ groupe_mineraux.setDepth(15);
     this.dialogues4 = [
       "C'est trop haut",
       "utilise un sort pour sauter plus haut",
-      "mais prends garde un boss t'attend derrière le mur"
+      "Mais prends garde, un boss t'attend derrière le mur"
     ];
 
     this.indexDialogue4 = 0;
@@ -785,11 +800,12 @@ groupe_mineraux.setDepth(15);
     this.physics.add.collider(plateforme, eaux);
 
     // Créer la porte
-    porte = this.physics.add.sprite(6400, 300, 'porte'); // Vraie coordonnée 6300, 300
-    porte.body.setSize(96, 90);
+    porte = this.physics.add.sprite(4640, 100, 'porte'); // Vraie coordonnée 6300, 300
+    
     porte.setCollideWorldBounds(true);
     this.physics.add.collider(porte, plateforme);
     porte.setImmovable(true);
+    porte.setAlpha(0); 
 
 
     // Détecter si le joueur est près de la porte et appuie sur la touche espace
@@ -800,10 +816,13 @@ this.input.keyboard.on('keydown-SPACE', () => {
 
       // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
       this.time.delayedCall(1000, () => {
+        musique_de_fond.stop();
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
       });
+     
   }
 });
+
 
   }
 }
@@ -1001,12 +1020,37 @@ if (distance2 < 100) {
   this.anciennementDansZone2 = false;  // Réinitialise seulement quand le joueur sort complètement
   this.bulleTexte2.setVisible(false);
 }
+if (distance3 < 100) {
+  if (!this.joueurDansZone3) {  
+      this.joueurDansZone3 = true;
+
+      if (!this.anciennementDansZone3) { 
+          this.indexDialogue3 = 0;  // Ne réinitialise qu'à la première entrée
+      }
+      this.anciennementDansZone3 = true;
+  }
+
+  if (time > this.derniereParole3 + 2000 && this.indexDialogue3 < this.dialogues3.length) { 
+      this.derniereParole3 = time;
+      this.bulleTexte3.setVisible(false);
+
+      this.time.delayedCall(500, () => { 
+          this.bulleTexte3.setText(this.dialogues3[this.indexDialogue3]);
+          this.bulleTexte3.setPosition(this.esprit3.x, this.esprit3.y - 50);
+          this.bulleTexte3.setVisible(true); 
+          this.indexDialogue3++;
+      });
+  }
+} else {
+  this.joueurDansZone3 = false;
+  this.anciennementDansZone3 = false;  // Réinitialise seulement quand le joueur sort complètement
+  this.bulleTexte3.setVisible(false);
+}
 
 
     if(devientGlace){
       eaux.children.iterate(function iterateur(eau) { eau.anims.play('eau_glace'); 
           eau.estGlace= true;
-
       });    }
 
 
@@ -1023,7 +1067,12 @@ class EcranRemerciements extends Phaser.Scene {
       super({ key: 'EcranRemerciements' });
   }
 
+  preload() {
+    this.load.audio('outro', 'src/assets/xenogenesis-outro-song.mp3');
+  }
   create() {
+    outro = this.sound.add('outro', { loop: true });
+    outro.play();
       // Récupérer les dimensions de la caméra
       const { width, height } = this.cameras.main;
 
@@ -1044,7 +1093,7 @@ class EcranRemerciements extends Phaser.Scene {
       }).setOrigin(0.5);
 
       // Ajouter un texte pour remercier
-      const texteDev = this.add.text(0, 50, "Merci à ChatGPT et aux professeurs pour nous avoir guidés sur la noble voie du développement...", {
+      const texteDev = this.add.text(0, 50, "Merci à ChatGPT, copilot et aux professeurs pour nous avoir guidés sur la noble voie du développement...", {
           fontSize: '18px',
           fill: '#FFFFFF',
           wordWrap: { width: width - 100 }
@@ -1069,7 +1118,8 @@ class EcranRemerciements extends Phaser.Scene {
 
       // Détecter la touche espace pour retourner au menu
       this.input.keyboard.on('keydown-SPACE', () => {
-          this.scene.start('ScenePresentation'); // Remplace 'MenuPrincipal' par la scène du menu si besoin
+        outro.stop();
+        this.scene.start('ScenePresentation'); // Remplace 'MenuPrincipal' par la scène du menu si besoin
       });
   }
 }
@@ -1142,6 +1192,7 @@ function tirerProjectile(type, player, murs) {
       bullet.setVelocity(450 * coefDir, 0); // Moins de vitesse horizontale, tir plus haut
       break;
   }
+  
 
   // Ajouter la collision entre le projectile et les squelettes1
   Squelettes1.forEach(squelette1 => {
@@ -1167,6 +1218,8 @@ function tirerProjectile(type, player, murs) {
       bullet.destroy();
       if (boss1.hp <= 0) {
         boss1.disableBody(true, true); // Désactiver le boss
+         // Mettre le flag à true pour indiquer que le boss est mort
+        porte.setAlpha(1); 
       };
     }
     );
@@ -1181,12 +1234,18 @@ function tirerProjectile(type, player, murs) {
 
   // Collision avec une box
   scene.physics.add.overlap(bullet, box, () => {
-    if (type === "chaleur") {  // Vérifie si le projectile est de type "chaleur"
-      son_explo.play();
-      box.disableBody(true, true); // Désactive la box
+    if (bullet.texture.key === "bullet_chaleur") { 
+        // Joue l'animation d'explosion
+        box.anims.play('box_explosed', true);
+        son_explo.play();
+        // Attends la fin de l'animation avant de désactiver la box
+        box.on('animationcomplete', () => {
+          box.disableBody(true, true); 
+      });
     }
-    bullet.destroy();
-  });
+
+    bullet.destroy(); // Détruit le projectile immédiatement après l'impact
+});
   scene.physics.add.overlap(bullet, eaux, () => {
     if (type === "congelation") {  // Vérifie si le projectile est de type "chaleur"
       devientGlace = true;
