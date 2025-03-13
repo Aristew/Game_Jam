@@ -261,7 +261,7 @@ class SceneJeu extends Phaser.Scene {
     son_ice = this.sound.add('ice');
     son_bone = this.sound.add('bone');
     musique_de_mort = this.sound.add('mort'), { loop: true };
-    
+
     // redimentionnement du monde avec les dimensions calculées via tiled
     //this.physics.world.setBounds(0, 0, 3200, 640);
     //  ajout du champs de la caméra de taille identique à celle du monde
@@ -841,6 +841,7 @@ groupe_mineraux.setDepth(15);
         this.time.delayedCall(1000, () => {
           musique_de_fond.stop();
           compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
+          musique_de_mort.stop();
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
         });
       }
@@ -1253,9 +1254,6 @@ function tirerProjectile(type, player, murs) {
       if (boss1.hp <= 0) {
         boss1.disableBody(true, true); // Désactiver le boss
         porte.setAlpha(1); // Rendre la porte visible
-        scene.bouclier.setVisible(false); // Cacher le bouclier
-        scene.bouclier.body.enable = false; // Désactiver le bouclier
-        scene.bouclierTimer.remove(); // Arrêter le timer du bouclier
       }
     });
   });
