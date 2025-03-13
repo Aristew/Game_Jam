@@ -853,8 +853,8 @@ this.input.keyboard.on('keydown-SPACE', () => {
 
   update(time) {
     if (this.bouclier.visible) {
-      this.bouclier.setPosition(player.x, player.y);
-  }
+      this.bouclier.setPosition(boss[0].x, boss[0].y); // Suivre le premier boss
+    }
     //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
     if (this.physics.world.collide(player, pic)) {
       finDuJeu();
