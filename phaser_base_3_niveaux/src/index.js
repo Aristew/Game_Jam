@@ -45,16 +45,25 @@ let styleSorts = {
     align: 'right'
 };
 
+/**
+ * Classe représentant la scène de présentation du jeu.
+ */
 class ScenePresentation extends Phaser.Scene {
   constructor() {
     super({ key: 'ScenePresentation' });
   }
 
+  /**
+   * Précharge les assets nécessaires pour la scène de présentation.
+   */
   preload() {
     this.load.image('backgroundPres', 'src/assets/Battleground3.png'); // Charge ton image de fond
     this.load.audio('background2', 'src/assets/the-shire--ambience--music--3-hours.mp3');
   }
 
+  /**
+   * Crée les éléments de la scène de présentation.
+   */
   create() {
     musique_de_fond2 = this.sound.add('background2');
     musique_de_fond2.play();
@@ -116,6 +125,9 @@ class ScenePresentation extends Phaser.Scene {
   }
 }
 
+/**
+ * Classe représentant la scène principale du jeu.
+ */
 class SceneJeu extends Phaser.Scene {
   constructor() {
     super({ key: 'SceneJeu' });
@@ -128,6 +140,10 @@ class SceneJeu extends Phaser.Scene {
   /** La fonction preload est appelée une et une seule fois,
    * lors du chargement de la scene dans le jeu.
    * On y trouve surtout le chargement des assets (images, son ..)
+   */
+
+  /**
+   * Précharge les assets nécessaires pour la scène de jeu.
    */
   preload() {
     // tous les assets du jeu sont placés dans le sous-répertoire src/assets/
@@ -248,6 +264,10 @@ class SceneJeu extends Phaser.Scene {
    * on y trouve toutes les instructions permettant de créer la scene
    * placement des peronnages, des sprites, des platesformes, création des animations
    * ainsi que toutes les instructions permettant de planifier des evenements
+   */
+
+  /**
+   * Crée les éléments de la scène de jeu.
    */
   create() {
     // lancement du son background
@@ -897,6 +917,10 @@ groupe_mineraux.setDepth(15);
   /** FONCTION UPDATE 
   /***********************************************************************/
 
+  /**
+   * Met à jour la scène de jeu à chaque frame.
+   * @param {number} time - Le temps écoulé depuis le début du jeu.
+   */
   update(time) {
     if (this.bouclier.visible && boss.length > 0) {
       this.bouclier.setPosition(boss[0].x, boss[0].y); // Suivre le premier boss
@@ -1138,14 +1162,24 @@ if (distance3 < 100) {
   }
 }
 
+/**
+ * Classe représentant l'écran de remerciements.
+ */
 class EcranRemerciements extends Phaser.Scene {
   constructor() {
       super({ key: 'EcranRemerciements' });
   }
 
+  /**
+   * Précharge les assets nécessaires pour l'écran de remerciements.
+   */
   preload() {
     this.load.audio('outro', 'src/assets/xenogenesis-outro-song.mp3');
   }
+
+  /**
+   * Crée les éléments de l'écran de remerciements.
+   */
   create() {
     outro = this.sound.add('outro', { loop: true });
     outro.play();
@@ -1222,6 +1256,13 @@ var config = {
   scene: [ScenePresentation, SceneJeu, EcranRemerciements] // liste des scènes du jeu
 };
 
+/**
+ * Tire un projectile depuis le joueur.
+ * @param {string} type - Le type de projectile à tirer.
+ * @param {Phaser.GameObjects.Sprite} player - Le joueur qui tire le projectile.
+ * @param {Phaser.Physics.Arcade.StaticGroup} murs - Les murs avec lesquels le projectile peut entrer en collision.
+ * @returns {boolean} - Indique si l'eau est devenue glace.
+ */
 function tirerProjectile(type, player, murs) {
   var coefDir = (player.direction == 'left') ? -1 : 1;
   var projectiles = {
@@ -1342,12 +1383,20 @@ function tirerProjectile(type, player, murs) {
 // création et lancement du jeu
 var game = new Phaser.Game(config);
 
+/**
+ * Ramasse un minéral.
+ * @param {Phaser.GameObjects.Sprite} un_player - Le joueur qui ramasse le minéral.
+ * @param {Phaser.GameObjects.Sprite} un_minerau - Le minéral à ramasser.
+ */
 function ramasserMineraux(un_player, un_minerau) {
   compteurMineraux[un_minerau.texture.key]++;
   un_minerau.disableBody(true, true);
   mettreAJourCompteur();
 }
 
+/**
+ * Met à jour le compteur de minéraux affiché à l'écran.
+ */
 function mettreAJourCompteur() {
   texteCompteur.setText(
     `🔮 Réserve d'Alchimiste 🔮\n` +
@@ -1356,8 +1405,11 @@ function mettreAJourCompteur() {
   );
 }
 
-
-
+/**
+ * Lance une attaque en fonction du type de sort.
+ * @param {string} type - Le type de sort à lancer.
+ * @param {Phaser.Physics.Arcade.StaticGroup} plat - Les plateformes avec lesquelles le projectile peut entrer en collision.
+ */
 function lancerAttaque(type, plat) {
   let attaques = {
     "explosion": {
@@ -1403,7 +1455,10 @@ function lancerAttaque(type, plat) {
   }
 }
 
-
+/**
+ * Affiche un message temporaire à l'écran.
+ * @param {string} message - Le message à afficher.
+ */
 function afficherMessage(message) {
   if (!scene.texteMessage) {
     scene.texteMessage = scene.add.text(0, 0, "", {
@@ -1438,6 +1493,9 @@ function afficherMessage(message) {
   });
 }
 
+/**
+ * Termine le jeu en affichant un écran de Game Over.
+ */
 function finDuJeu() {
   gameOver = true;
   player.setVelocity(0, 0); // Arrête le joueur
@@ -1521,6 +1579,12 @@ function finDuJeu() {
   boutonQuitter.setDepth(21);
 }
 
+/**
+ * Gère la collision entre le joueur et l'eau.
+ * @param {Phaser.GameObjects.Sprite} player - Le joueur.
+ * @param {Phaser.GameObjects.Sprite} eau - L'eau.
+ * @returns {boolean} - Indique si la collision est valide.
+ */
 function collisEau(player, eau) {
     
   if (  eau.estGlace== true)
