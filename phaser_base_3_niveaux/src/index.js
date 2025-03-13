@@ -12,7 +12,7 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 2, "jaune_clair": 2, "rose": 2, "violet": 2, "blanc": 2, "orange": 0 };
+var compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
@@ -328,16 +328,48 @@ if (!this.anims.exists('anim_boss_marche_D')) {
     key: 'bouclier_active',
     frames: this.anims.generateFrameNumbers('bouclier', { start: 0, end: 9 }),
     frameRate: 10,
-    repeat: 1  // L'animation tourne en boucle
+    repeat: 0  // L'animation tourne en boucle
 });
   }
-  this.bouclier = this.physics.add.sprite(6000, 400, 'bouclier');
-  this.bouclier.setVisible(true);
-  this.bouclier.setDisplaySize(175, 175);
-  this.bouclier.anims.play('bouclier_active', true);
-  this.bouclier.body.setAllowGravity(false);
-  this.bouclier.body.setImmovable(true); // Make the shield immovable
-  if (!this.anims.exists('anim_boss_attack_D')) {
+  if (!this.anims.exists('bouclier_desactive')) {
+    this.anims.create({
+      key: 'bouclier_desactive',
+      frames: this.anims.generateFrameNumbers('bouclier', { start: 11, end: 19 }),
+      frameRate: 10,
+      repeat: 0  // L'animation tourne en boucle
+  });
+    }
+    if (!this.anims.exists('bouclier_milieu')) {
+      this.anims.create({
+        key: 'bouclier_milieu',
+        frames: this.anims.generateFrameNumbers('bouclier', { start: 10, end: 10 }),
+        frameRate: 10,
+        repeat: 0  // L'animation tourne en boucle
+    });
+      }
+  this.bouclier = this.physics.add.sprite(0, 0, 'bouclier');
+  this.bouclier.setVisible(false);
+  this.bouclier.setDisplaySize(250, 230);
+    this.bouclier.body.setAllowGravity(false);
+this.bouclier.body.setImmovable(true); // Make the shield immovable
+  this.bouclierTimer = this.time.addEvent({
+    delay: 3000, // Toutes les 3 secondes
+    loop: true,  // Répétition infinie
+    callback: () => {
+      // Activer le bouclier
+      this.bouclier.setVisible(true);
+      this.bouclier.body.enable = true;
+        this.bouclier.anims.play('bouclier_active', true);
+  
+      // Après 2 secondes, cacher et désactiver le bouclier
+      this.time.delayedCall(2000, () => {
+        this.bouclier.anims.play('bouclier_desactive', true);
+        this.bouclier.setVisible(false);
+        this.bouclier.body.enable = false;
+      });
+    }
+  });
+if (!this.anims.exists('anim_boss_attack_D')) {
     this.anims.create({
       key: 'anim_boss_attack_D',
       frames: this.anims.generateFrameNumbers('boss_attack_D', { start: 0, end: 12 }),
@@ -485,7 +517,7 @@ this.physics.add.collider(player, plateforme);
       { x: 450, y: 300, type: "rouge" },
       { x: 485, y: 310, type: "rose" },
       { x: 550, y: 350, type: "jaune_clair" },
-      { x: 560, y: 350, type: "jaune_clair" },
+{ x: 560, y: 350, type: "jaune_clair" },
       { x: 515, y: 300, type: "rose" },
       { x: 650, y: 350, type: "rouge" },
       { x: 700, y: 250, type: "jaune_clair" },
@@ -855,7 +887,7 @@ this.input.keyboard.on('keydown-SPACE', () => {
   /***********************************************************************/
 
   update(time) {
-    if (this.bouclier.visible) {
+    if (this.bouclier.visible && boss.length > 0) {
       this.bouclier.setPosition(boss[0].x, boss[0].y); // Suivre le premier boss
     }
     //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
@@ -1163,7 +1195,7 @@ var config = {
       gravity: {
         y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: [ScenePresentation, SceneJeu, EcranRemerciements] // liste des scènes du jeu
@@ -1248,7 +1280,7 @@ function tirerProjectile(type, player, murs) {
     );
   });
 
-  // Ajouter la collision entre le projectile et le bouclier
+// Ajouter la collision entre le projectile et le bouclier
   scene.physics.add.collider(bullet, scene.bouclier, () => {
     bullet.setVelocityX(-bullet.body.velocity.x); // Inverser la direction horizontale
     bullet.setVelocityY(-bullet.body.velocity.y); // Inverser la direction verticale
@@ -1438,9 +1470,10 @@ function finDuJeu() {
     .setInteractive()
     .on('pointerdown', () => {
       // Réinitialisation complète des variables du jeu
-      compteurMineraux = { "rouge": 2, "jaune_clair": 2, "rose": 2, "violet": 2, "blanc": 2, "orange": 0 };
+      compteurMineraux = { "rouge": 5, "jaune_clair": 5, "rose": 5, "violet": 5, "blanc": 5, "orange": 5 };
       gameOver = false;
       devientGlace = false;
+      scene.bouclierTimer.remove(); // Remove the existing timer
       scene.scene.restart();
     });
   boutonRejouer.setOrigin(0.5);
