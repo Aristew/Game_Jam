@@ -860,7 +860,7 @@ groupe_mineraux.setDepth(15);
         // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
         this.time.delayedCall(1000, () => {
           musique_de_fond.stop();
-          compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
+          compteurMineraux = { "rouge": 4, "jaune_clair": 2, "rose": 2, "violet": 2, "blanc": 2, "orange": 0 };
           musique_de_mort.stop();
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
         });
