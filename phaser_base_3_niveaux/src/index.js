@@ -267,12 +267,13 @@ class SceneJeu extends Phaser.Scene {
     this.add.image(2384, 320, "fond");
     const carteDuNiveau = this.add.tilemap("carte");
     scene.texteMessage = scene.add.text(0, 0, "", {
-      fontSize: '20px',
-      fill: '#FFD700',
-      fontStyle: 'bold',
-      stroke: '#8B0000',
-      strokeThickness: 3
-    }).setOrigin(0.5, 0.5);
+      fontSize: '20px', // Définit la taille du texte à 20 pixels
+      fill: '#FFD700', // Définit la couleur du texte en or (gold)
+      fontStyle: 'bold', // Met le texte en gras
+      stroke: '#8B0000', // Ajoute un contour rouge foncé au texte
+      strokeThickness: 3 // Définit l'épaisseur du contour à 3 pixels
+    }).setOrigin(0.5, 0.5); 
+    // Centre le texte par rapport à son point d’ancrage
 
     // chargement du jeu de tuiles
     const tileset = carteDuNiveau.addTilesetImage(
@@ -981,6 +982,8 @@ this.input.keyboard.on('keydown-SPACE', () => {
   }
 
   if (time > this.derniereParole4 + 2000 && this.indexDialogue4 < this.dialogues4.length) { 
+    // Vérifie si au moins 2 secondes (2000 ms) se sont écoulées depuis la dernière phrase affichée
+    // et si l'index actuel du dialogue est encore dans les limites du tableau de dialogues 
       this.derniereParole4 = time;
       this.bulleTexte4.setVisible(false);
 
