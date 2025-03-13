@@ -331,10 +331,12 @@ if (!this.anims.exists('anim_boss_marche_D')) {
     repeat: 1  // L'animation tourne en boucle
 });
   }
-  this.bouclier = this.physics.add.sprite(boss.x, boss.y, 'bouclier');
+  this.bouclier = this.physics.add.sprite(6000, 400, 'bouclier');
   this.bouclier.setVisible(true);
+  this.bouclier.setDisplaySize(175, 175);
   this.bouclier.anims.play('bouclier_active', true);
   this.bouclier.body.setAllowGravity(false);
+  this.bouclier.body.setImmovable(true); // Make the shield immovable
   if (!this.anims.exists('anim_boss_attack_D')) {
     this.anims.create({
       key: 'anim_boss_attack_D',
@@ -1243,6 +1245,12 @@ function tirerProjectile(type, player, murs) {
       };
     }
     );
+  });
+
+  // Ajouter la collision entre le projectile et le bouclier
+  scene.physics.add.collider(bullet, scene.bouclier, () => {
+    bullet.setVelocityX(-bullet.body.velocity.x); // Inverser la direction horizontale
+    bullet.setVelocityY(-bullet.body.velocity.y); // Inverser la direction verticale
   });
 
 
