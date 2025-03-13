@@ -142,6 +142,10 @@ class SceneJeu extends Phaser.Scene {
     // chargement tuiles de jeu
     this.load.image("Phaser_tuilesdejeu", "src/assets/Tileset.png");
     this.load.image("fond", "src/assets/fond.png");
+    this.load.spritesheet('bouclier', 'src/assets/shield.png', {
+      frameWidth: 480,  // Ajuste selon ta sprite
+      frameHeight: 480
+  });
 
     
     box = this.load.spritesheet("box", "src/assets/box4.png", {
@@ -275,6 +279,7 @@ class SceneJeu extends Phaser.Scene {
       "Tileset",
       "Phaser_tuilesdejeu"
     );
+    
 
     // chargement du calque calque_background
     // chargement du calque calque_background_2
@@ -318,6 +323,18 @@ if (!this.anims.exists('anim_boss_marche_D')) {
       repeat: -1
     });
   }
+  if (!this.anims.exists('bouclier_active')) {
+  this.anims.create({
+    key: 'bouclier_active',
+    frames: this.anims.generateFrameNumbers('bouclier', { start: 0, end: 9 }),
+    frameRate: 10,
+    repeat: 1  // L'animation tourne en boucle
+});
+  }
+  this.bouclier = this.physics.add.sprite(boss.x, boss.y, 'bouclier');
+  this.bouclier.setVisible(true);
+  this.bouclier.anims.play('bouclier_active', true);
+  this.bouclier.body.setAllowGravity(false);
   if (!this.anims.exists('anim_boss_attack_D')) {
     this.anims.create({
       key: 'anim_boss_attack_D',
@@ -835,6 +852,9 @@ this.input.keyboard.on('keydown-SPACE', () => {
   /***********************************************************************/
 
   update(time) {
+    if (this.bouclier.visible) {
+      this.bouclier.setPosition(player.x, player.y);
+  }
     //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
     if (this.physics.world.collide(player, pic)) {
       finDuJeu();
