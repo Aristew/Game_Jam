@@ -12,11 +12,12 @@ var groupeBullets;
 var gameOver = false;
 var groupe_mineraux;
 var couleurs = ["rouge", "jaune_clair", "rose", "violet", "blanc", "orange"];
-var compteurMineraux = { "rouge": 20, "jaune_clair": 15, "rose": 15, "violet": 15, "blanc": 15, "orange": 15 };
+var compteurMineraux = { "rouge": 4, "jaune_clair": 2, "rose": 2, "violet": 2, "blanc": 2, "orange": 0 };
 var texteCompteur;
 var scene;
 var musique_de_fond;
 var musique_de_fond2;
+var musique_de_mort;
 var box;
 var Squelettes1 = []; // Tableau pour stocker les squelettes a lance
 var Squelettes2 = []; // Tableau pour stocker les squelettes a épée
@@ -153,6 +154,7 @@ class SceneJeu extends Phaser.Scene {
     this.load.audio('ice', 'src/assets/ice-cracking-field-recording-06-139709.mp3');
     this.load.audio('bone', 'src/assets/bone-break-sound-269658.mp3');
     this.load.audio('spell', 'src/assets/magical-spell-cast-190272.mp3');
+    this.load.audio('mort', 'src/assets/mystical3.mp3');
     this.load.image("img_ciel", "src/assets/sky.png");
     this.load.image("img_plateforme", "src/assets/platform.png");
     // chargement tuiles de jeu
@@ -278,6 +280,8 @@ class SceneJeu extends Phaser.Scene {
     son_spell= this.sound.add('spell');
     son_ice = this.sound.add('ice');
     son_bone = this.sound.add('bone');
+    musique_de_mort = this.sound.add('mort'), { loop: true };
+
     // redimentionnement du monde avec les dimensions calculées via tiled
     //this.physics.world.setBounds(0, 0, 3200, 640);
     //  ajout du champs de la caméra de taille identique à celle du monde
@@ -344,52 +348,8 @@ if (!this.anims.exists('anim_boss_marche_D')) {
       repeat: -1
     });
   }
-  if (!this.anims.exists('bouclier_active')) {
-  this.anims.create({
-    key: 'bouclier_active',
-    frames: this.anims.generateFrameNumbers('bouclier', { start: 0, end: 9 }),
-    frameRate: 10,
-    repeat: 0  // L'animation tourne en boucle
-});
-  }
-  if (!this.anims.exists('bouclier_desactive')) {
-    this.anims.create({
-      key: 'bouclier_desactive',
-      frames: this.anims.generateFrameNumbers('bouclier', { start: 11, end: 19 }),
-      frameRate: 10,
-      repeat: 0  // L'animation tourne en boucle
-  });
-    }
-    if (!this.anims.exists('bouclier_milieu')) {
-      this.anims.create({
-        key: 'bouclier_milieu',
-        frames: this.anims.generateFrameNumbers('bouclier', { start: 10, end: 10 }),
-        frameRate: 10,
-        repeat: 0  // L'animation tourne en boucle
-    });
-      }
-  this.bouclier = this.physics.add.sprite(0, 0, 'bouclier');
-  this.bouclier.setVisible(false);
-  this.bouclier.setDisplaySize(250, 230);
-    this.bouclier.body.setAllowGravity(false);
-this.bouclier.body.setImmovable(true); // Make the shield immovable
-  this.bouclierTimer = this.time.addEvent({
-    delay: 3000, // Toutes les 3 secondes
-    loop: true,  // Répétition infinie
-    callback: () => {
-      // Activer le bouclier
-      this.bouclier.setVisible(true);
-      this.bouclier.body.enable = true;
-        this.bouclier.anims.play('bouclier_active', true);
-  
-      // Après 2 secondes, cacher et désactiver le bouclier
-      this.time.delayedCall(2000, () => {
-        this.bouclier.anims.play('bouclier_desactive', true);
-        this.bouclier.setVisible(false);
-        this.bouclier.body.enable = false;
-      });
-    }
-  });
+
+      
 if (!this.anims.exists('anim_boss_attack_D')) {
     this.anims.create({
       key: 'anim_boss_attack_D',
@@ -901,6 +861,7 @@ groupe_mineraux.setDepth(15);
         this.time.delayedCall(1000, () => {
           musique_de_fond.stop();
           compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
+          musique_de_mort.stop();
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
         });
       }
@@ -922,9 +883,7 @@ groupe_mineraux.setDepth(15);
    * @param {number} time - Le temps écoulé depuis le début du jeu.
    */
   update(time) {
-    if (this.bouclier.visible && boss.length > 0) {
-      this.bouclier.setPosition(boss[0].x, boss[0].y); // Suivre le premier boss
-    }
+    
     //texteCompteur.setPosition(scene.cameras.main.scrollX + 20, scene.cameras.main.scrollY + 20);
     if (this.physics.world.collide(player, pic)) {
       finDuJeu();
@@ -975,7 +934,7 @@ groupe_mineraux.setDepth(15);
   } else if (player.x >= 3900) { 
       texteSorts.setVisible(true);
       texteSorts.setText("Sorts : A - Explosion | Z - Congélation | E - Chaleur | R - Foudre | T - Tempete");
-  }
+  } 
   
   // Positionne toujours le texte correctement quand il est visible
   if (player.x > 900) {
@@ -1250,7 +1209,7 @@ var config = {
       gravity: {
         y: 440 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: [ScenePresentation, SceneJeu, EcranRemerciements] // liste des scènes du jeu
@@ -1336,18 +1295,10 @@ function tirerProjectile(type, player, murs) {
       if (boss1.hp <= 0) {
         boss1.disableBody(true, true); // Désactiver le boss
         porte.setAlpha(1); // Rendre la porte visible
-        scene.bouclier.setVisible(false); // Cacher le bouclier
-        scene.bouclier.body.enable = false; // Désactiver le bouclier
-        scene.bouclierTimer.remove(); // Arrêter le timer du bouclier
       }
     });
   });
 
-// Ajouter la collision entre le projectile et le bouclier
-  scene.physics.add.collider(bullet, scene.bouclier, () => {
-    bullet.setVelocityX(-bullet.body.velocity.x); // Inverser la direction horizontale
-    bullet.setVelocityY(-bullet.body.velocity.y); // Inverser la direction verticale
-  });
 
 
   
@@ -1500,8 +1451,8 @@ function finDuJeu() {
   gameOver = true;
   player.setVelocity(0, 0); // Arrête le joueur
   player.anims.stop(); // Stop l'animation du joueur
-  player.body.moves = false; // Empêche tout mouvement
-  musique_de_fond.stop(); // Stop la musique
+  player.body.moves = false; // Empêche tout mouvement du joueur
+  musique_de_mort.play(); // Joue la musique de mort
 
   // Fond noir semi-transparent
   let overlay = scene.add.rectangle(
@@ -1550,10 +1501,10 @@ function finDuJeu() {
     .setInteractive()
     .on('pointerdown', () => {
       // Réinitialisation complète des variables du jeu
-      compteurMineraux = { "rouge": 20, "jaune_clair": 15, "rose": 15, "violet": 15, "blanc": 15, "orange": 15 };
+      compteurMineraux = { "rouge": 4, "jaune_clair": 2, "rose": 2, "violet": 2, "blanc": 2, "orange": 0 };
       gameOver = false;
       devientGlace = false;
-      scene.bouclierTimer.remove(); // Remove the existing timer
+      musique_de_mort.stop();
       scene.scene.restart();
     });
   boutonRejouer.setOrigin(0.5);
