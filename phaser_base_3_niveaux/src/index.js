@@ -271,12 +271,13 @@ class SceneJeu extends Phaser.Scene {
     this.add.image(2384, 320, "fond");
     const carteDuNiveau = this.add.tilemap("carte");
     scene.texteMessage = scene.add.text(0, 0, "", {
-      fontSize: '20px',
-      fill: '#FFD700',
-      fontStyle: 'bold',
-      stroke: '#8B0000',
-      strokeThickness: 3
-    }).setOrigin(0.5, 0.5);
+      fontSize: '20px', // Définit la taille du texte à 20 pixels
+      fill: '#FFD700', // Définit la couleur du texte en or (gold)
+      fontStyle: 'bold', // Met le texte en gras
+      stroke: '#8B0000', // Ajoute un contour rouge foncé au texte
+      strokeThickness: 3 // Définit l'épaisseur du contour à 3 pixels
+    }).setOrigin(0.5, 0.5); 
+    // Centre le texte par rapport à son point d’ancrage
 
     // chargement du jeu de tuiles
     const tileset = carteDuNiveau.addTilesetImage(
@@ -819,22 +820,31 @@ groupe_mineraux.setDepth(15);
     porte.setImmovable(true);
     porte.setAlpha(0); 
 
+    // Ajouter un texte pour indiquer d'appuyer sur espace
+    this.textePorte = this.add.text(porte.x, porte.y - 50, "Appuyez sur ESPACE", {
+      fontSize: '18px',
+      fill: '#FFD700',
+      fontStyle: 'bold',
+      stroke: '#8B0000',
+      strokeThickness: 3,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      padding: { x: 10, y: 5 }
+    }).setOrigin(0.5).setVisible(false);
 
     // Détecter si le joueur est près de la porte et appuie sur la touche espace
-this.input.keyboard.on('keydown-SPACE', () => {
-  const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
-  if (distance < 50) { // Si le joueur est suffisamment proche de la porte
-      porte.anims.play('anim_porte', true);
+    this.input.keyboard.on('keydown-SPACE', () => {
+      const distance = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
+      if (distance < 50) { // Si le joueur est suffisamment proche de la porte
+        porte.anims.play('anim_porte', true);
 
-      // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
-      this.time.delayedCall(1000, () => {
-        musique_de_fond.stop();
-        compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
+        // Ajouter un délai de 1 seconde avant d'afficher l'écran de remerciements
+        this.time.delayedCall(1000, () => {
+          musique_de_fond.stop();
+          compteurMineraux = { "rouge": 20, "jaune_clair": 20, "rose": 20, "violet": 20, "blanc": 20, "orange": 20 };
           this.scene.start('EcranRemerciements'); // On démarre la scène de remerciements
-      });
-     
-  }
-});
+        });
+      }
+    });
 
 
   }
@@ -939,6 +949,8 @@ this.input.keyboard.on('keydown-SPACE', () => {
   }
 
   if (time > this.derniereParole4 + 2000 && this.indexDialogue4 < this.dialogues4.length) { 
+    // Vérifie si au moins 2 secondes (2000 ms) se sont écoulées depuis la dernière phrase affichée
+    // et si l'index actuel du dialogue est encore dans les limites du tableau de dialogues 
       this.derniereParole4 = time;
       this.bulleTexte4.setVisible(false);
 
@@ -1072,6 +1084,14 @@ if (distance3 < 100) {
       // arret du son background
       musique_de_fond.stop();
       return;
+    }
+
+    // Afficher ou cacher le texte d'instruction près de la porte
+    const distanceToPorte = Phaser.Math.Distance.Between(player.x, player.y, porte.x, porte.y);
+    if (distanceToPorte < 100) {
+      this.textePorte.setVisible(true);
+    } else {
+      this.textePorte.setVisible(false);
     }
   }
 }
@@ -1232,11 +1252,12 @@ function tirerProjectile(type, player, murs) {
       bullet.destroy();
       if (boss1.hp <= 0) {
         boss1.disableBody(true, true); // Désactiver le boss
-         // Mettre le flag à true pour indiquer que le boss est mort
-        porte.setAlpha(1); 
-      };
-    }
-    );
+        porte.setAlpha(1); // Rendre la porte visible
+        scene.bouclier.setVisible(false); // Cacher le bouclier
+        scene.bouclier.body.enable = false; // Désactiver le bouclier
+        scene.bouclierTimer.remove(); // Arrêter le timer du bouclier
+      }
+    });
   });
 
 
